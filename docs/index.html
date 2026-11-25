@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ghostlyne</title>
-<meta name="description" content="Know your safe leverage before you trade: daily, calibrated odds that a leveraged crypto position gets liquidated, with every forecast on a public ledger.">
+<meta name="description" content="Know your leverage. Know your risk. Daily, calibrated odds that a leveraged crypto position gets liquidated, with every forecast on a public ledger.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -18,7 +18,7 @@ body{font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
 .wrap{max-width:1040px;margin:0 auto;padding:0 max(4vw,16px)}
 header{padding:28px 0 0}
 .word{font:500 22px/1 "IBM Plex Mono",monospace;letter-spacing:.42em}
-.tag{color:var(--sub);margin-top:8px;font-size:15px}
+.tag{color:var(--fg,#f2f2f2);margin-top:10px;font-size:17px}.tag2{color:var(--sub);margin-top:4px;font-size:14px}.none{color:var(--sub);font-style:italic}
 .day{font:13px/1.5 "IBM Plex Mono",monospace;color:var(--dim);margin:34px 0 10px}
 .line{font-size:clamp(24px,3.6vw,36px);line-height:1.22;letter-spacing:-.01em;font-weight:500;max-width:30ch;margin:0 0 30px;text-wrap:balance}
 .num,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
@@ -57,16 +57,17 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 @media(max-width:720px){.two{grid-template-columns:minmax(0,1fr)}th,td{padding:10px 6px 10px 0}td{font-size:14px}.hide-s{display:none}}
 </style></head><body>
 <div class="wrap">
-<header><div class="word">GHOSTLYNE</div><div class="tag">Know your safe leverage before you trade.</div></header>
+<header><div class="word">GHOSTLYNE</div><div class="tag">Know your leverage. Know your risk.</div><div class="tag2">See how much leverage corresponds to your chosen liquidation-risk threshold.</div></header>
 <p class="day" id="day">Loading today's odds…</p>
 <div id="lvchip"></div>
 <h1 class="line" id="line"></h1>
 <div class="chips" role="group" aria-label="Leverage"><span>Leverage</span><div id="chips" style="display:contents"></div></div>
-<div class="board"><table><thead><tr><th>Market</th><th>Long odds</th><th>Short odds</th><th class="hide-s">Long vs normal</th><th class="hide-s">Short vs normal</th><th>Max lev. ≤5%</th></tr></thead><tbody id="board"></tbody></table></div>
+<div class="chips" role="group" aria-label="Risk threshold"><span>Risk limit</span><div id="thr" style="display:contents"></div></div>
+<div class="board"><table><thead><tr><th>Market</th><th>Long odds</th><th>Short odds</th><th class="hide-s">Long vs normal</th><th class="hide-s">Short vs normal</th><th id="mlh">Max lev. ≤5%</th></tr></thead><tbody id="board"></tbody></table></div>
 <p class="note" id="boardnote"></p>
 
 <section><h2>What the number means</h2>
-<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage, up to 20x, whose modeled odds are at or below 5%, for longs / shorts. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p></section>
+<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. "None" means no tested leverage (5x to 20x) meets the threshold that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p></section>
 
 <section><h2>Reading the colours</h2>
 <p class="sub">Each market side gets a level from today's modeled 10x odds compared with its own 90-day normal. The day takes the most serious level on the board.</p>
@@ -94,18 +95,21 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=p=>p==null?'—':p<0.001?'<0.1%':p<0.1?(100*p).toFixed(1)+'%':Math.round(100*p)+'%';
 const name=s=>s.replace('USDT','').replace('1000','');
-let D=null,lev='10';
+let D=null,lev='10',thr=0.05;const THR=[0.02,0.05,0.10];
+const maxlev=(f,sd)=>{const ok=[20,15,10,7,5].filter(L=>f[sd][String(L)]!=null&&f[sd][String(L)]<=thr+1e-12);return ok.length?ok[0]:null};
+function thrchips(){document.getElementById('thr').innerHTML=THR.map(x=>`<button class="chip" aria-pressed="${x===thr}" data-t="${x}">≤${Math.round(100*x)}%</button>`).join('');document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{thr=+b.dataset.t;thrchips();board()}))}
 const LV={calm:'Calm',normal:'Normal',elevated:'Elevated',severe:'Severe'};
 const level=(p,r)=>r==null?'normal':(r>=2.5&&p>=0.10)?'severe':(r>=1.5&&p>=0.03)?'elevated':r<0.8?'calm':'normal';
 function board(){
   const F=D.forecasts,rows=Object.keys(F).sort((a,b)=>(b==='BTCUSDT')-(a==='BTCUSDT')||(b==='ETHUSDT')-(a==='ETHUSDT')||F[b].long['10']+F[b].short['10']-F[a].long['10']-F[a].short['10']);
   document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
     const on=!!D.day_level,ll=on?level(f.long['10'],rl):'normal',ls=on?level(f.short['10'],rs):'normal';const c=x=>` class="lv-${x}"`;
-    return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${f.safe.long?f.safe.long+'x':'<5x'} / ${f.safe.short?f.safe.short+'x':'<5x'}</td></tr>`}).join('');
+    return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'long'))} / ${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'short'))}</td></tr>`}).join('');
+  document.getElementById('mlh').textContent=`Max lev. ≤${Math.round(100*thr)}%`;
   document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Colours show each side's level (see Reading the colours).`;
 }
 function chips(){document.getElementById('chips').innerHTML=D.leverage.map(L=>`<button class="chip" type="button" aria-pressed="${String(L)===lev}" data-l="${L}">${L}x</button>`).join('');
-  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{lev=b.dataset.l;chips();board()}))}
+  document.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',()=>{lev=b.dataset.l;chips();board()}))}
 function bt(){
   const s=document.getElementById('bt'),T=D.backtest&&D.backtest.tests;if(!T||!T['long_10x']){s.parentElement.innerHTML='<p class="empty">Backtest results will appear after the first full run.</p>';return}
   const draw=()=>{const W=s.clientWidth,H=s.clientHeight,ml=44,mr=10,mt=10,mb=34,ser=[['long_10x','#f2f2f2','longs'],['short_10x','#8a8a8a','shorts']];
@@ -139,7 +143,7 @@ fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
   // The chip and line colour come only from the level the engine wrote into the hashed record, so they can never contradict the line.
   const dl=d.day_level; document.getElementById('lvchip').innerHTML=dl?`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`:'';
   document.getElementById('line').className='line'+(dl?' lv-'+dl:'');
-  chips();board();bt();live();cta();
+  chips();thrchips();board();bt();live();cta();
   document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
 }).catch(()=>{document.getElementById('day').textContent='Today’s odds are not available yet.'});
 }

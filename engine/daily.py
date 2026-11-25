@@ -74,7 +74,7 @@ def daily_line(F):
     if sev or ele:
         day = "severe" if sev else "elevated"; p, r, s, sd = (sev or ele)[0]; safe = F[s]["safe"][sd]; others = len(sev) + len(ele) - 1
         line = (f"{'Severe' if sev else 'Elevated'} risk. {NAME(s)} {sd}s lead: {100*p:.0f}% modeled odds of a 10x liquidation, {r:.1f}× normal. "
-                f"At or below 5% odds, the most leverage is {str(safe)+'x' if safe else 'under 5x'}." + (f" {others} other market side{'s' if others != 1 else ''} also elevated." if others else ""))
+                + (f"At or below 5% odds, the most leverage is {safe}x." if safe else "No tested leverage (5x to 20x) is at or below 5% odds.") + (f" {others} other market side{'s' if others != 1 else ''} also elevated." if others else ""))
     else:
         p, r, s, sd = sorted(c, reverse=True)[0]
         day = "calm" if calm_share >= 0.5 else "normal"
