@@ -100,7 +100,7 @@ const level=(p,r)=>r==null?'normal':(r>=2.5&&p>=0.10)?'severe':(r>=1.5&&p>=0.03)
 function board(){
   const F=D.forecasts,rows=Object.keys(F).sort((a,b)=>(b==='BTCUSDT')-(a==='BTCUSDT')||(b==='ETHUSDT')-(a==='ETHUSDT')||F[b].long['10']+F[b].short['10']-F[a].long['10']-F[a].short['10']);
   document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
-    const ll=level(f.long['10'],rl),ls=level(f.short['10'],rs);const c=x=>` class="lv-${x}"`;
+    const on=!!D.day_level,ll=on?level(f.long['10'],rl):'normal',ls=on?level(f.short['10'],rs):'normal';const c=x=>` class="lv-${x}"`;
     return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${f.safe.long?f.safe.long+'x':'<5x'} / ${f.safe.short?f.safe.short+'x':'<5x'}</td></tr>`}).join('');
   document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Colours show each side's level (see Reading the colours).`;
 }
