@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ghostlyne</title>
+<meta name="description" content="Daily, calibrated odds that a leveraged crypto position gets liquidated. Every forecast on a public ledger.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE quiet, exact, a little cold: a number you can trust, said once
+   IDEA Ghostlyne's black page: one line a day, then the odds board, then the receipts
+   PICTURE the odds board: every market's liquidation odds at the chosen leverage, longs and shorts side by side
+   COLOUR black ground, white ink; neon pink = elevated risk or a liquidation that happened, neon green = survived
+   TYPE IBM Plex Sans for words, IBM Plex Mono for every number
+   LAYOUT name and line, leverage chips, board; then proof (backtest + live ledger); phone stacks the same order */
+:root{color-scheme:dark;--bg:#000;--ink:#f2f2f2;--sub:#b5b5b5;--dim:#7d7d7d;--rule:#1c1c1c;--pink:#ff3d8b;--green:#39ff7a}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1040px;margin:0 auto;padding:0 max(4vw,16px)}
+header{padding:28px 0 0}
+.word{font:500 22px/1 "IBM Plex Mono",monospace;letter-spacing:.42em}
+.tag{color:var(--sub);margin-top:8px;font-size:15px}
+.day{font:13px/1.5 "IBM Plex Mono",monospace;color:var(--dim);margin:34px 0 10px}
+.line{font-size:clamp(24px,3.6vw,36px);line-height:1.22;letter-spacing:-.01em;font-weight:500;max-width:30ch;margin:0 0 30px;text-wrap:balance}
+.num,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+.chips span{color:var(--dim);font-size:14px;margin-right:4px}
+.chip{min-height:40px;min-width:52px;padding:0 12px;background:transparent;border:1px solid #3a3a3a;color:var(--sub);font:500 15px "IBM Plex Mono",monospace;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--ink);color:var(--ink);background:#111}
+.chip:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+table{border-collapse:collapse;width:100%}
+th,td{padding:11px 10px 11px 0;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th{font-weight:500;color:var(--dim);font-size:13px}
+th:first-child,td:first-child{text-align:left}
+td{font:15px "IBM Plex Mono",monospace}
+td:first-child{font-family:"IBM Plex Sans",sans-serif;font-weight:500}
+.hot{color:var(--pink)}
+.board{overflow-x:auto}
+.note{color:var(--dim);font-size:13px;margin:10px 0 0;max-width:80ch}
+section{padding:44px 0 8px;border-top:1px solid var(--rule);margin-top:44px}
+h2{font-weight:500;font-size:22px;margin:0 0 6px}
+.sub{color:var(--sub);max-width:70ch}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.fig{position:relative;height:260px;margin-top:10px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font:12px "IBM Plex Mono",monospace;fill:var(--dim)}
+.rec{display:grid;grid-template-columns:7.5em minmax(0,1fr) 5.5em;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.rec .num{text-align:right}
+.cta{display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:500}
+.cta:hover{background:#111}
+footer{color:var(--dim);font-size:13px;padding:40px 0 60px;border-top:1px solid var(--rule);margin-top:44px}
+footer p{max-width:85ch}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
+.empty{color:var(--dim);border:1px dashed #333;padding:14px 16px}
+@media(max-width:720px){.two{grid-template-columns:minmax(0,1fr)}th,td{padding:10px 6px 10px 0}td{font-size:14px}.hide-s{display:none}}
+</style></head><body>
+<div class="wrap">
+<header><div class="word">GHOSTLYNE</div><div class="tag">The odds your position survives.</div></header>
+<p class="day" id="day">Loading today's odds…</p>
+<h1 class="line" id="line"></h1>
+<div class="chips" role="group" aria-label="Leverage"><span>Leverage</span><div id="chips" style="display:contents"></div></div>
+<div class="board"><table><thead><tr><th>Market</th><th>Long odds</th><th>Short odds</th><th class="hide-s">Long vs normal</th><th class="hide-s">Short vs normal</th><th>Max lev. ≤5%</th></tr></thead><tbody id="board"></tbody></table></div>
+<p class="note" id="boardnote"></p>
+
+<section><h2>What the number means</h2>
+<p class="sub">The probability that price moves far enough against a position opened at today's UTC open to reach its liquidation level before the UTC day ends. "Vs normal" compares today's odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage whose odds are at or below 5% today, for longs / shorts. Liquidation levels assume isolated margin with about 0.5% maintenance margin; your exchange and position size can move them.</p></section>
+
+<section><h2>Proof, before you trust it</h2>
+<div class="two"><div><p class="sub">Walk-forward backtest at 10x: every forecast made only with earlier data, odds calibrated only on earlier forecasts. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p></div>
+<div><p class="sub">Live record since launch. Every day's forecast is written to a hash-chained public ledger before the day plays out, then scored. Nothing is edited after publication.</p><div id="live"></div></div></div></section>
+
+<section><h2>Every line, and what happened</h2><p class="sub">Green: the position in the line survived the day. Pink: it was liquidated. A good forecaster gets pink on some high-odds days; the test is whether the odds match the frequency.</p><div id="hist"></div></section>
+
+<section id="access"><h2>Early access</h2><p class="sub">Ghostlyne is free while the record builds. Paid access will add every market, alerts when your positions' odds jump, and the daily line in your inbox.</p><div id="ctabox" style="margin-top:14px"></div></section>
+
+<footer><p>Ghostlyne publishes statistical estimates for information only. They involve uncertainty, can be wrong, and are not investment advice or a recommendation to trade any asset or to use leverage. Leveraged trading can lose more than you expect.</p>
+<p id="foot"></p></footer>
+</div>
+<script>
+{
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=p=>p==null?'—':p<0.001?'<0.1%':p<0.1?(100*p).toFixed(1)+'%':Math.round(100*p)+'%';
+const name=s=>s.replace('USDT','').replace('1000','');
+let D=null,lev='10';
+function board(){
+  const F=D.forecasts,rows=Object.keys(F).sort((a,b)=>(b==='BTCUSDT')-(a==='BTCUSDT')||(b==='ETHUSDT')-(a==='ETHUSDT')||F[b].long['10']+F[b].short['10']-F[a].long['10']-F[a].short['10']);
+  document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
+    const c=r=>r!=null&&r>=1.5?' class="hot"':'';
+    return `<tr><td>${esc(name(s))}</td><td${c(rl)}>${pct(f.long[lev])}</td><td${c(rs)}>${pct(f.short[lev])}</td><td class="hide-s"${c(rl)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(rs)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${f.safe.long?f.safe.long+'x':'<5x'} / ${f.safe.short?f.safe.short+'x':'<5x'}</td></tr>`}).join('');
+  document.getElementById('boardnote').textContent=`Odds of liquidation today at ${lev}x (price moving ${(100*D.liq_distance[lev]).toFixed(1)}% against the position). Pink: at least 1.5× that market's normal 10x odds.`;
+}
+function chips(){document.getElementById('chips').innerHTML=D.leverage.map(L=>`<button class="chip" type="button" aria-pressed="${String(L)===lev}" data-l="${L}">${L}x</button>`).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{lev=b.dataset.l;chips();board()}))}
+function bt(){
+  const s=document.getElementById('bt'),T=D.backtest&&D.backtest.tests;if(!T||!T['long_10x']){s.parentElement.innerHTML='<p class="empty">Backtest results will appear after the first full run.</p>';return}
+  const draw=()=>{const W=s.clientWidth,H=s.clientHeight,ml=44,mr=10,mt=10,mb=34,ser=[['long_10x','#f2f2f2','longs'],['short_10x','#8a8a8a','shorts']];
+    const mx=Math.max(...ser.flatMap(([k])=>T[k].deciles.flat()))*1.08,x=v=>ml+(W-ml-mr)*v/mx,y=v=>mt+(H-mt-mb)*(1-v/mx);let o='';
+    const st=mx>0.3?0.1:mx>0.12?0.05:0.02;for(let v=0;v<=mx;v+=st)o+=`<line x1="${ml}" x2="${W-mr}" y1="${y(v)}" y2="${y(v)}" stroke="#151515"/><text x="${ml-6}" y="${y(v)+4}" text-anchor="end">${Math.round(v*100)}%</text><text x="${x(v)}" y="${H-18}" text-anchor="middle">${Math.round(v*100)}%</text>`;
+    o+=`<line x1="${x(0)}" y1="${y(0)}" x2="${x(mx)}" y2="${y(mx)}" stroke="#444" stroke-dasharray="4 4"/>`;
+    ser.forEach(([k,c])=>{const d=T[k].deciles;o+=`<path d="${d.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+','+y(p[1]).toFixed(1)).join('')}" fill="none" stroke="${c}" stroke-width="1.6"/>`+d.map(p=>`<circle cx="${x(p[0])}" cy="${y(p[1])}" r="3.2" fill="${c}"/>`).join('')});
+    o+=`<text x="${ml+(W-ml-mr)/2}" y="${H-2}" text-anchor="middle">said (deciles) → happened ↑ · white longs, grey shorts</text>`;s.innerHTML=o};
+  new ResizeObserver(draw).observe(s);
+  const L=T['long_10x'],S=T['short_10x'];
+  document.getElementById('btnote').textContent=`${D.backtest.eval_from} to ${D.backtest.through}. Against the textbook volatility calculator, separation of risky from safe days (AUC) ${L.auc_textbook.toFixed(2)}→${L.auc_cal.toFixed(2)} for longs and ${S.auc_textbook.toFixed(2)}→${S.auc_cal.toFixed(2)} for shorts; forecast error ${(100*L.skill_cal).toFixed(1)}% / ${(100*S.skill_cal).toFixed(1)}% lower.`;
+}
+function live(){
+  const Lg=D.ledger,cal=Lg.calibration.filter(c=>c.n>0);
+  let h=`<p class="mono" style="font-size:14px">${Lg.days} day${Lg.days===1?'':'s'} published · ${Lg.scored_days} scored</p>`;
+  h+=cal.length?`<table><thead><tr><th>Said</th><th>Forecasts</th><th>Average said</th><th>Happened</th></tr></thead><tbody>${cal.map(c=>`<tr><td class="mono">${pct(c.lo)}–${pct(c.hi)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)}</td></tr>`).join('')}</tbody></table><p class="note">Small samples are noisy; the table converges as days accumulate.</p>`:`<p class="empty">The first forecast is scored after today's UTC day closes.</p>`;
+  document.getElementById('live').innerHTML=h;
+  const R=Lg.recent;document.getElementById('hist').innerHTML=R.length?R.map(r=>`<div class="rec"><span class="mono">${esc(r.date)}</span><span>${esc(r.line)}</span><span class="num ${r.hit===true?'hot':r.hit===false?'':''}" style="${r.hit===false?'color:var(--green)':''}">${r.hit===true?'liquidated':r.hit===false?'survived':'pending'}</span></div>`).join(''):'<p class="empty">The record starts today.</p>';
+}
+function cta(){const b=document.getElementById('ctabox');
+  if(D.waitlist_url)b.innerHTML=`<a class="cta" href="${esc(D.waitlist_url)}">Request early access</a>`;
+  else if(D.contact_email)b.innerHTML=`<p>Write to <span class="mono">${esc(D.contact_email)}</span> to request access.</p>`;
+  else b.innerHTML='<p class="empty">Access requests open shortly.</p>'}
+fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
+  document.getElementById('day').textContent=`UTC day ${d.day} · data through ${d.data_through} · published ${d.generated_utc.slice(11,16)} UTC`;
+  document.getElementById('line').textContent=d.line;
+  chips();board();bt();live();cta();
+  document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
+}).catch(()=>{document.getElementById('day').textContent='Today’s odds are not available yet.'});
+}
+</script>
+</body></html>
