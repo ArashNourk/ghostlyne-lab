@@ -167,7 +167,7 @@ fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
     dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · `+(p?`verified public ${p.verified_public_utc.replace('T',' ').slice(0,16)} UTC, ${p.on_time?'before':'after'} the window opened`:'publication being verified');}).catch(()=>{});
   document.getElementById('line').textContent=d.line;
   // The chip and line colour come only from the level the engine wrote into the hashed record, so they can never contradict the line.
-  const dl=d.day_level; document.getElementById('lvchip').innerHTML=dl?`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`:'';
+  const dl=d.day_level; document.getElementById('lvchip').innerHTML=dl?`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`:'<p class="note" style="margin:0 0 12px">This edition was sealed before colour levels existed, so it is shown uncoloured. Colour levels start with the next edition, published at 23:15 UTC.</p>';
   document.getElementById('line').className='line'+(dl?' lv-'+dl:'');
   chips();thrchips();board();bt();live();cta();
   document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
