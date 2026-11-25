@@ -83,6 +83,28 @@ def daily_line(F):
     return line, {"symbol": s, "side": sd, "leverage": 10, "p": p, "ratio": round(r, 3), "day_level": day,
                   "levels": {f"{a}|{b}": v for (a, b), v in lv.items()}}
 
+def render_static(site):
+    """Write today's line, badge and board into docs/index.html so search engines, link previews and tools that do not
+    run JavaScript see the same numbers. The page's script replaces them with the live data.json on load."""
+    import html, re
+    p = ROOT / "docs/index.html"; h = p.read_text(); e = html.escape
+    pct = lambda x: "—" if x is None else ("<0.1%" if x < 0.001 else (f"{100*x:.1f}%" if x < 0.1 else f"{100*x:.0f}%"))
+    lv = site.get("day_level"); F = site["forecasts"]
+    def ml(f, sd):
+        ok = [L for L in (20, 15, 10, 7, 5) if f[sd].get(str(L)) is not None and f[sd][str(L)] <= 0.05 + 1e-12]
+        return f"{ok[0]}x" if ok else '<span class="none">none</span>'
+    order = sorted(F, key=lambda s: (s != "BTCUSDT", s != "ETHUSDT", -(F[s]["long"]["10"] + F[s]["short"]["10"])))
+    rows = "".join(f"<tr><td>{e(NAME(s))}</td><td>{pct(F[s]['long']['10'])}</td><td>{pct(F[s]['short']['10'])}</td>"
+                   f"<td class=\"hide-s\">—</td><td class=\"hide-s\">—</td><td>{ml(F[s], 'long')} / {ml(F[s], 'short')}</td></tr>" for s in order)
+    desc = e(f"{site['line']} Know your leverage. Know your risk: daily, calibrated liquidation odds for 28 crypto perpetuals, every forecast on a public ledger.")
+    parts = {"meta": f'<meta name="description" content="{desc}">\n<meta property="og:title" content="Ghostlyne: know your leverage, know your risk">'
+                     f'<meta property="og:description" content="{desc}"><meta property="og:type" content="website"><meta name="twitter:card" content="summary">',
+             "day": e(f"Odds for UTC day {site['day']}"), "chip": f'<span class="chip-lv lv-{lv}"><i></i>{lv.capitalize()} day</span>' if lv else "",
+             "line": e(site["line"]), "board": rows}
+    for k, v in parts.items():
+        h = re.sub(rf"<!--S:{k}-->.*?<!--/S:{k}-->", lambda m: f"<!--S:{k}-->{v}<!--/S:{k}-->", h, flags=re.S)
+    p.write_text(h)
+
 def main():
     now = ts(os.environ.get("GL_NOW") or pd.Timestamp.now("UTC"))
     today = now.normalize(); cut = today + G.CUT
@@ -161,7 +183,7 @@ def main():
                        "recent": hist[-30:][::-1]},
             "backtest": bt, "waitlist_url": CFG.get("waitlist_url", ""), "contact_email": CFG.get("contact_email", "")}
     (ROOT / "docs/ledger").mkdir(parents=True, exist_ok=True)
-    json.dump(site, open(ROOT / "docs/data.json", "w"), separators=(",", ":"))
+    json.dump(site, open(ROOT / "docs/data.json", "w"), separators=(",", ":")); render_static(site)
     for src in [LEDGER, OUTCOMES, PUBS]:
         if src.exists(): (ROOT / "docs/ledger" / src.name).write_text(src.read_text())
 
