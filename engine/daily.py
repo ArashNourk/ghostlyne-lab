@@ -39,15 +39,14 @@ def forecast(D, info_day):
             if cal is None:                                     # thin data (rare at 5x): one pooled map, the v2 fallback
                 past = np.where((D.Date > info_day - pd.DateOffset(months=12)) & (D.Date < info_day) & ~np.isnan(raw) & ~np.isnan(y))[0]
                 if len(past) >= 500 and y[past].sum() >= 10:
-                    from sklearn.isotonic import IsotonicRegression
-                    m = IsotonicRegression(out_of_bounds="clip", y_min=1e-4, y_max=0.999).fit(raw[past], y[past]).predict; cal = (m, m)
+                    m = G.SmoothIso(raw[past], y[past]).predict; cal = (m, m)
                     method[f"{side}_{L}"] = "pooled calibration (too few events for regime maps)"
             if cal is not None:
                 Pm[:, j] = np.where(st[rows], cal[1](pr), cal[0](pr))
             else:
                 Pm[:, j] = pr; method.setdefault(f"{side}_{L}", "uncalibrated (too few recent events)")
             if L == 10:
-                rec = np.where((D.Date > info_day - pd.Timedelta(days=90)) & (D.Date < info_day) & ~np.isnan(raw))[0]
+                rec = np.where((D.Date > info_day - pd.Timedelta(days=365)) & (D.Date < info_day) & ~np.isnan(raw))[0]
                 nv = (np.where(st[rec], cal[1](raw[rec]), cal[0](raw[rec])) if cal is not None else raw[rec])
                 norm = pd.Series(nv, index=D.sym.values[rec]).groupby(level=0).mean().to_dict()
                 tb = dict(zip(D.sym.values[rows], G.textbook(D.loc[rows], side, k)))
@@ -61,7 +60,7 @@ def forecast(D, info_day):
             safe = [L for L in G.LEVERAGE if L <= G.MAXLEV_CAP and o[side][str(L)] <= lim + 1e-12]; o["safe"][side] = max(safe) if safe else None
     return out, method
 
-# Risk levels (shared with the page). Ratio = today's modeled 10x odds / that market's 90-day normal 10x odds.
+# Risk levels (shared with the page). Ratio = today's modeled 10x odds / that market's 365-day normal 10x odds.
 #   severe   ratio >= 2.5 and 10x odds >= 10%   neon pink
 #   elevated ratio >= 1.5 and 10x odds >= 3%    soft pink
 #   calm     ratio <  0.8                       electric green

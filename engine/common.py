@@ -246,10 +246,22 @@ def stress_flags(D):
     hot = (D.v1 - D.v30).values > 1
     return {"long": (br_dn > 0.3) | hot, "short": (br_up > 0.3) | hot}
 
+class SmoothIso:
+    """Isotonic regression, then linear interpolation (logit-raw space) between the centres of its constant blocks, so
+    neighbouring markets do not collapse onto one identical probability. Identical to research/v04.py; adopted in v0.3.1
+    after passing its pre-registered criterion (H5) on 2023."""
+    def __init__(self, raw, y, ymin=1e-4, ymax=0.999):
+        lg = lambda p: np.log(np.clip(p, 1e-6, 1 - 1e-6) / (1 - np.clip(p, 1e-6, 1 - 1e-6))); self.lg = lg
+        fit = IsotonicRegression(out_of_bounds="clip", y_min=ymin, y_max=ymax).fit(raw, y).predict(raw); x = lg(raw)
+        df = pd.DataFrame({"x": x, "f": np.round(fit, 10)}).groupby("f").x.mean().reset_index().sort_values("x")
+        self.cx, self.cy = df.x.values, df.f.values
+        if len(self.cx) < 2: self.cx, self.cy = np.array([x.min(), x.max() + 1e-9]), np.array([fit.mean()] * 2)
+    def predict(self, raw): return np.interp(self.lg(np.asarray(raw, float)), self.cx, self.cy)
+
 def regime_calibrator(raw, y, dates, stress, day, cal_months=12, stress_months=24):
     """Calibration maps fit on rows before `day`: (normal_map, stress_map), each a function raw -> probability, or None
     when even the pooled map lacks data. Identical to research/candidates.calibrate_walk_regime."""
-    iso = lambda a, b: IsotonicRegression(out_of_bounds="clip", y_min=1e-4, y_max=0.999).fit(a, b)
+    iso = lambda a, b: SmoothIso(a, b)
     ok = ~np.isnan(raw) & ~np.isnan(y) & (dates < day - pd.Timedelta(days=1))
     pa = np.where(ok & (dates >= day - pd.DateOffset(months=cal_months)))[0]
     if len(pa) <= 1000 or y[pa].sum() < 20: return None
