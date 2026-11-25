@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ghostlyne</title>
-<meta name="description" content="Daily, calibrated odds that a leveraged crypto position gets liquidated. Every forecast on a public ledger.">
+<meta name="description" content="Know your safe leverage before you trade: daily, calibrated odds that a leveraged crypto position gets liquidated, with every forecast on a public ledger.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -57,7 +57,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 @media(max-width:720px){.two{grid-template-columns:minmax(0,1fr)}th,td{padding:10px 6px 10px 0}td{font-size:14px}.hide-s{display:none}}
 </style></head><body>
 <div class="wrap">
-<header><div class="word">GHOSTLYNE</div><div class="tag">The odds your position survives.</div></header>
+<header><div class="word">GHOSTLYNE</div><div class="tag">Know your safe leverage before you trade.</div></header>
 <p class="day" id="day">Loading today's odds…</p>
 <div id="lvchip"></div>
 <h1 class="line" id="line"></h1>
@@ -79,7 +79,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <p class="note">In the record below, green means the position named in that day's line survived and pink means it was liquidated.</p></section>
 
 <section><h2>Proof, before you trust it</h2>
-<div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p></div>
+<div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p><p class="note" id="mlnote"></p></div>
 <div><p class="sub">Live record. Every forecast is written to a hash-chained public ledger, its public availability is verified and timestamped, and it is scored after the day closes. Only forecasts verified public before their window opens enter this table. Nothing is edited after publication.</p><div id="live"></div></div></div></section>
 
 <section><h2>Every line, and what happened</h2><p class="sub">Green: the position in the line survived the day. Pink: it was liquidated. A good forecaster gets pink on some high-odds days; the test is whether the odds match the frequency.</p><div id="hist"></div></section>
@@ -116,7 +116,8 @@ function bt(){
     o+=`<text x="${ml+(W-ml-mr)/2}" y="${H-2}" text-anchor="middle">said (deciles) → happened ↑ · white longs, grey shorts</text>`;s.innerHTML=o};
   new ResizeObserver(draw).observe(s);
   const L=T['long_10x'],S=T['short_10x'];
-  const f=(x)=>(x>0?'+':'')+(100*x).toFixed(1)+'%';document.getElementById('btnote').textContent=L.best_baseline?`${D.backtest.eval_from} to ${D.backtest.through}. Compared with the best of five conventional forecasters, each calibrated the same way (longs: ${L.best_baseline}; shorts: ${S.best_baseline}), Ghostlyne's Brier skill is ${f(L.skill_best)} for longs (90% interval ${f(L.ci_best[0])} to ${f(L.ci_best[1])}) and ${f(S.skill_best)} for shorts (${f(S.ci_best[0])} to ${f(S.ci_best[1])}); positive means more accurate than that forecaster.`:`${D.backtest.eval_from} to ${D.backtest.through}.`;
+  const f=(x)=>(x>0?'+':'')+(100*x).toFixed(1)+'%';const M=D.backtest.maxlev;if(M&&M.long&&M.short){const q=x=>(100*x).toFixed(1)+'%';document.getElementById('mlnote').textContent=`Max leverage ≤5%, tested: on days where Ghostlyne named a leverage at or below 5% modeled odds, that position was actually liquidated ${q(M.long.realized)} of the time for longs (90% interval ${q(M.long.realized_ci90[0])} to ${q(M.long.realized_ci90[1])}) and ${q(M.short.realized)} for shorts (${q(M.short.realized_ci90[0])} to ${q(M.short.realized_ci90[1])}).`;}
+  document.getElementById('btnote').textContent=L.best_baseline?`${D.backtest.eval_from} to ${D.backtest.through}. Compared with the best of five conventional forecasters, each calibrated the same way (longs: ${L.best_baseline}; shorts: ${S.best_baseline}), Ghostlyne's Brier skill is ${f(L.skill_best)} for longs (90% interval ${f(L.ci_best[0])} to ${f(L.ci_best[1])}) and ${f(S.skill_best)} for shorts (${f(S.ci_best[0])} to ${f(S.ci_best[1])}); positive means more accurate than that forecaster.`:`${D.backtest.eval_from} to ${D.backtest.through}.`;
 }
 function live(){
   const Lg=D.ledger,cal=Lg.calibration.filter(c=>c.n>0);

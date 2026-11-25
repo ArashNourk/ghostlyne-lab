@@ -27,8 +27,28 @@ def week_boot(D, ok, e_a, e_b, B=1000, seed=0):
     return float(np.percentile(sk, 5)), float(np.percentile(sk, 95))
 
 res = {"start": str(START.date()), "eval_from": str(EVAL.date()), "through": str(D.Date.max().date()), "markets": sorted(D.sym.unique().tolist()),
-       "rows": int(len(D)), "mmr": G.MMR, "tests": {}, "by_market": {}, "monotonic_violation_share": {}}
-site = {"eval_from": str(EVAL.date()), "through": str(D.Date.max().date()), "tests": {}}
+       "rows": int(len(D)), "mmr": G.MMR, "tests": {}, "by_market": {}, "monotonic_violation_share": {}, "maxlev": {}}
+site = {"eval_from": str(EVAL.date()), "through": str(D.Date.max().date()), "tests": {}, "maxlev": {}}
+THR = 0.05
+
+def maxlev_check(Pm, Y, ok):
+    """Validate the 'max leverage at or below 5% modeled odds' recommendation: for every market-day, take the highest
+    leverage whose forecast is <= 5%, then record whether a position at that leverage was actually liquidated."""
+    lev = np.array(LEV); rows = np.where(ok)[0]; rec_L, rec_p, hit = [], [], []
+    for i in rows:
+        good = np.where(Pm[i] <= THR)[0]
+        if len(good) == 0: rec_L.append(0); rec_p.append(np.nan); hit.append(np.nan); continue
+        j = good[np.argmax(lev[good])]; rec_L.append(int(lev[j])); rec_p.append(Pm[i, j]); hit.append(Y[i, j])
+    rec_L, rec_p, hit = np.array(rec_L), np.array(rec_p), np.array(hit); has = rec_L > 0
+    wk = D.Date.values[rows][has].astype("datetime64[W]"); g = pd.DataFrame({"w": wk, "h": hit[has]}).groupby("w").h.agg(["sum", "count"])
+    rng = np.random.default_rng(1); bs = []
+    for _ in range(1000):
+        i = rng.integers(0, len(g), len(g)); bs.append(g["sum"].values[i].sum() / g["count"].values[i].sum())
+    by = {str(L): {"days": int((rec_L == L).sum()), "forecast": float(np.nanmean(rec_p[rec_L == L])), "realized": float(np.nanmean(hit[rec_L == L]))}
+          for L in LEV if (rec_L == L).sum() >= 50}
+    return {"n": int(len(rows)), "covered": float(has.mean()), "under5x_share": float((~has).mean()), "realized": float(np.nanmean(hit[has])),
+            "realized_ci90": [float(np.percentile(bs, 5)), float(np.percentile(bs, 95))], "forecast_mean": float(np.nanmean(rec_p[has])),
+            "mean_leverage": float(rec_L[has].mean()), "breaches": int(np.nansum(hit[has])), "by_leverage": by}
 for side in ["long", "short"]:
     P = {nm: np.full((len(D), len(LEV)), np.nan) for nm in NAMES}; Y = np.full((len(D), len(LEV)), np.nan); Ylast = np.full((len(D), len(LEV)), np.nan)
     for j, L in enumerate(LEV):
@@ -44,6 +64,11 @@ for side in ["long", "short"]:
         P[nm], bad = G.monotone(P[nm]); viol[nm] = bad
     valid = ~np.isnan(P["Ghostlyne"]).any(1)
     res["monotonic_violation_share"][side] = {nm: viol[nm] / max(valid.sum(), 1) for nm in NAMES}
+    okall = (D.Date >= EVAL).values & ~np.isnan(Y).any(1)
+    for nm in NAMES: okall &= ~np.isnan(P[nm]).any(1)
+    res["maxlev"][side] = {nm: maxlev_check(P[nm], Y, okall) for nm in NAMES}
+    m = res["maxlev"][side]["Ghostlyne"]; site["maxlev"][side] = m
+    print(side, "max-lev <=5%: realized", round(m["realized"], 4), m["realized_ci90"], "mean lev", round(m["mean_leverage"], 2), flush=True)
     for j, L in enumerate(LEV):
         y = Y[:, j]; ok = (D.Date >= EVAL).values & ~np.isnan(y)
         for nm in NAMES: ok &= ~np.isnan(P[nm][:, j])
@@ -91,6 +116,17 @@ for side in ["long", "short"]:
     bm = res["by_market"].get(side, {}); pos = sum(v["skill"] > 0 for v in bm.values())
     L += ["", f"By market ({side}, 20x/15x/10x pooled, vs best baseline): positive in {pos} of {len(bm)} markets.",
           ", ".join(f"{s.replace('USDT','')} {v['skill']:+.3f}" for s, v in sorted(bm.items(), key=lambda kv: -kv[1]['skill']))]
+L += ["", "## Max leverage at or below 5% modeled odds", "",
+      "For every market-day, the highest leverage whose forecast is at or below 5%. Realized = share of those recommended positions that were",
+      "actually liquidated (target: at or below 5%). A better model recommends more leverage at the same realized risk.", "",
+      "| Side | Method | Realized liq. rate (90% CI) | Mean forecast | Mean recommended leverage | Days with no level ≤5% |", "|---|---|---|---|---|---|"]
+for side in ["long", "short"]:
+    for nm in NAMES:
+        m = res["maxlev"][side][nm]
+        L.append(f"| {side} | {nm} | {100*m['realized']:.2f}% ({100*m['realized_ci90'][0]:.2f}, {100*m['realized_ci90'][1]:.2f}) | {100*m['forecast_mean']:.2f}% | {m['mean_leverage']:.1f}x | {100*m['under5x_share']:.1f}% |")
+    L.append("")
+    L.append(f"Ghostlyne {side}, by recommended leverage: " + ", ".join(f"{k}x: {v['days']} days, forecast {100*v['forecast']:.1f}%, realized {100*v['realized']:.1f}%" for k, v in res["maxlev"][side]["Ghostlyne"]["by_leverage"].items()))
+    L.append("")
 L += ["", "Share of forecast rows where raw calibrated odds violated leverage monotonicity before correction:",
       json.dumps({s: {k: round(v, 4) for k, v in d.items()} for s, d in res["monotonic_violation_share"].items()})]
 (OUT / "backtest_v2.md").write_text("\n".join(L)); print("\n".join(L))
