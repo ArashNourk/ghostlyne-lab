@@ -135,9 +135,9 @@ fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
   fetch('ledger/publications.jsonl',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(tx=>{const p=tx.trim().split('\n').filter(Boolean).map(l=>JSON.parse(l)).find(x=>x.forecast_hash===d.hash);
     dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · `+(p?`verified public ${p.verified_public_utc.replace('T',' ').slice(0,16)} UTC, ${p.on_time?'before':'after'} the window opened`:'publication being verified');}).catch(()=>{});
   document.getElementById('line').textContent=d.line;
-  const F=d.forecasts,lvs=Object.keys(F).flatMap(s=>['long','short'].map(sd=>level(F[s][sd]['10'],F[s].normal10&&F[s].normal10[sd]?F[s][sd]['10']/F[s].normal10[sd]:null)));
-  const dl=d.day_level||(lvs.includes('severe')?'severe':lvs.includes('elevated')?'elevated':lvs.filter(x=>x==='calm').length>=lvs.length/2?'calm':'normal');
-  document.getElementById('lvchip').innerHTML=`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`;document.getElementById('line').className='line lv-'+dl;
+  // The chip and line colour come only from the level the engine wrote into the hashed record, so they can never contradict the line.
+  const dl=d.day_level; document.getElementById('lvchip').innerHTML=dl?`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`:'';
+  document.getElementById('line').className='line'+(dl?' lv-'+dl:'');
   chips();board();bt();live();cta();
   document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
 }).catch(()=>{document.getElementById('day').textContent='Today’s odds are not available yet.'});
