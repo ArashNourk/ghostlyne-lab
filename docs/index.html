@@ -61,11 +61,11 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <p class="note" id="boardnote"></p>
 
 <section><h2>What the number means</h2>
-<p class="sub">The probability that price moves far enough against a position opened at the UTC open to reach its liquidation level before that UTC day ends. Odds are published at about 23:15 UTC the evening before the day they cover, and only forecasts published before their window opens count toward the record. "Vs normal" compares today's odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage whose odds are at or below 5% today, for longs / shorts. Liquidation levels assume isolated margin with about 0.5% maintenance margin; your exchange and position size can move them.</p></section>
+<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage whose modeled odds are at or below 5%, for longs / shorts.</p></section>
 
 <section><h2>Proof, before you trust it</h2>
-<div class="two"><div><p class="sub">Walk-forward backtest at 10x: every forecast made only with earlier data, odds calibrated only on earlier forecasts. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p></div>
-<div><p class="sub">Live record since launch. Every day's forecast is written to a hash-chained public ledger before the day plays out, then scored. Nothing is edited after publication.</p><div id="live"></div></div></div></section>
+<div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p></div>
+<div><p class="sub">Live record. Every forecast is written to a hash-chained public ledger, its public availability is verified and timestamped, and it is scored after the day closes. Only forecasts verified public before their window opens enter this table. Nothing is edited after publication.</p><div id="live"></div></div></div></section>
 
 <section><h2>Every line, and what happened</h2><p class="sub">Green: the position in the line survived the day. Pink: it was liquidated. A good forecaster gets pink on some high-odds days; the test is whether the odds match the frequency.</p><div id="hist"></div></section>
 
@@ -85,7 +85,7 @@ function board(){
   document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
     const c=r=>r!=null&&r>=1.5?' class="hot"':'';
     return `<tr><td>${esc(name(s))}</td><td${c(rl)}>${pct(f.long[lev])}</td><td${c(rs)}>${pct(f.short[lev])}</td><td class="hide-s"${c(rl)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(rs)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${f.safe.long?f.safe.long+'x':'<5x'} / ${f.safe.short?f.safe.short+'x':'<5x'}</td></tr>`}).join('');
-  document.getElementById('boardnote').textContent=`Odds of liquidation today at ${lev}x (price moving ${(100*D.liq_distance[lev]).toFixed(1)}% against the position). Pink: at least 1.5× that market's normal 10x odds.`;
+  document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Pink: at least 1.5× that market's normal 10x odds.`;
 }
 function chips(){document.getElementById('chips').innerHTML=D.leverage.map(L=>`<button class="chip" type="button" aria-pressed="${String(L)===lev}" data-l="${L}">${L}x</button>`).join('');
   document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{lev=b.dataset.l;chips();board()}))}
@@ -99,11 +99,11 @@ function bt(){
     o+=`<text x="${ml+(W-ml-mr)/2}" y="${H-2}" text-anchor="middle">said (deciles) → happened ↑ · white longs, grey shorts</text>`;s.innerHTML=o};
   new ResizeObserver(draw).observe(s);
   const L=T['long_10x'],S=T['short_10x'];
-  document.getElementById('btnote').textContent=`${D.backtest.eval_from} to ${D.backtest.through}. Against the textbook volatility calculator, separation of risky from safe days (AUC) ${L.auc_textbook.toFixed(2)}→${L.auc_cal.toFixed(2)} for longs and ${S.auc_textbook.toFixed(2)}→${S.auc_cal.toFixed(2)} for shorts; forecast error ${(100*L.skill_cal).toFixed(1)}% / ${(100*S.skill_cal).toFixed(1)}% lower.`;
+  const f=(x)=>(x>0?'+':'')+(100*x).toFixed(1)+'%';document.getElementById('btnote').textContent=L.best_baseline?`${D.backtest.eval_from} to ${D.backtest.through}. Compared with the best of five conventional forecasters, each calibrated the same way (longs: ${L.best_baseline}; shorts: ${S.best_baseline}), Ghostlyne's Brier skill is ${f(L.skill_best)} for longs (90% interval ${f(L.ci_best[0])} to ${f(L.ci_best[1])}) and ${f(S.skill_best)} for shorts (${f(S.ci_best[0])} to ${f(S.ci_best[1])}); positive means more accurate than that forecaster.`:`${D.backtest.eval_from} to ${D.backtest.through}.`;
 }
 function live(){
   const Lg=D.ledger,cal=Lg.calibration.filter(c=>c.n>0);
-  let h=`<p class="mono" style="font-size:14px">${Lg.days} day${Lg.days===1?'':'s'} published · ${Lg.scored_days} scored</p>`;
+  let h=`<p class="mono" style="font-size:14px">${Lg.days} day${Lg.days===1?'':'s'} published · ${Lg.scored_days} scored · ${Lg.on_time_scored||0} on time</p>`;
   h+=cal.length?`<table><thead><tr><th>Said</th><th>Forecasts</th><th>Average said</th><th>Happened</th></tr></thead><tbody>${cal.map(c=>`<tr><td class="mono">${pct(c.lo)}–${pct(c.hi)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)}</td></tr>`).join('')}</tbody></table><p class="note">Small samples are noisy; the table converges as days accumulate.</p>`:`<p class="empty">The first forecast is scored after today's UTC day closes.</p>`;
   document.getElementById('live').innerHTML=h;
   const R=Lg.recent;document.getElementById('hist').innerHTML=R.length?R.map(r=>`<div class="rec"><span class="mono">${esc(r.date)}</span><span>${esc(r.line)}${r.on_time===false?' <span style="color:var(--dim)">(late: excluded from calibration)</span>':''}</span><span class="num ${r.hit===true?'hot':r.hit===false?'':''}" style="${r.hit===false?'color:var(--green)':''}">${r.hit===true?'liquidated':r.hit===false?'survived':'pending'}</span></div>`).join(''):'<p class="empty">The record starts today.</p>';
@@ -113,7 +113,10 @@ function cta(){const b=document.getElementById('ctabox');
   else if(D.contact_email)b.innerHTML=`<p>Write to <span class="mono">${esc(D.contact_email)}</span> to request access.</p>`;
   else b.innerHTML='<p class="empty">Access requests open shortly.</p>'}
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
-  document.getElementById('day').textContent=`Odds for UTC day ${d.day} · published ${(d.published_utc||d.generated_utc).slice(0,16).replace('T',' ')} UTC · ${d.on_time===false?'published after the window opened, so excluded from the calibration record':'published before the window opened'}`;
+  const cut=d.information_cut_utc?d.information_cut_utc.replace('T',' ').slice(0,16):'';
+  const dayEl=document.getElementById('day');dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · checking publication time…`;
+  fetch('ledger/publications.jsonl',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(tx=>{const p=tx.trim().split('\n').filter(Boolean).map(l=>JSON.parse(l)).find(x=>x.forecast_hash===d.hash);
+    dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · `+(p?`verified public ${p.verified_public_utc.replace('T',' ').slice(0,16)} UTC, ${p.on_time?'before':'after'} the window opened`:'publication being verified');}).catch(()=>{});
   document.getElementById('line').textContent=d.line;
   chips();board();bt();live();cta();
   document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
