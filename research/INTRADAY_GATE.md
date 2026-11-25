@@ -41,7 +41,7 @@ test data** is the comparator, so Ghostlyne has to beat the best standard answer
 |---|---|---|
 | G1 | Accuracy, all distances and horizons pooled | Brier skill vs the best opponent ≥ +5%, 90% interval above zero |
 | G2 | Accuracy in the liquidation zone (d ≥ 5%, h = 4 and 8) | Brier skill vs the best opponent > 0, 90% interval above zero |
-| G3 | Breadth | positive skill in at least 22 of 28 markets (T1 and T2: of those trading) |
+| G3 | Breadth | positive skill in at least 78% of the markets with data in that period (22 of 28 when all trade; for example 17 of 22 in 2022) |
 | G4 | Calibration of the product rule | the tightest distance with forecast ≤ 5% has a realized hit rate between 3.5% and 6.5%, with no regime-specific rules |
 
 Intervals: week-block bootstrap (all markets and hours in a week resampled together). Also reported without pass/fail:
@@ -62,3 +62,11 @@ Each step is kept only if it improves development out-of-sample scores over the 
 4. Additions, tested one at a time: open-interest velocity, perp–spot basis, Deribit BTC/ETH implied volatility as a
    market-wide regime and event signal, order-book depth if a clean history exists.
 5. Tail model (extreme value / self-exciting jumps) only if steps 3 and 4 show tail miscalibration.
+
+## Amendment 1 (before any intraday data was downloaded)
+
+- G3 clarified: several markets (PEPE, SUI, ARB, APT, OP and others) did not trade on Binance Futures for all of 2022 or
+  2023. The breadth criterion is 78% of the markets with data in each test period, rounded up.
+- Data sources fixed: perp–spot gap from Binance premium-index candles (no spot join); open interest from Binance's daily
+  5-minute metrics files (from about December 2021 for most markets; earlier periods have no open-interest features and
+  the positioning step is evaluated only where data exist); Deribit DVOL from April 2021.
