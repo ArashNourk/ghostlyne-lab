@@ -46,7 +46,7 @@ def _norm(d):
 def candles(sym, cache: Path, through: pd.Timestamp):
     """Daily futures candles: monthly archives, then daily archives, then a spot top-up for the latest days."""
     cache.mkdir(parents=True, exist_ok=True); p = cache / f"{sym}.parquet"
-    have = pd.read_parquet(p) if p.exists() else pd.DataFrame(columns=["date", "open", "high", "low", "close"])
+    have = pd.read_parquet(p) if p.exists() else pd.DataFrame({"date": pd.Series(dtype="datetime64[ns]"), **{c: pd.Series(dtype=float) for c in ["open", "high", "low", "close"]}})
     last = have.date.max() if len(have) else pd.Timestamp("2020-12-31")
     frames = [have]
     month_start = (last + pd.Timedelta(days=1)).replace(day=1)
@@ -69,6 +69,7 @@ def candles(sym, cache: Path, through: pd.Timestamp):
                     k[["open", "high", "low", "close"]] *= 1000
                 out = pd.concat([out, k]).drop_duplicates("date", keep="first").sort_values("date")
         except Exception: pass
+    out["date"] = pd.to_datetime(out["date"]); out[["open", "high", "low", "close"]] = out[["open", "high", "low", "close"]].astype(float)
     out = out[out.date <= through]
     out.to_parquet(p); return out.set_index("date")
 
