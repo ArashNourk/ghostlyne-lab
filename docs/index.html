@@ -61,7 +61,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <p class="note" id="boardnote"></p>
 
 <section><h2>What the number means</h2>
-<p class="sub">The probability that price moves far enough against a position opened at today's UTC open to reach its liquidation level before the UTC day ends. "Vs normal" compares today's odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage whose odds are at or below 5% today, for longs / shorts. Liquidation levels assume isolated margin with about 0.5% maintenance margin; your exchange and position size can move them.</p></section>
+<p class="sub">The probability that price moves far enough against a position opened at the UTC open to reach its liquidation level before that UTC day ends. Odds are published at about 23:15 UTC the evening before the day they cover, and only forecasts published before their window opens count toward the record. "Vs normal" compares today's odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage whose odds are at or below 5% today, for longs / shorts. Liquidation levels assume isolated margin with about 0.5% maintenance margin; your exchange and position size can move them.</p></section>
 
 <section><h2>Proof, before you trust it</h2>
 <div class="two"><div><p class="sub">Walk-forward backtest at 10x: every forecast made only with earlier data, odds calibrated only on earlier forecasts. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p></div>
@@ -106,14 +106,14 @@ function live(){
   let h=`<p class="mono" style="font-size:14px">${Lg.days} day${Lg.days===1?'':'s'} published · ${Lg.scored_days} scored</p>`;
   h+=cal.length?`<table><thead><tr><th>Said</th><th>Forecasts</th><th>Average said</th><th>Happened</th></tr></thead><tbody>${cal.map(c=>`<tr><td class="mono">${pct(c.lo)}–${pct(c.hi)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)}</td></tr>`).join('')}</tbody></table><p class="note">Small samples are noisy; the table converges as days accumulate.</p>`:`<p class="empty">The first forecast is scored after today's UTC day closes.</p>`;
   document.getElementById('live').innerHTML=h;
-  const R=Lg.recent;document.getElementById('hist').innerHTML=R.length?R.map(r=>`<div class="rec"><span class="mono">${esc(r.date)}</span><span>${esc(r.line)}</span><span class="num ${r.hit===true?'hot':r.hit===false?'':''}" style="${r.hit===false?'color:var(--green)':''}">${r.hit===true?'liquidated':r.hit===false?'survived':'pending'}</span></div>`).join(''):'<p class="empty">The record starts today.</p>';
+  const R=Lg.recent;document.getElementById('hist').innerHTML=R.length?R.map(r=>`<div class="rec"><span class="mono">${esc(r.date)}</span><span>${esc(r.line)}${r.on_time===false?' <span style="color:var(--dim)">(late: excluded from calibration)</span>':''}</span><span class="num ${r.hit===true?'hot':r.hit===false?'':''}" style="${r.hit===false?'color:var(--green)':''}">${r.hit===true?'liquidated':r.hit===false?'survived':'pending'}</span></div>`).join(''):'<p class="empty">The record starts today.</p>';
 }
 function cta(){const b=document.getElementById('ctabox');
   if(D.waitlist_url)b.innerHTML=`<a class="cta" href="${esc(D.waitlist_url)}">Request early access</a>`;
   else if(D.contact_email)b.innerHTML=`<p>Write to <span class="mono">${esc(D.contact_email)}</span> to request access.</p>`;
   else b.innerHTML='<p class="empty">Access requests open shortly.</p>'}
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
-  document.getElementById('day').textContent=`UTC day ${d.day} · data through ${d.data_through} · published ${d.generated_utc.slice(11,16)} UTC`;
+  document.getElementById('day').textContent=`Odds for UTC day ${d.day} · published ${(d.published_utc||d.generated_utc).slice(0,16).replace('T',' ')} UTC · ${d.on_time===false?'published after the window opened, so excluded from the calibration record':'published before the window opened'}`;
   document.getElementById('line').textContent=d.line;
   chips();board();bt();live();cta();
   document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;

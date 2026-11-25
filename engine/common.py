@@ -43,8 +43,9 @@ def _norm(d):
     for c in ["open", "high", "low", "close"]: d[c] = d[c].astype(float)
     return d[["date", "open", "high", "low", "close"]]
 
-def candles(sym, cache: Path, through: pd.Timestamp):
-    """Daily futures candles: monthly archives, then daily archives, then a spot top-up for the latest days."""
+def candles(sym, cache: Path, through: pd.Timestamp, partial_day=None):
+    """Daily futures candles: monthly archives, then daily archives, then a spot top-up for the latest complete days.
+    Only complete days are cached. If partial_day is given, today's in-progress candle (spot) is appended in memory only."""
     cache.mkdir(parents=True, exist_ok=True); p = cache / f"{sym}.parquet"
     have = pd.read_parquet(p) if p.exists() else pd.DataFrame({"date": pd.Series(dtype="datetime64[ns]"), **{c: pd.Series(dtype=float) for c in ["open", "high", "low", "close"]}})
     last = have.date.max() if len(have) else pd.Timestamp("2020-12-31")
@@ -71,10 +72,19 @@ def candles(sym, cache: Path, through: pd.Timestamp):
         except Exception: pass
     out["date"] = pd.to_datetime(out["date"]); out[["open", "high", "low", "close"]] = out[["open", "high", "low", "close"]].astype(float)
     out = out[out.date <= through]
-    out.to_parquet(p); return out.set_index("date")
+    out.to_parquet(p)
+    if partial_day is not None:
+        try:
+            r = S.get("https://data-api.binance.vision/api/v3/klines", params={"symbol": SPOT.get(sym, sym), "interval": "1d", "limit": 2}, timeout=30)
+            k = _norm(pd.DataFrame(r.json(), columns=KCOLS)); k = k[k.date == partial_day]
+            if len(k):
+                if sym in SPOT: k[["open", "high", "low", "close"]] *= 1000
+                out = pd.concat([out, k])
+        except Exception: pass
+    return out.set_index("date")
 
-def load_all(cache: Path, through: pd.Timestamp):
-    with ThreadPoolExecutor(8) as ex: res = list(ex.map(lambda s: (s, candles(s, cache, through)), SYMS))
+def load_all(cache: Path, through: pd.Timestamp, partial_day=None):
+    with ThreadPoolExecutor(8) as ex: res = list(ex.map(lambda s: (s, candles(s, cache, through, partial_day)), SYMS))
     return {s: d for s, d in res if len(d) > 60}
 
 def features(kl):
