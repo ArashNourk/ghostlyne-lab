@@ -116,7 +116,7 @@ def main():
     if btp.exists():
         b = json.load(open(btp)); bt = {"eval_from": b["eval_from"], "through": b["through"], "tests": {k: {kk: v[kk] for kk in ["k", "n", "base", "skill_cal", "auc_cal", "auc_textbook", "deciles"]} for k, v in b["tests"].items()}}
     tdy = led[-1]
-    site = {"generated_utc": pd.Timestamp.now("UTC").isoformat(), "published_utc": tdy["published_utc"], "on_time": tdy.get("on_time"), "day": tdy["date"], "data_through": tdy["data_through"], "line": tdy["line"],
+    site = {"generated_utc": pd.Timestamp.now("UTC").isoformat(), "published_utc": tdy["published_utc"], "on_time": tdy.get("on_time", bool(pd.Timestamp(tdy["published_utc"]).tz_convert(None) < pd.Timestamp(tdy["date"]))), "day": tdy["date"], "data_through": tdy["data_through"], "line": tdy["line"],
             "liq_distance": tdy["liq_distance"], "leverage": G.LEVERAGE, "forecasts": tdy["forecasts"], "hash": tdy["hash"],
             "ledger": {"days": len(led), "scored_days": len(outs), "calibration": [{"lo": float(bins[i]), "hi": float(bins[i + 1]), "n": a[0], "pred": a[1] / a[0] if a[0] else None, "actual": a[2] / a[0] if a[0] else None} for i, a in enumerate(agg)], "recent": hist[-30:][::-1]},
             "backtest": bt, "waitlist_url": CFG.get("waitlist_url", ""), "contact_email": CFG.get("contact_email", "")}

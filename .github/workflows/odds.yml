@@ -34,7 +34,7 @@ jobs:
         run: |
           git config user.name "ghostlyne-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add ledger docs/data.json results || true
+          git add ledger docs/data.json docs/ledger results || true
           git commit -m "Ghostlyne odds $(date -u +%F)" || echo "nothing to commit"
           git pull --rebase || true
           git push
