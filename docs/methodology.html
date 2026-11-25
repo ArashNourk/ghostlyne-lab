@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methodology · Ghostlyne</title>
+<meta name="description" content="How Ghostlyne forecasts liquidation risk: the exact definition, data, model, calibration, the max-leverage rule, a pre-registered out-of-sample test, the public hash-chained record, and the known limitations.">
+<meta property="og:title" content="Ghostlyne methodology"><meta property="og:description" content="Definition, model, calibration, pre-registered validation, public record and limitations."><meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* VOICE an independent research note: exact, sourced, says what failed as plainly as what worked
+   LAYOUT masthead, title block, contents rail beside numbered sections on desktop; phone stacks */
+:root{color-scheme:dark;--bg:#000;--ink:#f2f2f2;--sub:#b5b5b5;--dim:#7d7d7d;--rule:#1c1c1c;--pink:#ff3d8b;--soft:#ff8ab8;--green:#39ff7a}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+html{scroll-behavior:smooth}
+body{font:16px/1.65 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1040px;margin:0 auto;padding:0 max(4vw,16px)}
+.mast{display:flex;justify-content:space-between;align-items:center;padding:22px 0 16px;border-bottom:1px solid var(--rule)}
+.word{font:500 22px/1 "IBM Plex Mono",monospace;letter-spacing:.42em;color:var(--ink);text-decoration:none}
+.mast a.back{font:500 13px "IBM Plex Mono",monospace;color:var(--ink);text-decoration:none;border-bottom:1px solid #444;padding-bottom:2px}
+.titleblk{padding:30px 0 24px;border-bottom:1px solid var(--ink)}
+.eyebrow{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--dim);margin:0 0 12px}
+h1{font-size:clamp(32px,4.3vw,48px);line-height:1.04;letter-spacing:-.025em;font-weight:500;margin:0 0 14px}
+.lede{color:var(--sub);font-size:17px;max-width:62ch;margin:0}
+.meta{font:12px/1.7 "IBM Plex Mono",monospace;color:var(--dim);margin-top:16px}
+.grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px;padding-top:28px}
+nav.toc{position:sticky;top:20px;align-self:start;font-size:13.5px}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+nav.toc li{counter-increment:t;margin:0 0 7px}
+nav.toc a{color:var(--sub);text-decoration:none}nav.toc a:hover{color:var(--ink)}
+nav.toc a::before{content:counter(t,decimal-leading-zero) "  ";font-family:"IBM Plex Mono",monospace;color:var(--dim);font-size:11.5px}
+article{counter-reset:s}
+section{padding:0 0 34px;margin:0 0 34px;border-bottom:1px solid var(--rule);scroll-margin-top:16px}
+section:last-child{border-bottom:0}
+h2{font-weight:500;font-size:23px;line-height:1.25;margin:0 0 12px;counter-increment:s}
+h2::before{content:counter(s,decimal-leading-zero);display:block;font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.16em;color:var(--dim);margin-bottom:6px}
+h3{font-weight:500;font-size:17px;margin:22px 0 6px}
+p,li{max-width:70ch}
+p{margin:0 0 12px;color:#dcdcdc}
+ul,ol.plain{padding-left:20px;margin:0 0 12px;color:#dcdcdc}li{margin:0 0 5px}
+.def{border:1px solid #333;padding:16px 18px;margin:6px 0 16px;background:#070707}
+.def p{margin:0;color:var(--ink)}
+.def .k{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.16em;color:var(--dim);display:block;margin-bottom:6px}
+code,.mono{font-family:"IBM Plex Mono",monospace;font-size:.92em}
+pre{font:13px/1.6 "IBM Plex Mono",monospace;background:#070707;border:1px solid #222;padding:14px 16px;overflow-x:auto;color:#dcdcdc;margin:6px 0 14px}
+.tbl{overflow-x:auto;margin:6px 0 14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th{font-weight:500;color:var(--dim);font-size:12.5px}
+th:first-child,td:first-child{text-align:left}
+td{font-family:"IBM Plex Mono",monospace;font-size:13.5px}
+td.t{font-family:"IBM Plex Sans",sans-serif;white-space:normal}
+.pass{color:var(--green)}.fail{color:var(--pink);font-weight:600}.neg{color:var(--soft)}
+.note{color:var(--dim);font-size:13px}
+.call{border-left:2px solid var(--ink);padding:2px 0 2px 14px;margin:14px 0}
+.call.warn{border-color:var(--pink)}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
+a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+footer{color:var(--dim);font-size:13px;padding:30px 0 60px;border-top:1px solid var(--rule)}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr);gap:8px}nav.toc{position:static;border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:22px}nav.toc ol{columns:2;column-gap:20px}}
+</style></head><body>
+<div class="wrap">
+<div class="mast"><a class="word" href="./">GHOSTLYNE</a><a class="back" href="./">← Today’s risk</a></div>
+
+<div class="titleblk">
+<p class="eyebrow">METHODOLOGY</p>
+<h1>How Ghostlyne measures liquidation risk</h1>
+<p class="lede">Exactly what each number means, how it is produced, how it was tested, including a pre-registered test on a year never used to build it, and where it is weak. Every claim on this page can be checked against code and results that are public.</p>
+<p class="meta">Model version odds-texture-0.3-stresscal-gate · page updated 25 Nov 2026 · <a href="https://github.com/ArashNourk/ghostlyne-lab">source code and research</a></p>
+</div>
+
+<div class="grid">
+<nav class="toc" aria-label="Contents"><ol>
+<li><a href="#definition">The forecast</a></li>
+<li><a href="#data">Data and timing</a></li>
+<li><a href="#model">The model</a></li>
+<li><a href="#calibration">Calibration</a></li>
+<li><a href="#stress">Stress days</a></li>
+<li><a href="#maxlev">Maximum leverage</a></li>
+<li><a href="#levels">Colour levels</a></li>
+<li><a href="#backtest">Development test</a></li>
+<li><a href="#holdout">Pre-registered test</a></li>
+<li><a href="#record">Public record</a></li>
+<li><a href="#limits">Limitations</a></li>
+<li><a href="#changes">Changes</a></li>
+</ol></nav>
+
+<article>
+
+<section id="definition"><h2>What exactly is forecast</h2>
+<div class="def"><span class="k">DEFINITION</span><p>For a market, a side (long or short) and a leverage <span class="mono">L</span>: the probability that an isolated-margin position opened at the 00:00 UTC open of the next UTC day reaches its liquidation price, on the Binance mark price, at any time during that UTC day.</p></div>
+<p>The liquidation price is standardized so that every market and every day is measured the same way. With a maintenance margin rate of 0.5%, the liquidation distance from entry is <span class="mono">1/L − 0.5%</span>. A long is liquidated if the day's mark-price low reaches <span class="mono">entry × (1 − distance)</span>; a short if the mark-price high reaches <span class="mono">entry × (1 + distance)</span>.</p>
+<div class="tbl"><table><thead><tr><th>Leverage</th><th>40x</th><th>20x</th><th>15x</th><th>10x</th><th>7x</th><th>5x</th></tr></thead>
+<tbody><tr><td>Distance to liquidation</td><td>2.0%</td><td>4.5%</td><td>6.2%</td><td>9.5%</td><td>13.8%</td><td>19.5%</td></tr></tbody></table></div>
+<p>It is a <strong>modeled probability under standardized assumptions</strong>, not a statement about your account. Real exchanges use tiered maintenance margins that rise with position size, charge fees and funding, and some liquidate in stages. Those differences are listed under <a href="#limits">Limitations</a>.</p>
+</section>
+
+<section id="data"><h2>Data and timing</h2>
+<ul>
+<li><strong>Markets:</strong> 28 Binance USD-M perpetual futures (BTC, ETH and 26 large altcoins). 1000PEPE and 1000SHIB are quoted per 1,000 tokens.</li>
+<li><strong>History:</strong> Binance's public archives (data.binance.vision): daily and 15-minute candles, and daily mark-price candles, from January 2021.</li>
+<li><strong>Information cut:</strong> each forecast uses complete days up to yesterday plus today truncated at <strong>23:15 UTC</strong> (15-minute candles opened before 23:15). The forecast is computed at 23:15, published, and its public availability is verified before the window opens at 00:00 UTC. The historical tests use exactly the same cut, so they cannot see information the live forecast would not have had.</li>
+<li><strong>Outcomes</strong> are measured on the <strong>mark price</strong>, which is what Binance uses to trigger liquidations, not on the last traded price.</li>
+</ul>
+<p class="note">One live difference: Binance's futures API is not reachable from the servers that run Ghostlyne, so today's partial day comes from Binance spot 15-minute candles, while history uses futures candles. Spot and perpetual prices for these markets track each other closely, but this is a real difference between test and live conditions.</p>
+</section>
+
+<section id="model"><h2>The model</h2>
+<p>A separate penalized logistic regression is fit for each side and each leverage. Inputs are standardized, with L2 regularization (C = 0.3). The model is refit at the start of every month on all earlier data only (walk-forward). It describes the market's current volatility "texture", not a view on direction.</p>
+<div class="tbl"><table><thead><tr><th>Input</th><th>What it measures</th></tr></thead><tbody>
+<tr><td>v1, v7, v30</td><td class="t">Log Parkinson (high–low) variance: today to 23:15, and averaged over 7 and 30 days</td></tr>
+<tr><td>ret1, ret7</td><td class="t">Log return today to 23:15, and over 7 days</td></tr>
+<tr><td>dd30, ru30</td><td class="t">Distance below the 30-day high, and above the 30-day low</td></tr>
+<tr><td>b_v7, b_ret1</td><td class="t">Bitcoin's 7-day variance and today's return, the market-wide backdrop</td></tr>
+</tbody></table></div>
+<p>We tested more complex alternatives on the development period: market-wide breadth features, jump counts, an asymmetric GJR-GARCH-t model, an extreme-value (generalized Pareto) tail model, and an ensemble. None produced a measurable out-of-sample improvement, so none was adopted. Complexity is added only when it pays for itself out of sample.</p>
+</section>
+
+<section id="calibration"><h2>Calibration</h2>
+<p>A model's raw output is not a trustworthy probability. Each month, raw outputs are mapped to observed frequencies with <strong>isotonic regression</strong>, fit only on the previous 12 months of out-of-sample forecasts and their outcomes. "8%" should then mean that about 8 in 100 such forecasts end in liquidation.</p>
+<p><strong>Stress days get their own map.</strong> Testing showed that every method, ours and the textbook ones alike, under-forecast on market-wide stress days (defined next). Stress rows are therefore calibrated separately on the previous 24 months of stress-day forecasts. If there are fewer than 300 such rows or 15 liquidations, the normal map is scaled up by the past ratio of realized to forecast liquidations on stress days.</p>
+<p><strong>Consistency across leverage.</strong> Higher leverage means a closer liquidation price, so its odds can never be lower. After calibration the six leverage levels are forced into non-decreasing order (pool-adjacent-violators).</p>
+<p class="note">Fallbacks: with too little recent data for regime maps, a single pooled map is used; with too little for that, the uncalibrated model output is used, and the exception is written into that day's public record.</p>
+</section>
+
+<section id="stress"><h2>Stress days</h2>
+<p>Defined separately for each side, using only information available at 23:15 UTC. A day counts as a stress day for longs if <strong>more than 30% of markets fell 5% or more today</strong>, and for shorts if more than 30% rose 5% or more. It also counts for both sides if <strong>today's range for that market is far above its month</strong>: log Parkinson variance more than 1 above its 30-day level, roughly 2.7 times the usual variance. About 15% of days qualify.</p>
+<p>On the board, a stress day is marked with a small <span style="color:var(--soft)">s</span> next to the maximum leverage.</p>
+</section>
+
+<section id="maxlev"><h2>The maximum-leverage rule</h2>
+<div class="def"><span class="k">RULE</span><p>The highest leverage, up to 20x, whose odds are at or below your risk limit. On a stress day for that side, the limit is halved. If no tested leverage (5x to 20x) qualifies, Ghostlyne says <em>none</em> and does not name one.</p></div>
+<ul>
+<li><strong>Risk limit:</strong> 2%, 5% (default) or 10%. Only the 5% limit has pass/fail criteria in the pre-registered test. The 2% and 10% results are reported there too.</li>
+<li><strong>Why it stops at 20x:</strong> on the rare days 40x looked acceptable, those 40x positions were liquidated far more often than the limit allowed: about 7–10% in development, and 8.8% (longs) and 24.5% (shorts) in the untouched test.</li>
+<li><strong>Why it abstains:</strong> when conditions are bad enough that even 5x exceeds the limit, the honest answer is none.</li>
+</ul>
+<div class="call warn"><p>A 5% modeled probability is not "safe". It means roughly one such position in twenty would still be liquidated. The rule tells you which leverage corresponds to a risk level you choose, not whether to trade.</p></div>
+</section>
+
+<section id="levels"><h2>Colour levels</h2>
+<p>Each market side is compared with its own normal: the average calibrated 10x odds for that market and side over the previous 90 days. The day takes the most serious level on the board.</p>
+<div class="tbl"><table><thead><tr><th>Level</th><th>Rule</th></tr></thead><tbody>
+<tr><td style="color:var(--green)">Calm</td><td class="t">10x odds below 0.8× normal. A calm day: nothing elevated, and at least half the board calm.</td></tr>
+<tr><td>Normal</td><td class="t">Anything else</td></tr>
+<tr><td style="color:var(--soft)">Elevated</td><td class="t">At least 1.5× normal and at least 3% at 10x</td></tr>
+<tr><td style="color:var(--pink);font-weight:600">Severe</td><td class="t">At least 2.5× normal and at least 10% at 10x</td></tr>
+</tbody></table></div>
+<p class="note">Levels describe risk relative to each market's own recent history. They are a reading aid and have not been separately validated as signals.</p>
+</section>
+
+<section id="backtest"><h2>Development test, 2024 to 2026</h2>
+<p>Walk-forward: every forecast uses only earlier data. Evaluated from 1 Jan 2024 to 23 Nov 2026 on all 28 markets, about 29,000 market-days per side. Ghostlyne is compared with five standard methods. Each is given the identical calibration and monotonicity treatment, so the comparison is about the information each uses, not about presentation.</p>
+<ul>
+<li>Textbook: average true range with normally distributed moves</li>
+<li>EWMA (RiskMetrics, λ = 0.94)</li>
+<li>GARCH(1,1) with Student-t errors</li>
+<li>Filtered historical simulation</li>
+<li>Rolling one-year frequency</li>
+</ul>
+<p><strong>Brier skill</strong> is the percentage reduction in squared probability error against the strongest of the five for that position. Positive is better. Intervals are 90%, from a <strong>week-block bootstrap</strong>: whole weeks are resampled with all markets together, because markets move together and treating them as independent would overstate certainty.</p>
+<div class="tbl"><table><thead><tr><th>Position</th><th>Base rate</th><th>Strongest baseline</th><th>Skill vs it (90% CI)</th><th>AUC Ghostlyne / it</th></tr></thead><tbody>
+<tr><td>Long 40x</td><td>57.0%</td><td class="t">Textbook</td><td>+1.4% (+0.6, +2.3)</td><td>0.672 / 0.657</td></tr>
+<tr><td>Long 20x</td><td>26.0%</td><td class="t">GARCH-t</td><td>+1.4% (+0.3, +2.5)</td><td>0.688 / 0.669</td></tr>
+<tr><td>Long 15x</td><td>14.6%</td><td class="t">GARCH-t</td><td>+1.0% (−1.1, +2.6)</td><td>0.702 / 0.676</td></tr>
+<tr><td>Long 10x</td><td>5.0%</td><td class="t">GARCH-t</td><td class="neg">−2.5% (−9.4, +1.8)</td><td>0.716 / 0.680</td></tr>
+<tr><td>Long 7x</td><td>1.6%</td><td class="t">Textbook</td><td class="neg">−1.9% (−5.9, +1.1)</td><td>0.702 / 0.613</td></tr>
+<tr><td>Long 5x</td><td>0.6%</td><td class="t">Textbook</td><td>−0.2% (−1.7, +0.8)</td><td>0.681 / 0.566</td></tr>
+<tr><td>Short 40x</td><td>53.2%</td><td class="t">GARCH-t</td><td>+0.5% (−0.3, +1.3)</td><td>0.651 / 0.646</td></tr>
+<tr><td>Short 20x</td><td>23.3%</td><td class="t">GARCH-t</td><td>+1.1% (+0.2, +2.0)</td><td>0.684 / 0.670</td></tr>
+<tr><td>Short 15x</td><td>13.9%</td><td class="t">GARCH-t</td><td>+1.4% (+0.6, +2.2)</td><td>0.695 / 0.677</td></tr>
+<tr><td>Short 10x</td><td>5.5%</td><td class="t">GARCH-t</td><td>+1.2% (+0.3, +2.0)</td><td>0.723 / 0.696</td></tr>
+<tr><td>Short 7x</td><td>2.1%</td><td class="t">GARCH-t</td><td>+0.1% (−2.8, +2.3)</td><td>0.740 / 0.714</td></tr>
+<tr><td>Short 5x</td><td>0.7%</td><td class="t">Historical sim.</td><td class="neg">−1.7% (−10.3, +3.0)</td><td>0.748 / 0.678</td></tr>
+</tbody></table></div>
+<p><strong>How to read this.</strong> Ghostlyne ranks risk better than the strongest baseline in all 12 positions (higher AUC). Its probability accuracy is modestly better at 15x to 40x, about 1 to 1.5%, and not better at long 10x or at 5x and 7x, where liquidations are rare. The edge is real but small. We do not claim more.</p>
+<p class="note">This period was used to make design decisions, so it cannot validate them. That is what the next test is for. Full tables: <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/results/backtest_v2.md">backtest_v2.md</a>, <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/DEV_RESULTS.md">DEV_RESULTS.md</a>.</p>
+</section>
+
+<section id="holdout"><h2>Pre-registered test on untouched data</h2>
+<p>Every design choice above was made after looking at 2024–2026 results: the 20x cap, the stress definition, stress calibration, the halved limit and keeping the simple model. To test them honestly we used 2022, a year never used to evaluate this model, which includes the LUNA collapse, the 3AC and Celsius contagion and the FTX collapse.</p>
+<p><strong>The rules and pass criteria were written down and published before the test was run.</strong> The <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/PREREGISTRATION.md">pre-registration</a> is timestamped by its public commit, ahead of the <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/HOLDOUT_RESULTS.md">results</a>. The test was run once. Failures are reported as failures and were not tuned away on this data.</p>
+<div class="tbl"><table><thead><tr><th>Criterion at the 5% limit</th><th>Longs</th><th>Shorts</th></tr></thead><tbody>
+<tr><td class="t">H1 · Recommended positions liquidated at most 5% of the time</td><td class="pass">pass · 1.8%</td><td class="pass">pass · 2.9%</td></tr>
+<tr><td class="t">H2 · Same on stress days</td><td class="pass">pass · 0.0%*</td><td class="pass">pass · 2.3%</td></tr>
+<tr><td class="t">H3 · Lower stress-day rate than the previous rule (4.1% / 5.4%)</td><td class="pass">pass</td><td class="pass">pass</td></tr>
+<tr><td class="t">H4 · 20x cap justified (uncapped 40x liquidated over 5%)</td><td class="pass">pass · 8.8%</td><td class="pass">pass · 24.5%</td></tr>
+<tr><td class="t">H5 · More leverage than GARCH-t at equal realized risk</td><td class="fail">FAIL</td><td class="pass">pass*</td></tr>
+</tbody></table></div>
+<p class="note">22 markets traded in 2022 (about 7,300 long and 6,000 short market-days). *On long stress days Ghostlyne mostly declined to name a leverage, so the 0% rests on few positions. The short pass on H5 (+0.4 to +0.5x) has a 90% interval that includes zero.</p>
+<h3>What this does and does not show</h3>
+<ul>
+<li><strong>Shown:</strong> the rule keeps its promise out of sample, including through the worst crashes of 2022, and the stress-day fix works where the previous rule did not.</li>
+<li><strong>Shown:</strong> it is conservative. At the 5% limit, positions were liquidated only 1.8% and 2.9% of the time, and it declined on 17% of long days and 9% of short days. That safety costs usable leverage.</li>
+<li><strong>Not shown:</strong> that Ghostlyne allows more leverage than GARCH-t at the same risk. In development it did, by about +0.2 to +0.4x. In the untouched test the difference was not reliable. We make no superiority claim on leverage.</li>
+</ul>
+</section>
+
+<section id="record"><h2>The public record</h2>
+<p>A forecast that can be edited after the fact proves nothing. Every daily forecast is appended to a <strong>hash-chained ledger</strong>. Each record contains its forecasts, assumptions, model version, information cut and window start, plus a SHA-256 hash of the previous record and of itself. Changing any past record would break every hash after it.</p>
+<pre>hash = SHA-256( prev_hash + JSON(record without "hash", keys sorted, no spaces) )
+first record: prev_hash = 64 zeros</pre>
+<p>After publishing, an independent check repeatedly fetches the public page until it serves that hash, and records when it did. A forecast counts as <strong>on time</strong> only if it was verifiably public before its window opened at 00:00 UTC. Late forecasts stay in the record, marked late, and are excluded from the live accuracy figures. Outcomes are scored from mark prices after each day closes and stored in a separate file (outcomes.jsonl), so forecasts are never rewritten.</p>
+<p>Verify it yourself: download <a href="ledger/forecasts.jsonl">forecasts.jsonl</a> and <a href="ledger/publications.jsonl">publications.jsonl</a> and recompute the chain:</p>
+<pre>import json, hashlib
+prev = "0" * 64
+for line in open("forecasts.jsonl"):
+    r = json.loads(line); h = r.pop("hash")
+    assert r["prev_hash"] == prev
+    assert hashlib.sha256((prev + json.dumps(r, sort_keys=True, separators=(",", ":"))).encode()).hexdigest() == h
+    prev = h
+print("chain intact")</pre>
+<p class="note">The first ledger was reset before launch, after a misleading daily line was found. The first forecast in the current ledger (25 Nov 2026) was published after its window opened and is marked late.</p>
+</section>
+
+<section id="limits"><h2>Limitations</h2>
+<ul>
+<li><strong>Standardized margin.</strong> Real maintenance margins rise with position size, so large positions sit closer to liquidation than modeled. Fees, funding, partial liquidation, cross margin and added collateral are not modeled.</li>
+<li><strong>One day.</strong> Each forecast covers one UTC day from the 00:00 open. A position held longer, or opened at another time, faces different risk.</li>
+<li><strong>One venue.</strong> Outcomes use Binance mark prices. Other exchanges compute mark prices differently.</li>
+<li><strong>Market list.</strong> The 28 markets were chosen because they trade today, so the historical tests exclude coins that were delisted. This can make history look calmer than it was.</li>
+<li><strong>Rare events.</strong> At 5x and 7x liquidations are rare, so estimates there are less precise. The model shows no measurable accuracy edge at those levels.</li>
+<li><strong>Small stress samples.</strong> Stress-day results rest on a few hundred market-days per year. The current rule handles stress conservatively, partly by declining to answer.</li>
+<li><strong>Live versus history.</strong> Today's partial day comes from spot rather than futures candles (see <a href="#data">Data</a>).</li>
+<li><strong>Not advice.</strong> Ghostlyne publishes modeled probabilities. It does not recommend trades and cannot know your account.</li>
+</ul>
+</section>
+
+<section id="changes"><h2>Changes</h2>
+<div class="tbl"><table><thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead><tbody>
+<tr><td>0.3</td><td>25 Nov 2026</td><td class="t">Stress-day calibration, halved limit on stress days, explicit abstention, 20x cap, risk-limit choice of 2/5/10%. Validated by the pre-registered 2022 test.</td></tr>
+<tr><td>0.2</td><td>24 Nov 2026</td><td class="t">Information cut aligned to 23:15 UTC in tests and live, mark-price outcomes, five calibrated baselines, monotone leverage, verified publication time.</td></tr>
+<tr><td>0.1</td><td>Nov 2026</td><td class="t">First version, retired before launch.</td></tr>
+</tbody></table></div>
+<p class="note">Every change is recorded here and in the public code history. Past forecasts are never recomputed with a newer model.</p>
+</section>
+
+</article></div>
+<footer><p>Ghostlyne publishes modeled probabilities under standardized assumptions. Not financial advice. <a href="./">Today’s risk</a> · <a href="https://github.com/ArashNourk/ghostlyne-lab">Code and research</a></p></footer>
+</div>
+</body></html>

@@ -80,7 +80,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <div class="hero">
 <div><p class="eyebrow">QUANTITATIVE RISK INTELLIGENCE</p><h1>Know your leverage.<span>Know your risk.</span></h1></div>
 <div><p class="lede">Daily liquidation-risk forecasts for leveraged crypto traders. Find the maximum modeled leverage for your chosen risk tolerance, backed by a publicly verifiable forecasting record.</p>
-<div class="acts"><a class="btn" href="#today">Explore today’s risk</a><a class="tlink" href="#method">Methodology ↓</a></div></div>
+<div class="acts"><a class="btn" href="#today">Explore today’s risk</a><a class="tlink" href="methodology.html">Methodology →</a></div></div>
 </div>
 </header>
 <div class="edition" id="today"><span>DAILY RISK INTELLIGENCE / <b>LATEST EDITION</b></span><span id="edno"></span></div>
@@ -93,7 +93,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <p class="note" id="boardnote"></p>
 
 <section id="method"><h2>What the number means</h2>
-<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. On a stress day for that side (over 30% of markets moved 5% or more against it today, or today's range is far above the month; marked <sup class="st">s</sup>) the limit is halved. "None" means no tested leverage (5x to 20x) meets the limit that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p></section>
+<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. On a stress day for that side (over 30% of markets moved 5% or more against it today, or today's range is far above the month; marked <sup class="st">s</sup>) the limit is halved. "None" means no tested leverage (5x to 20x) meets the limit that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p><p><a class="tlink" href="methodology.html">Full methodology: definition, model, pre-registered test, limitations →</a></p></section>
 
 <section><h2>Reading the colours</h2>
 <p class="sub">Each market side gets a level from today's modeled 10x odds compared with its own 90-day normal. The day takes the most serious level on the board.</p>
@@ -114,7 +114,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <section id="access"><h2>Early access</h2><p class="sub">Ghostlyne is free while the record builds. Paid access will add every market, alerts when your positions' odds jump, and the daily line in your inbox.</p><div id="ctabox" style="margin-top:14px"></div></section>
 
 <footer><p>Ghostlyne publishes statistical estimates for information only. They involve uncertainty, can be wrong, and are not investment advice or a recommendation to trade any asset or to use leverage. Leveraged trading can lose more than you expect.</p>
-<p id="foot"></p></footer>
+<p><a href="methodology.html">Methodology</a></p><p id="foot"></p></footer>
 </div>
 <script>
 {
