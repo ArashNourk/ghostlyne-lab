@@ -22,9 +22,9 @@ SYMS = ["BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT","BNBUSDT","DOGEUSDT","ADAUSDT","
 SPOT = {"1000PEPEUSDT": ("PEPEUSDT", 1000), "1000SHIBUSDT": ("SHIBUSDT", 1000)}
 CUT = pd.Timedelta(hours=23, minutes=15)
 MMR = 0.005                                  # standardized maintenance margin rate (Binance tier-1 is 0.4%-1% depending on market and size)
-LEVERAGE = [40, 20, 15, 10, 7, 5]
+LEVERAGE = [40, 20, 15, 10, 7, 5]            # descending leverage = ascending distance
 # The max-leverage recommendation never names 40x: in the backtest, the rare days where 40x looked safe were liquidated 7-10% of the time.
-MAXLEV_CAP = 20            # descending leverage = ascending distance
+MAXLEV_CAP = 20
 DIST = {L: round(1 / L - MMR, 4) for L in LEVERAGE}
 TEX = ["v1", "v7", "v30", "ret1", "ret7", "dd30", "ru30", "b_v7", "b_ret1"]
 BASE = "https://data.binance.vision/data/futures/um"
