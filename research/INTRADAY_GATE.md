@@ -70,3 +70,44 @@ Each step is kept only if it improves development out-of-sample scores over the 
 - Data sources fixed: perp–spot gap from Binance premium-index candles (no spot join); open interest from Binance's daily
   5-minute metrics files (from about December 2021 for most markets; earlier periods have no open-interest features and
   the positioning step is evaluated only where data exist); Deribit DVOL from April 2021.
+
+## Amendment 2 (before any model was fit or any test-period result was computed)
+
+The original text above and Amendment 1 are unchanged. These clarifications only tighten or specify the gate; nothing is
+relaxed, and the gate will not be relaxed after results are seen.
+
+1. **Primary metric.** Relative Brier skill, BS = 1 − Brier(Ghostlyne) / Brier(strongest conventional baseline), computed
+   separately for every cell (side × horizon × distance: 2 × 3 × 6 = 36 cells). Within a cell every market-hour counts
+   equally. The strongest baseline is chosen per cell on the test data itself, which favours the baselines. G1 is the
+   equal-weighted mean of BS over all cells that have at least 100 barrier hits in that test period; cells with fewer are
+   reported but excluded from the mean. G2 uses the same definition restricted to liquidation-zone cells (d ≥ 5%, h = 4, 8).
+2. **Forward versus retrospective.** T3 (2025-07-01 to 2026-10-31) is the primary, genuinely forward test: the model is
+   specified on earlier data only. T1 (2022) and T2 (2023) are retrospective regime tests. Every forecast in them uses only
+   earlier data, but the model's design was chosen on later data, so they test robustness across regimes, not forecasting
+   in real time. All three remain required for a go decision.
+3. **Dependence and multiplicity.** Hourly origins with 4- and 8-hour horizons overlap, and markets move together. All
+   intervals use a week-block bootstrap that resamples whole weeks across all markets and hours. The go decision is a
+   conjunction of pre-specified criteria, so no single favourable result can carry it. G3 is a breadth check, not 28
+   independent confirmations; per-market results are reported with their own intervals and no per-market significance is
+   claimed. The universe is the 28 markets trading today, so coins delisted before today are absent (survivorship bias);
+   this is disclosed and cannot be fully corrected with this data.
+4. **Calibration against actual forecasts.** In addition to G4, reliability is reported in fixed forecast bands (0-1, 1-2,
+   2-5, 5-10, 10-20, 20%+) with realized rates, counts and 90% intervals, plus calibration intercept and slope.
+   Added criterion **G5**: forecasts between 4% and 6% (pooled over cells) must have a realized hit rate between 3.5% and
+   6.5%, with at least 1,000 such forecasts in the period; with fewer, G5 fails.
+5. **Coverage audit, no silent substitution.** Before any model is fit, coverage of every market and every input is
+   audited and published. Missing inputs are never filled with stand-ins. A model that uses a feature (open interest,
+   implied volatility) is compared with its opponent only on rows where that feature exists. If a feature's coverage
+   rules out a test period, results with that feature are reported as unavailable for that period.
+   Deribit DVOL is a 30-day implied-volatility index, not a short-dated surface; it is used only as a market-wide regime
+   signal, and no short-dated implied volatility is claimed.
+6. **Stop-loss outcomes.** For every barrier hit, the outcome over the same horizon is classified as: *breach then
+   recovery* (mark price at t + h back at or above the entry for longs, at or below for shorts), *breach then continued
+   adverse movement* (mark price at t + h at or beyond the barrier), or *breach, partial recovery* (in between). These are
+   reported, by distance and horizon, as secondary results; the share of breaches that recover is the measure of avoidable
+   stop-outs. They are not part of the go decision.
+7. **Commercial value.** A statistical improvement is necessary, not sufficient. Alongside the gate we report, at a fixed
+   5% risk, how much tighter a stop (or how much more leverage) the model allows than the strongest baseline at the same
+   realized rate. No claim of customer value is made from Brier skill alone.
+8. **Advanced models.** CC-FPE components (self-exciting jumps, extreme-value tails, copulas) remain candidates, added
+   only if simpler models show a measurable deficiency on development data that the component addresses.
