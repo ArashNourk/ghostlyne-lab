@@ -53,17 +53,35 @@ def forecast(D, info_day):
             safe = [L for L in G.LEVERAGE if o[side][str(L)] <= 0.05]; o["safe"][side] = max(safe) if safe else None
     return out, method
 
+# Risk levels (shared with the page). Ratio = today's modeled 10x odds / that market's 90-day normal 10x odds.
+#   severe   ratio >= 2.5 and 10x odds >= 10%   neon pink
+#   elevated ratio >= 1.5 and 10x odds >= 3%    soft pink
+#   calm     ratio <  0.8                       electric green
+#   normal   everything else                    white
+def level(p, r):
+    if r is None: return "normal"
+    if r >= 2.5 and p >= 0.10: return "severe"
+    if r >= 1.5 and p >= 0.03: return "elevated"
+    if r < 0.8: return "calm"
+    return "normal"
+
 def daily_line(F):
     c = [(F[s][sd]["10"], F[s][sd]["10"] / F[s]["normal10"][sd], s, sd) for s in F for sd in ["long", "short"] if F[s]["normal10"].get(sd)]
-    hot = sorted([x for x in c if x[0] >= 0.05 and x[1] >= 1.5], reverse=True)
-    if hot:
-        p, r, s, sd = hot[0]; safe = F[s]["safe"][sd]; others = len(hot) - 1
-        line = (f"{NAME(s)} {sd}s carry the most risk: {100*p:.0f}% modeled odds of a 10x liquidation, {r:.1f}× normal. "
-                f"At or below 5% odds, the most leverage is {str(safe)+'x' if safe else 'under 5x'}." + (f" {others} other market{'s' if others != 1 else ''} also elevated." if others else ""))
+    lv = {(s, sd): level(p, r) for p, r, s, sd in c}
+    sev = sorted([x for x in c if lv[(x[2], x[3])] == "severe"], reverse=True)
+    ele = sorted([x for x in c if lv[(x[2], x[3])] == "elevated"], reverse=True)
+    calm_share = sum(v == "calm" for v in lv.values()) / max(len(lv), 1)
+    if sev or ele:
+        day = "severe" if sev else "elevated"; p, r, s, sd = (sev or ele)[0]; safe = F[s]["safe"][sd]; others = len(sev) + len(ele) - 1
+        line = (f"{'Severe' if sev else 'Elevated'} risk. {NAME(s)} {sd}s lead: {100*p:.0f}% modeled odds of a 10x liquidation, {r:.1f}× normal. "
+                f"At or below 5% odds, the most leverage is {str(safe)+'x' if safe else 'under 5x'}." + (f" {others} other market side{'s' if others != 1 else ''} also elevated." if others else ""))
     else:
         p, r, s, sd = sorted(c, reverse=True)[0]
-        line = f"A calm day: no market has elevated 10x liquidation odds. The highest is {NAME(s)} {sd}s at {100*p:.1f}%{', ' + format(r, '.1f') + '× normal' if r >= 1.2 else ''}."
-    return line, {"symbol": s, "side": sd, "leverage": 10, "p": p, "ratio": round(r, 3)}
+        day = "calm" if calm_share >= 0.5 else "normal"
+        line = (f"{'A calm day' if day == 'calm' else 'A normal day'}: no market has elevated 10x liquidation odds"
+                f"{', and most are below their usual level' if day == 'calm' else ''}. The highest is {NAME(s)} {sd}s at {100*p:.1f}%.")
+    return line, {"symbol": s, "side": sd, "leverage": 10, "p": p, "ratio": round(r, 3), "day_level": day,
+                  "levels": {f"{a}|{b}": v for (a, b), v in lv.items()}}
 
 def main():
     now = ts(os.environ.get("GL_NOW") or pd.Timestamp.now("UTC"))
@@ -131,10 +149,10 @@ def main():
                         b = min(int(np.searchsorted(bins, p, side="right") - 1), len(agg) - 1)
                         agg[b][0] += 1; agg[b][1] += p; agg[b][2] += int(o["results"][s][sd][L])
         t = r["line_target"]; rr = o["results"].get(t["symbol"])
-        hist.append({"date": r["date"], "line": r["line"], "p": t["p"], "hit": None if rr is None else bool(rr[t["side"]][str(t["leverage"])]), "on_time": o.get("on_time", False), "hash": r["hash"][:12]})
+        hist.append({"date": r["date"], "line": r["line"], "p": t["p"], "hit": None if rr is None else bool(rr[t["side"]][str(t["leverage"])]), "on_time": o.get("on_time", False), "day_level": t.get("day_level"), "hash": r["hash"][:12]})
     tdy = led[-1]; p_now = pub_at.get(tdy["hash"])
     bt = json.load(open(ROOT / "results/odds_backtest.json")) if (ROOT / "results/odds_backtest.json").exists() else {}
-    site = {"generated_utc": pd.Timestamp.now("UTC").isoformat(), "day": tdy["date"], "computed_utc": tdy.get("computed_utc", tdy.get("published_utc")),
+    site = {"generated_utc": pd.Timestamp.now("UTC").isoformat(), "day": tdy["date"], "day_level": tdy.get("line_target", {}).get("day_level"), "computed_utc": tdy.get("computed_utc", tdy.get("published_utc")),
             "information_cut_utc": tdy.get("information_cut_utc"), "verified_public_utc": p_now.isoformat() + "Z" if p_now is not None else None,
             "assumptions": tdy.get("assumptions"), "line": tdy["line"], "liq_distance": tdy["liq_distance"], "leverage": G.LEVERAGE,
             "forecasts": tdy["forecasts"], "hash": tdy["hash"],

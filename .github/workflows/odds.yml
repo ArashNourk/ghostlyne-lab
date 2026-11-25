@@ -26,7 +26,7 @@ jobs:
           key: data-v2-${{ github.run_id }}
           restore-keys: data-v2-
       - name: Backtest v2 (on code changes)
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[backtest]')
         run: python engine/backtest.py
       - name: Forecast, score, ledger, site
         run: python engine/daily.py

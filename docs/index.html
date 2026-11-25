@@ -33,7 +33,11 @@ th{font-weight:500;color:var(--dim);font-size:13px}
 th:first-child,td:first-child{text-align:left}
 td{font:15px "IBM Plex Mono",monospace}
 td:first-child{font-family:"IBM Plex Sans",sans-serif;font-weight:500}
-.hot{color:var(--pink)}
+.lv-calm{color:#39ff7a}.lv-normal{color:#f2f2f2}.lv-elevated{color:#ff8ab8}.lv-severe{color:#ff3d8b;font-weight:600}
+.chip-lv{display:inline-flex;align-items:center;gap:8px;font:500 13px "IBM Plex Mono",monospace;border:1px solid currentColor;padding:6px 10px;margin:0 0 12px}
+.chip-lv i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(13em,1fr));gap:14px 24px;margin-top:12px}
+.legend div{border-top:2px solid currentColor;padding-top:8px}.legend b{display:block;font-weight:500}.legend span{color:var(--sub);font-size:14px}
 .board{overflow-x:auto}
 .note{color:var(--dim);font-size:13px;margin:10px 0 0;max-width:80ch}
 section{padding:44px 0 8px;border-top:1px solid var(--rule);margin-top:44px}
@@ -55,6 +59,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <div class="wrap">
 <header><div class="word">GHOSTLYNE</div><div class="tag">The odds your position survives.</div></header>
 <p class="day" id="day">Loading today's odds…</p>
+<div id="lvchip"></div>
 <h1 class="line" id="line"></h1>
 <div class="chips" role="group" aria-label="Leverage"><span>Leverage</span><div id="chips" style="display:contents"></div></div>
 <div class="board"><table><thead><tr><th>Market</th><th>Long odds</th><th>Short odds</th><th class="hide-s">Long vs normal</th><th class="hide-s">Short vs normal</th><th>Max lev. ≤5%</th></tr></thead><tbody id="board"></tbody></table></div>
@@ -62,6 +67,16 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 
 <section><h2>What the number means</h2>
 <p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev. ≤5%" is the highest leverage whose modeled odds are at or below 5%, for longs / shorts.</p></section>
+
+<section><h2>Reading the colours</h2>
+<p class="sub">Each market side gets a level from today's modeled 10x odds compared with its own 90-day normal. The day takes the most serious level on the board.</p>
+<div class="legend">
+<div class="lv-calm"><b>Calm</b><span>Odds below 0.8× normal. A calm day: nothing elevated, and most markets quieter than usual.</span></div>
+<div class="lv-normal"><b>Normal</b><span>Within the usual range for that market.</span></div>
+<div class="lv-elevated"><b>Elevated</b><span>At least 1.5× normal and at least 3% at 10x.</span></div>
+<div class="lv-severe"><b>Severe</b><span>At least 2.5× normal and at least 10% at 10x.</span></div>
+</div>
+<p class="note">In the record below, green means the position named in that day's line survived and pink means it was liquidated.</p></section>
 
 <section><h2>Proof, before you trust it</h2>
 <div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p></div>
@@ -80,12 +95,14 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const pct=p=>p==null?'—':p<0.001?'<0.1%':p<0.1?(100*p).toFixed(1)+'%':Math.round(100*p)+'%';
 const name=s=>s.replace('USDT','').replace('1000','');
 let D=null,lev='10';
+const LV={calm:'Calm',normal:'Normal',elevated:'Elevated',severe:'Severe'};
+const level=(p,r)=>r==null?'normal':(r>=2.5&&p>=0.10)?'severe':(r>=1.5&&p>=0.03)?'elevated':r<0.8?'calm':'normal';
 function board(){
   const F=D.forecasts,rows=Object.keys(F).sort((a,b)=>(b==='BTCUSDT')-(a==='BTCUSDT')||(b==='ETHUSDT')-(a==='ETHUSDT')||F[b].long['10']+F[b].short['10']-F[a].long['10']-F[a].short['10']);
   document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
-    const c=r=>r!=null&&r>=1.5?' class="hot"':'';
-    return `<tr><td>${esc(name(s))}</td><td${c(rl)}>${pct(f.long[lev])}</td><td${c(rs)}>${pct(f.short[lev])}</td><td class="hide-s"${c(rl)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(rs)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${f.safe.long?f.safe.long+'x':'<5x'} / ${f.safe.short?f.safe.short+'x':'<5x'}</td></tr>`}).join('');
-  document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Pink: at least 1.5× that market's normal 10x odds.`;
+    const ll=level(f.long['10'],rl),ls=level(f.short['10'],rs);const c=x=>` class="lv-${x}"`;
+    return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${f.safe.long?f.safe.long+'x':'<5x'} / ${f.safe.short?f.safe.short+'x':'<5x'}</td></tr>`}).join('');
+  document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Colours show each side's level (see Reading the colours).`;
 }
 function chips(){document.getElementById('chips').innerHTML=D.leverage.map(L=>`<button class="chip" type="button" aria-pressed="${String(L)===lev}" data-l="${L}">${L}x</button>`).join('');
   document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{lev=b.dataset.l;chips();board()}))}
@@ -118,6 +135,9 @@ fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
   fetch('ledger/publications.jsonl',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(tx=>{const p=tx.trim().split('\n').filter(Boolean).map(l=>JSON.parse(l)).find(x=>x.forecast_hash===d.hash);
     dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · `+(p?`verified public ${p.verified_public_utc.replace('T',' ').slice(0,16)} UTC, ${p.on_time?'before':'after'} the window opened`:'publication being verified');}).catch(()=>{});
   document.getElementById('line').textContent=d.line;
+  const F=d.forecasts,lvs=Object.keys(F).flatMap(s=>['long','short'].map(sd=>level(F[s][sd]['10'],F[s].normal10&&F[s].normal10[sd]?F[s][sd]['10']/F[s].normal10[sd]:null)));
+  const dl=d.day_level||(lvs.includes('severe')?'severe':lvs.includes('elevated')?'elevated':lvs.filter(x=>x==='calm').length>=lvs.length/2?'calm':'normal');
+  document.getElementById('lvchip').innerHTML=`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`;document.getElementById('line').className='line lv-'+dl;
   chips();board();bt();live();cta();
   document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
 }).catch(()=>{document.getElementById('day').textContent='Today’s odds are not available yet.'});
