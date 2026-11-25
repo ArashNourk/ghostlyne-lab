@@ -42,32 +42,32 @@ By market (long, 20x/15x/10x pooled, vs best baseline): positive in 21 of 28 mar
 TRX +0.098, ETH +0.028, BTC +0.027, NEAR +0.025, OP +0.021, ALGO +0.020, ARB +0.014, APT +0.014, INJ +0.014, BCH +0.013, LTC +0.010, FIL +0.010, SOL +0.009, SUI +0.007, LINK +0.005, XLM +0.005, 1000PEPE +0.004, ETC +0.004, ATOM +0.004, AAVE +0.002, XRP +0.000, ADA -0.002, 1000SHIB -0.004, DOT -0.004, BNB -0.006, AVAX -0.009, DOGE -0.010, UNI -0.015
 
 By market (short, 20x/15x/10x pooled, vs best baseline): positive in 23 of 28 markets.
-TRX +0.140, DOT +0.028, SUI +0.024, ARB +0.022, SOL +0.021, 1000PEPE +0.020, ETC +0.020, 1000SHIB +0.020, FIL +0.019, ATOM +0.018, BCH +0.018, APT +0.016, UNI +0.015, AAVE +0.013, AVAX +0.012, XRP +0.012, ADA +0.011, INJ +0.006, NEAR +0.004, OP +0.004, ALGO +0.004, BTC +0.003, DOGE +0.002, LINK -0.001, LTC -0.001, ETH -0.003, BNB -0.008, XLM -0.023
+TRX +0.140, DOT +0.028, SUI +0.024, ARB +0.022, SOL +0.021, 1000PEPE +0.021, ETC +0.020, 1000SHIB +0.020, FIL +0.019, ATOM +0.018, BCH +0.018, APT +0.016, UNI +0.015, AAVE +0.013, AVAX +0.012, XRP +0.012, ADA +0.011, INJ +0.006, NEAR +0.004, OP +0.004, ALGO +0.004, BTC +0.003, DOGE +0.002, LINK -0.001, LTC -0.001, ETH -0.003, BNB -0.008, XLM -0.023
 
 ## Max leverage at or below 5% modeled odds
 
-For every market-day, the highest leverage whose forecast is at or below 5%. Realized = share of those recommended positions that were
+For every market-day, the highest leverage up to 20x whose forecast is at or below 5% (the live rule). Realized = share of those recommended positions that were
 actually liquidated (target: at or below 5%). A better model recommends more leverage at the same realized risk.
 
 | Side | Method | Realized liq. rate (90% CI) | Mean forecast | Mean recommended leverage | Days with no level ≤5% |
 |---|---|---|---|---|---|
-| long | Ghostlyne | 3.11% (2.43, 3.81) | 2.75% | 10.0x | 1.2% |
-| long | Textbook (ATR, normal) | 3.14% (2.38, 3.90) | 2.97% | 9.8x | 0.0% |
-| long | EWMA RiskMetrics | 2.98% (2.26, 3.74) | 2.97% | 9.8x | 0.2% |
-| long | GARCH(1,1)-t | 2.98% (2.31, 3.69) | 2.83% | 9.6x | 0.3% |
-| long | Filtered historical simulation | 3.13% (2.41, 3.91) | 2.95% | 9.9x | 0.1% |
-| long | Rolling 1-year frequency | 3.22% (2.45, 4.05) | 2.57% | 9.3x | 0.1% |
+| long | Ghostlyne | 3.08% (2.40, 3.80) | 2.74% | 9.9x | 1.2% |
+| long | Textbook (ATR, normal) | 3.11% (2.33, 3.88) | 2.97% | 9.6x | 0.0% |
+| long | EWMA RiskMetrics | 2.96% (2.24, 3.72) | 2.97% | 9.7x | 0.2% |
+| long | GARCH(1,1)-t | 2.96% (2.27, 3.67) | 2.83% | 9.5x | 0.3% |
+| long | Filtered historical simulation | 3.11% (2.39, 3.89) | 2.94% | 9.8x | 0.1% |
+| long | Rolling 1-year frequency | 3.18% (2.41, 4.00) | 2.57% | 9.2x | 0.1% |
 
-Ghostlyne long, by recommended leverage: 40x: 145 days, forecast 2.1%, realized 6.9%, 20x: 1401 days, forecast 2.7%, realized 3.4%, 15x: 2284 days, forecast 3.4%, realized 3.5%, 10x: 14476 days, forecast 3.0%, realized 3.2%, 7x: 9913 days, forecast 2.3%, realized 2.6%, 5x: 254 days, forecast 2.8%, realized 9.8%
+Ghostlyne long, by recommended leverage: 20x: 1546 days, forecast 2.4%, realized 3.1%, 15x: 2284 days, forecast 3.4%, realized 3.5%, 10x: 14476 days, forecast 3.0%, realized 3.2%, 7x: 9913 days, forecast 2.3%, realized 2.6%, 5x: 254 days, forecast 2.8%, realized 9.8%
 
-| short | Ghostlyne | 3.40% (2.94, 3.90) | 3.03% | 10.1x | 1.2% |
-| short | Textbook (ATR, normal) | 3.32% (2.81, 3.89) | 3.11% | 9.6x | 1.4% |
-| short | EWMA RiskMetrics | 3.24% (2.75, 3.78) | 3.06% | 9.4x | 1.1% |
-| short | GARCH(1,1)-t | 3.23% (2.77, 3.76) | 2.97% | 9.6x | 1.4% |
-| short | Filtered historical simulation | 3.20% (2.70, 3.74) | 2.92% | 9.3x | 0.7% |
-| short | Rolling 1-year frequency | 3.33% (2.74, 3.98) | 2.95% | 9.2x | 1.1% |
+| short | Ghostlyne | 3.39% (2.93, 3.88) | 3.03% | 10.0x | 1.2% |
+| short | Textbook (ATR, normal) | 3.28% (2.78, 3.85) | 3.10% | 9.6x | 1.4% |
+| short | EWMA RiskMetrics | 3.21% (2.71, 3.74) | 3.06% | 9.4x | 1.1% |
+| short | GARCH(1,1)-t | 3.21% (2.76, 3.73) | 2.97% | 9.5x | 1.4% |
+| short | Filtered historical simulation | 3.16% (2.67, 3.70) | 2.92% | 9.2x | 0.7% |
+| short | Rolling 1-year frequency | 3.25% (2.66, 3.89) | 2.94% | 9.1x | 1.1% |
 
-Ghostlyne short, by recommended leverage: 40x: 63 days, forecast 2.7%, realized 9.5%, 20x: 1934 days, forecast 2.7%, realized 3.7%, 15x: 3197 days, forecast 3.6%, realized 4.5%, 10x: 13370 days, forecast 3.1%, realized 3.5%, 7x: 8483 days, forecast 2.9%, realized 3.0%, 5x: 2037 days, forecast 2.4%, realized 2.2%
+Ghostlyne short, by recommended leverage: 20x: 1997 days, forecast 2.6%, realized 3.7%, 15x: 3197 days, forecast 3.6%, realized 4.5%, 10x: 13370 days, forecast 3.1%, realized 3.5%, 7x: 8483 days, forecast 2.9%, realized 3.0%, 5x: 2037 days, forecast 2.4%, realized 2.2%
 
 
 Share of forecast rows where raw calibrated odds violated leverage monotonicity before correction:
