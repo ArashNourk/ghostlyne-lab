@@ -36,7 +36,7 @@ def maxlev_check(Pm, Y, ok):
     leverage whose forecast is <= 5%, then record whether a position at that leverage was actually liquidated."""
     lev = np.array(LEV); rows = np.where(ok)[0]; rec_L, rec_p, hit = [], [], []
     for i in rows:
-        good = np.where(Pm[i] <= THR)[0]
+        good = np.where((Pm[i] <= THR) & (lev <= G.MAXLEV_CAP))[0]
         if len(good) == 0: rec_L.append(0); rec_p.append(np.nan); hit.append(np.nan); continue
         j = good[np.argmax(lev[good])]; rec_L.append(int(lev[j])); rec_p.append(Pm[i, j]); hit.append(Y[i, j])
     rec_L, rec_p, hit = np.array(rec_L), np.array(rec_p), np.array(hit); has = rec_L > 0
@@ -117,7 +117,7 @@ for side in ["long", "short"]:
     L += ["", f"By market ({side}, 20x/15x/10x pooled, vs best baseline): positive in {pos} of {len(bm)} markets.",
           ", ".join(f"{s.replace('USDT','')} {v['skill']:+.3f}" for s, v in sorted(bm.items(), key=lambda kv: -kv[1]['skill']))]
 L += ["", "## Max leverage at or below 5% modeled odds", "",
-      "For every market-day, the highest leverage whose forecast is at or below 5%. Realized = share of those recommended positions that were",
+      "For every market-day, the highest leverage up to 20x whose forecast is at or below 5% (the live rule). Realized = share of those recommended positions that were",
       "actually liquidated (target: at or below 5%). A better model recommends more leverage at the same realized risk.", "",
       "| Side | Method | Realized liq. rate (90% CI) | Mean forecast | Mean recommended leverage | Days with no level ≤5% |", "|---|---|---|---|---|---|"]
 for side in ["long", "short"]:

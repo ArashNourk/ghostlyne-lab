@@ -50,7 +50,7 @@ def forecast(D, info_day):
             for j, L in enumerate(G.LEVERAGE): o[side][str(L)] = round(float(Pm[i, j]), 5)
             o["normal10"][side] = round(float(norm[s]), 5) if s in norm else None
             o["textbook10"][side] = round(float(tb[s]), 5)
-            safe = [L for L in G.LEVERAGE if o[side][str(L)] <= 0.05]; o["safe"][side] = max(safe) if safe else None
+            safe = [L for L in G.LEVERAGE if L <= G.MAXLEV_CAP and o[side][str(L)] <= 0.05]; o["safe"][side] = max(safe) if safe else None
     return out, method
 
 # Risk levels (shared with the page). Ratio = today's modeled 10x odds / that market's 90-day normal 10x odds.
