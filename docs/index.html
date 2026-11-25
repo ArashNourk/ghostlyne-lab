@@ -11,7 +11,7 @@
    PICTURE the odds board: every market's liquidation odds at the chosen leverage, longs and shorts side by side
    COLOUR black ground, white ink; neon pink = elevated risk or a liquidation that happened, neon green = survived
    TYPE IBM Plex Sans for words, IBM Plex Mono for every number
-   LAYOUT name and line, leverage chips, board; then proof (backtest + live ledger); phone stacks the same order */
+   LAYOUT masthead, compact editorial hero (under 250px on desktop), edition rule, daily line, chips, board; then proof; phone stacks */
 :root{color-scheme:dark;--bg:#000;--ink:#f2f2f2;--sub:#b5b5b5;--dim:#7d7d7d;--rule:#1c1c1c;--pink:#ff3d8b;--green:#39ff7a}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0;background:var(--bg);color:var(--ink)}
@@ -20,8 +20,25 @@ body{font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
 header{padding:28px 0 0}
 .word{font:500 22px/1 "IBM Plex Mono",monospace;letter-spacing:.42em}
 .tag{color:var(--fg,#f2f2f2);margin-top:10px;font-size:17px}.tag2{color:var(--sub);margin-top:4px;font-size:14px}.none{color:var(--sub);font-style:italic}.st{color:#ff8ab8;font-size:10px;margin-left:2px}
-.day{font:13px/1.5 "IBM Plex Mono",monospace;color:var(--dim);margin:34px 0 10px}
-.line{font-size:clamp(24px,3.6vw,36px);line-height:1.22;letter-spacing:-.01em;font-weight:500;max-width:30ch;margin:0 0 30px;text-wrap:balance}
+.mast{display:flex;justify-content:space-between;align-items:center;padding:22px 0 16px;border-bottom:1px solid var(--rule)}
+.mast .meta{font:12px "IBM Plex Mono",monospace;color:var(--dim);letter-spacing:.06em}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px 48px;align-items:end;padding:26px 0 26px}
+.eyebrow{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--dim);margin:0 0 12px}
+.hero h1{font-size:clamp(32px,4.3vw,48px);line-height:1.04;letter-spacing:-.025em;font-weight:500;margin:0}
+.hero h1 span{display:block;color:var(--sub)}
+.lede{color:var(--sub);font-size:15.5px;line-height:1.55;margin:0 0 18px;max-width:46ch}
+.acts{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;background:var(--ink);color:#000;font-weight:500;font-size:15px;text-decoration:none}
+.btn:hover{background:#fff}
+.tlink{font:500 13px "IBM Plex Mono",monospace;color:var(--ink);text-decoration:none;border-bottom:1px solid #444;padding-bottom:2px}
+.tlink:hover{border-color:var(--ink)}
+.edition{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);padding:9px 0;font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.16em;color:var(--sub);scroll-margin-top:12px}
+.edition b{font-weight:500;color:var(--ink)}
+@media(max-width:720px){.hero{grid-template-columns:minmax(0,1fr);padding:22px 0 24px;gap:14px}.mast .meta{display:none}.lede{font-size:15px}}
+.today{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:8px 48px;align-items:end;margin-bottom:22px}.today .line{margin:0}.ctrls .chips{margin:0 0 12px}.ctrls .chips>span{flex-basis:100%;font:500 11px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;margin:0}.ctrls .chip{min-width:48px;padding:0 10px}.ctrls .chips:last-child{margin:0}
+@media(max-width:860px){.today{grid-template-columns:minmax(0,1fr);gap:22px}}
+.day{font:13px/1.5 "IBM Plex Mono",monospace;color:var(--dim);margin:16px 0 10px}
+.line{font-size:clamp(22px,3vw,32px);line-height:1.22;letter-spacing:-.01em;font-weight:500;max-width:30ch;margin:0 0 30px;text-wrap:balance}
 .num,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
 .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
 .chips span{color:var(--dim);font-size:14px;margin-right:4px}
@@ -58,16 +75,24 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 @media(max-width:720px){.two{grid-template-columns:minmax(0,1fr)}th,td{padding:10px 6px 10px 0}td{font-size:14px}.hide-s{display:none}}
 </style></head><body>
 <div class="wrap">
-<header><div class="word">GHOSTLYNE</div><div class="tag">Know your leverage. Know your risk.</div><div class="tag2">See how much leverage corresponds to your chosen liquidation-risk threshold.</div></header>
+<header>
+<div class="mast"><div class="word">GHOSTLYNE</div><div class="meta">28 crypto perpetuals · 6 leverage levels · daily at 23:15 UTC</div></div>
+<div class="hero">
+<div><p class="eyebrow">QUANTITATIVE RISK INTELLIGENCE</p><h1>Know your leverage.<span>Know your risk.</span></h1></div>
+<div><p class="lede">Daily liquidation-risk forecasts for leveraged crypto traders. Find the maximum modeled leverage for your chosen risk tolerance, backed by a publicly verifiable forecasting record.</p>
+<div class="acts"><a class="btn" href="#today">Explore today’s risk</a><a class="tlink" href="#method">Methodology ↓</a></div></div>
+</div>
+</header>
+<div class="edition" id="today"><span>DAILY RISK INTELLIGENCE / <b>LATEST EDITION</b></span><span id="edno"></span></div>
 <p class="day" id="day"><!--S:day-->Odds for UTC day 2026-11-25<!--/S:day--></p>
-<div id="lvchip"><!--S:chip--><!--/S:chip--></div>
-<h1 class="line" id="line"><!--S:line-->A calm day: no market has elevated 10x liquidation odds. The highest is APT longs at 8.1%, 1.4× normal.<!--/S:line--></h1>
-<div class="chips" role="group" aria-label="Leverage"><span>Leverage</span><div id="chips" style="display:contents"></div></div>
-<div class="chips" role="group" aria-label="Risk threshold"><span>Risk limit</span><div id="thr" style="display:contents"></div></div>
+<div class="today"><div class="lead"><div id="lvchip"><!--S:chip--><!--/S:chip--></div>
+<h2 class="line" id="line"><!--S:line-->A calm day: no market has elevated 10x liquidation odds. The highest is APT longs at 8.1%, 1.4× normal.<!--/S:line--></h2></div>
+<div class="ctrls"><div class="chips" role="group" aria-label="Leverage"><span>Leverage</span><div id="chips" style="display:contents"></div></div>
+<div class="chips" role="group" aria-label="Risk threshold"><span>Risk limit</span><div id="thr" style="display:contents"></div></div></div></div>
 <div class="board"><table><thead><tr><th>Market</th><th>Long odds</th><th>Short odds</th><th class="hide-s">Long vs normal</th><th class="hide-s">Short vs normal</th><th id="mlh">Max lev. ≤5%</th></tr></thead><tbody id="board"><!--S:board--><tr><td>BTC</td><td>1.9%</td><td>2.3%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ETH</td><td>1.9%</td><td>2.3%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>PEPE</td><td>8.1%</td><td>6.8%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>INJ</td><td>8.1%</td><td>6.8%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>NEAR</td><td>8.1%</td><td>6.8%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>UNI</td><td>8.1%</td><td>5.7%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>APT</td><td>8.1%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 10x</td></tr><tr><td>AAVE</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ARB</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>DOT</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>FIL</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>OP</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>SUI</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>XLM</td><td>4.5%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ALGO</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ATOM</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>AVAX</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ADA</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>BCH</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>DOGE</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>LTC</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>SOL</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>XRP</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>SHIB</td><td>3.0%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>LINK</td><td>3.0%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ETC</td><td>1.9%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>BNB</td><td>1.6%</td><td>2.3%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>TRX</td><td><0.1%</td><td>0.6%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>20x / 20x</td></tr><!--/S:board--></tbody></table></div>
 <p class="note" id="boardnote"></p>
 
-<section><h2>What the number means</h2>
+<section id="method"><h2>What the number means</h2>
 <p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. On a stress day for that side (over 30% of markets moved 5% or more against it today, or today's range is far above the month; marked <sup class="st">s</sup>) the limit is halved. "None" means no tested leverage (5x to 20x) meets the limit that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p></section>
 
 <section><h2>Reading the colours</h2>
@@ -136,6 +161,7 @@ function cta(){const b=document.getElementById('ctabox');
   else b.innerHTML='<p class="empty">Access requests open shortly.</p>'}
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
   const cut=d.information_cut_utc?d.information_cut_utc.replace('T',' ').slice(0,16):'';
+  document.getElementById('edno').textContent=`NO. ${String(d.ledger&&d.ledger.days||1).padStart(3,'0')} · ${new Date(d.day+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).toUpperCase()}`;
   const dayEl=document.getElementById('day');dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · checking publication time…`;
   fetch('ledger/publications.jsonl',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(tx=>{const p=tx.trim().split('\n').filter(Boolean).map(l=>JSON.parse(l)).find(x=>x.forecast_hash===d.hash);
     dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · `+(p?`verified public ${p.verified_public_utc.replace('T',' ').slice(0,16)} UTC, ${p.on_time?'before':'after'} the window opened`:'publication being verified');}).catch(()=>{});
