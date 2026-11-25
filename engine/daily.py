@@ -64,14 +64,17 @@ def main():
             for side in ["long", "short"]:
                 safe = [L for L in G.LEVERAGE if F[s][side][str(L)] <= 0.05]
                 F[s].setdefault("safe", {})[side] = max(safe) if safe else None
-        cands = [(F[s][side]["10"] / F[s]["normal10"][side], s, side) for s in F for side in ["long", "short"] if F[s]["normal10"].get(side)]
-        cands.sort(reverse=True); ratio, s, side = cands[0]
-        p10 = F[s][side]["10"]; safe = F[s]["safe"][side]
-        if ratio >= 1.5:
-            line = f"{NAME(s)} {side}s carry the most risk today: {100*p10:.0f}% odds of a 10x liquidation, {ratio:.1f}× normal. At or below 5% odds, the most leverage is {str(safe)+'x' if safe else 'under 5x'}."
+        cands = [(F[s][side]["10"], F[s][side]["10"] / F[s]["normal10"][side], s, side) for s in F for side in ["long", "short"] if F[s]["normal10"].get(side)]
+        hot = sorted([c for c in cands if c[0] >= 0.05 and c[1] >= 1.5], reverse=True)
+        if hot:
+            p10, ratio, s, side = hot[0]; safe = F[s]["safe"][side]
+            others = len(hot) - 1
+            line = (f"{NAME(s)} {side}s carry the most risk today: {100*p10:.0f}% odds of a 10x liquidation, {ratio:.1f}× normal. "
+                    f"At or below 5% odds, the most leverage is {str(safe)+'x' if safe else 'under 5x'}." + (f" {others} other market{'s' if others != 1 else ''} also elevated." if others else ""))
         else:
-            med = np.median([c[0] for c in cands])
-            line = f"A calm day: no market is above 1.5× its normal liquidation odds. Highest relative risk is {NAME(s)} {side}s at {100*p10:.0f}% for 10x ({ratio:.1f}× normal)."
+            p10, ratio, s, side = sorted(cands, reverse=True)[0]
+            line = (f"A calm day: no market has elevated 10x liquidation odds. The highest is {NAME(s)} {side}s at {100*p10:.1f}%"
+                    f"{', ' + format(ratio, '.1f') + '× normal' if ratio >= 1.2 else ''}.")
         rec = {"date": day, "published_utc": pd.Timestamp.utcnow().isoformat(), "data_through": str(through.date()), "model_version": CFG["model_version"],
                "liq_distance": {str(L): G.DIST[L] for L in G.LEVERAGE}, "line": line, "line_target": {"symbol": s, "side": side, "leverage": 10, "p": p10, "ratio": round(ratio, 3)},
                "forecasts": F, "prev_hash": led[-1]["hash"] if led else "0" * 64}
