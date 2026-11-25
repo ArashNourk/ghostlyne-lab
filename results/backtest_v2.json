@@ -1,0 +1,1403 @@
+{
+ "start": "2023-01-01",
+ "eval_from": "2024-01-01",
+ "through": "2026-11-23",
+ "markets": [
+  "1000PEPEUSDT",
+  "1000SHIBUSDT",
+  "AAVEUSDT",
+  "ADAUSDT",
+  "ALGOUSDT",
+  "APTUSDT",
+  "ARBUSDT",
+  "ATOMUSDT",
+  "AVAXUSDT",
+  "BCHUSDT",
+  "BNBUSDT",
+  "BTCUSDT",
+  "DOGEUSDT",
+  "DOTUSDT",
+  "ETCUSDT",
+  "ETHUSDT",
+  "FILUSDT",
+  "INJUSDT",
+  "LINKUSDT",
+  "LTCUSDT",
+  "NEARUSDT",
+  "OPUSDT",
+  "SOLUSDT",
+  "SUIUSDT",
+  "TRXUSDT",
+  "UNIUSDT",
+  "XLMUSDT",
+  "XRPUSDT"
+ ],
+ "rows": 55026,
+ "mmr": 0.005,
+ "tests": {
+  "long_40x": {
+   "k": 0.02,
+   "n": 29448,
+   "base_rate": 0.5695123607715294,
+   "brier": {
+    "Ghostlyne": 0.22195996189054198,
+    "Textbook (ATR, normal)": 0.2251712756893381,
+    "EWMA RiskMetrics": 0.22574937728861016,
+    "GARCH(1,1)-t": 0.22546456099796156,
+    "Filtered historical simulation": 0.2256151921761811,
+    "Rolling 1-year frequency": 0.23605308821238724
+   },
+   "auc": {
+    "Ghostlyne": 0.6718122262297558,
+    "Textbook (ATR, normal)": 0.6566520661200446,
+    "EWMA RiskMetrics": 0.6563876379819574,
+    "GARCH(1,1)-t": 0.6572950137377848,
+    "Filtered historical simulation": 0.6558410140953382,
+    "Rolling 1-year frequency": 0.5996333513066451
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.014261649444250901,
+    "EWMA RiskMetrics": 0.01678593953871066,
+    "GARCH(1,1)-t": 0.015543902296251577,
+    "Filtered historical simulation": 0.01620117089803408,
+    "Rolling 1-year frequency": 0.059703206717486634
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     0.005967749707236436,
+     0.022714361745184597
+    ],
+    "EWMA RiskMetrics": [
+     0.007721731851605446,
+     0.02674721519895724
+    ],
+    "GARCH(1,1)-t": [
+     0.007650569476077357,
+     0.02382481643090079
+    ],
+    "Filtered historical simulation": [
+     0.006990666201793322,
+     0.026267931615207234
+    ],
+    "Rolling 1-year frequency": [
+     0.04293190895624971,
+     0.0783833354188064
+    ]
+   },
+   "best_baseline": "Textbook (ATR, normal)",
+   "last_price_base_rate": 0.5801412659603369,
+   "deciles": [
+    [
+     0.2349,
+     0.2521
+    ],
+    [
+     0.3979,
+     0.4208
+    ],
+    [
+     0.4697,
+     0.4976
+    ],
+    [
+     0.521,
+     0.5272
+    ],
+    [
+     0.5575,
+     0.5741
+    ],
+    [
+     0.5892,
+     0.5979
+    ],
+    [
+     0.621,
+     0.6488
+    ],
+    [
+     0.6614,
+     0.6606
+    ],
+    [
+     0.7129,
+     0.7023
+    ],
+    [
+     0.8267,
+     0.8168
+    ]
+   ]
+  },
+  "long_20x": {
+   "k": 0.045,
+   "n": 29448,
+   "base_rate": 0.25991578375441454,
+   "brier": {
+    "Ghostlyne": 0.17628723442465133,
+    "Textbook (ATR, normal)": 0.1806259519275844,
+    "EWMA RiskMetrics": 0.17920121739397268,
+    "GARCH(1,1)-t": 0.17887026294240896,
+    "Filtered historical simulation": 0.17920903113708853,
+    "Rolling 1-year frequency": 0.18653445427411622
+   },
+   "auc": {
+    "Ghostlyne": 0.6879170326591111,
+    "Textbook (ATR, normal)": 0.6618737063074801,
+    "EWMA RiskMetrics": 0.6684648674469704,
+    "GARCH(1,1)-t": 0.6692433939537756,
+    "Filtered historical simulation": 0.668142302322536,
+    "Rolling 1-year frequency": 0.6151209166459466
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.024020454738821417,
+    "EWMA RiskMetrics": 0.016260955208328598,
+    "GARCH(1,1)-t": 0.014440793429085996,
+    "Filtered historical simulation": 0.016303847489706702,
+    "Rolling 1-year frequency": 0.054934729829623774
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     0.011186519159709637,
+     0.03623253938261692
+    ],
+    "EWMA RiskMetrics": [
+     0.003958625957644612,
+     0.02776289033479627
+    ],
+    "GARCH(1,1)-t": [
+     0.0030322643557208987,
+     0.02483962204847123
+    ],
+    "Filtered historical simulation": [
+     0.0038824686152256595,
+     0.02763250135390352
+    ],
+    "Rolling 1-year frequency": [
+     0.03462124452636945,
+     0.07524748931906344
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.26864303178484106,
+   "deciles": [
+    [
+     0.045,
+     0.0477
+    ],
+    [
+     0.1195,
+     0.1399
+    ],
+    [
+     0.1567,
+     0.1675
+    ],
+    [
+     0.1927,
+     0.2077
+    ],
+    [
+     0.2295,
+     0.2264
+    ],
+    [
+     0.2678,
+     0.2776
+    ],
+    [
+     0.2935,
+     0.2869
+    ],
+    [
+     0.3364,
+     0.3367
+    ],
+    [
+     0.3982,
+     0.4004
+    ],
+    [
+     0.5359,
+     0.5127
+    ]
+   ]
+  },
+  "long_15x": {
+   "k": 0.0617,
+   "n": 29448,
+   "base_rate": 0.14551073077967944,
+   "brier": {
+    "Ghostlyne": 0.116726574388308,
+    "Textbook (ATR, normal)": 0.11945189329200406,
+    "EWMA RiskMetrics": 0.1181136563103735,
+    "GARCH(1,1)-t": 0.11786040091058986,
+    "Filtered historical simulation": 0.11815303302542618,
+    "Rolling 1-year frequency": 0.12166636828342355
+   },
+   "auc": {
+    "Ghostlyne": 0.7017209428134167,
+    "Textbook (ATR, normal)": 0.6671854746260912,
+    "EWMA RiskMetrics": 0.6769497879658929,
+    "GARCH(1,1)-t": 0.6763720797112279,
+    "Filtered historical simulation": 0.6756905767859136,
+    "Rolling 1-year frequency": 0.6260830354582869
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.022815200568097604,
+    "EWMA RiskMetrics": 0.011743620216282169,
+    "GARCH(1,1)-t": 0.009620080311299795,
+    "Filtered historical simulation": 0.012072975196592783,
+    "Rolling 1-year frequency": 0.04060114528616676
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     0.0009200516487849475,
+     0.04213698297760694
+    ],
+    "EWMA RiskMetrics": [
+     -0.009317664988400087,
+     0.02868598087309624
+    ],
+    "GARCH(1,1)-t": [
+     -0.010993406213903455,
+     0.026277226105597313
+    ],
+    "Filtered historical simulation": [
+     -0.009243071031625038,
+     0.029049806343396167
+    ],
+    "Rolling 1-year frequency": [
+     0.014255454506312826,
+     0.0632157603664612
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.15243819614235263,
+   "deciles": [
+    [
+     0.0182,
+     0.0206
+    ],
+    [
+     0.0521,
+     0.0696
+    ],
+    [
+     0.0695,
+     0.0681
+    ],
+    [
+     0.0873,
+     0.0893
+    ],
+    [
+     0.1175,
+     0.1272
+    ],
+    [
+     0.1456,
+     0.1493
+    ],
+    [
+     0.1649,
+     0.1651
+    ],
+    [
+     0.187,
+     0.1842
+    ],
+    [
+     0.2433,
+     0.2432
+    ],
+    [
+     0.3674,
+     0.3426
+    ]
+   ]
+  },
+  "long_10x": {
+   "k": 0.095,
+   "n": 29448,
+   "base_rate": 0.04998641673458299,
+   "brier": {
+    "Ghostlyne": 0.047500287848423195,
+    "Textbook (ATR, normal)": 0.04671812962832398,
+    "EWMA RiskMetrics": 0.04644152682159125,
+    "GARCH(1,1)-t": 0.046353209222337995,
+    "Filtered historical simulation": 0.04650275733588925,
+    "Rolling 1-year frequency": 0.04722840976790471
+   },
+   "auc": {
+    "Ghostlyne": 0.7160263800454737,
+    "Textbook (ATR, normal)": 0.6617512943936418,
+    "EWMA RiskMetrics": 0.678208638751694,
+    "GARCH(1,1)-t": 0.6801023548134425,
+    "Filtered historical simulation": 0.6728238431854634,
+    "Rolling 1-year frequency": 0.6174898627200645
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": -0.01674207050500187,
+    "EWMA RiskMetrics": -0.022797722195897263,
+    "GARCH(1,1)-t": -0.02474647700406507,
+    "Filtered historical simulation": -0.021450997095264324,
+    "Rolling 1-year frequency": -0.005756663877835022
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     -0.08515915497052111,
+     0.029513541149703896
+    ],
+    "EWMA RiskMetrics": [
+     -0.0926853237640679,
+     0.020611874616582516
+    ],
+    "GARCH(1,1)-t": [
+     -0.09418255740463166,
+     0.017949621995965812
+    ],
+    "Filtered historical simulation": [
+     -0.09223054670927325,
+     0.021151045021536204
+    ],
+    "Rolling 1-year frequency": [
+     -0.07595116623200815,
+     0.04000031190764204
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.053721814724259714,
+   "deciles": [
+    [
+     0.0041,
+     0.0058
+    ],
+    [
+     0.013,
+     0.0152
+    ],
+    [
+     0.0205,
+     0.0215
+    ],
+    [
+     0.0272,
+     0.0265
+    ],
+    [
+     0.0344,
+     0.0394
+    ],
+    [
+     0.0419,
+     0.0525
+    ],
+    [
+     0.0514,
+     0.0529
+    ],
+    [
+     0.0634,
+     0.0587
+    ],
+    [
+     0.0856,
+     0.0855
+    ],
+    [
+     0.1599,
+     0.1449
+    ]
+   ]
+  },
+  "long_7x": {
+   "k": 0.1379,
+   "n": 29448,
+   "base_rate": 0.01596033686498234,
+   "brier": {
+    "Ghostlyne": 0.01593891004362065,
+    "Textbook (ATR, normal)": 0.015643961549907222,
+    "EWMA RiskMetrics": 0.015676924945300548,
+    "GARCH(1,1)-t": 0.01569775699298555,
+    "Filtered historical simulation": 0.015705963540564506,
+    "Rolling 1-year frequency": 0.015695799302209212
+   },
+   "auc": {
+    "Ghostlyne": 0.70202325168176,
+    "Textbook (ATR, normal)": 0.6129887603655304,
+    "EWMA RiskMetrics": 0.6267845526246617,
+    "GARCH(1,1)-t": 0.6439036290186393,
+    "Filtered historical simulation": 0.6231060834117739,
+    "Rolling 1-year frequency": 0.5750831518554795
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": -0.018853823743588682,
+    "EWMA RiskMetrics": -0.016711510658768303,
+    "GARCH(1,1)-t": -0.015362261674891187,
+    "Filtered historical simulation": -0.014831723151177645,
+    "Rolling 1-year frequency": -0.015488904816540305
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     -0.05940120165963734,
+     0.010855687995451366
+    ],
+    "EWMA RiskMetrics": [
+     -0.05577830660162118,
+     0.012253125745181125
+    ],
+    "GARCH(1,1)-t": [
+     -0.055220452464006274,
+     0.008984718484267778
+    ],
+    "Filtered historical simulation": [
+     -0.05592372942676025,
+     0.01464996796302913
+    ],
+    "Rolling 1-year frequency": [
+     -0.05915295643449703,
+     0.012190163357898019
+    ]
+   },
+   "best_baseline": "Textbook (ATR, normal)",
+   "last_price_base_rate": 0.017794077696278186,
+   "deciles": [
+    [
+     0.0004,
+     0.0023
+    ],
+    [
+     0.0031,
+     0.0038
+    ],
+    [
+     0.0067,
+     0.006
+    ],
+    [
+     0.009,
+     0.0151
+    ],
+    [
+     0.0118,
+     0.0134
+    ],
+    [
+     0.0138,
+     0.0155
+    ],
+    [
+     0.0156,
+     0.0084
+    ],
+    [
+     0.0191,
+     0.0224
+    ],
+    [
+     0.0251,
+     0.0302
+    ],
+    [
+     0.0564,
+     0.0436
+    ]
+   ]
+  },
+  "long_5x": {
+   "k": 0.195,
+   "n": 28832,
+   "base_rate": 0.005930910099889012,
+   "brier": {
+    "Ghostlyne": 0.005913155365486061,
+    "Textbook (ATR, normal)": 0.005900116460727906,
+    "EWMA RiskMetrics": 0.005925104078802213,
+    "GARCH(1,1)-t": 0.00593373965599759,
+    "Filtered historical simulation": 0.005925145925565009,
+    "Rolling 1-year frequency": 0.005910347851027505
+   },
+   "auc": {
+    "Ghostlyne": 0.6808262383975943,
+    "Textbook (ATR, normal)": 0.5655225400533072,
+    "EWMA RiskMetrics": 0.5833198157693757,
+    "GARCH(1,1)-t": 0.6193838602530773,
+    "Filtered historical simulation": 0.5920384914929124,
+    "Rolling 1-year frequency": 0.5439985994783546
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": -0.002209940235069041,
+    "EWMA RiskMetrics": 0.002016625051178278,
+    "GARCH(1,1)-t": 0.003469024882263416,
+    "Filtered historical simulation": 0.002023673379454194,
+    "Rolling 1-year frequency": -0.00047501678908257183
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     -0.01663015618984136,
+     0.007532248533049849
+    ],
+    "EWMA RiskMetrics": [
+     -0.007703079189451977,
+     0.0129103951322874
+    ],
+    "GARCH(1,1)-t": [
+     -0.004244291475802553,
+     0.011393581333391826
+    ],
+    "Filtered historical simulation": [
+     -0.00970927264752599,
+     0.014897102748428955
+    ],
+    "Rolling 1-year frequency": [
+     -0.014789470144574546,
+     0.009858721393481148
+    ]
+   },
+   "best_baseline": "Textbook (ATR, normal)",
+   "last_price_base_rate": 0.006624583795782464,
+   "deciles": [
+    [
+     0.0007,
+     0.0028
+    ],
+    [
+     0.0033,
+     0.0062
+    ],
+    [
+     0.004,
+     0.003
+    ],
+    [
+     0.0045,
+     0.0039
+    ],
+    [
+     0.0051,
+     0.0014
+    ],
+    [
+     0.0069,
+     0.0036
+    ],
+    [
+     0.0088,
+     0.0189
+    ],
+    [
+     0.0258,
+     0.0139
+    ]
+   ]
+  },
+  "short_40x": {
+   "k": 0.02,
+   "n": 29448,
+   "base_rate": 0.5315471339309971,
+   "brier": {
+    "Ghostlyne": 0.2306197910229298,
+    "Textbook (ATR, normal)": 0.23236872287492485,
+    "EWMA RiskMetrics": 0.2323753325074092,
+    "GARCH(1,1)-t": 0.23168770228221527,
+    "Filtered historical simulation": 0.23259396456655615,
+    "Rolling 1-year frequency": 0.23859242582347176
+   },
+   "auc": {
+    "Ghostlyne": 0.6507509790009764,
+    "Textbook (ATR, normal)": 0.6462624159094434,
+    "EWMA RiskMetrics": 0.6428780881637272,
+    "GARCH(1,1)-t": 0.6459632723805913,
+    "Filtered historical simulation": 0.6418214045750783,
+    "Rolling 1-year frequency": 0.612928636450353
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.007526537265243105,
+    "EWMA RiskMetrics": 0.007554766960574111,
+    "GARCH(1,1)-t": 0.0046092703616382735,
+    "Filtered historical simulation": 0.008487638736909053,
+    "Rolling 1-year frequency": 0.03341528874198507
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     -0.0024321843172699915,
+     0.01618782567970361
+    ],
+    "EWMA RiskMetrics": [
+     -0.0015911601436879308,
+     0.016685493685590407
+    ],
+    "GARCH(1,1)-t": [
+     -0.00332996770411883,
+     0.012525974031267527
+    ],
+    "Filtered historical simulation": [
+     -0.0009823997136485295,
+     0.017771475905966914
+    ],
+    "Rolling 1-year frequency": [
+     0.019543901374417055,
+     0.0477577822722888
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.5368446074436295,
+   "deciles": [
+    [
+     0.2407,
+     0.2402
+    ],
+    [
+     0.3949,
+     0.4085
+    ],
+    [
+     0.4611,
+     0.4761
+    ],
+    [
+     0.5014,
+     0.4846
+    ],
+    [
+     0.5349,
+     0.53
+    ],
+    [
+     0.5664,
+     0.5765
+    ],
+    [
+     0.5961,
+     0.5669
+    ],
+    [
+     0.6313,
+     0.6256
+    ],
+    [
+     0.6716,
+     0.6718
+    ],
+    [
+     0.7743,
+     0.7399
+    ]
+   ]
+  },
+  "short_20x": {
+   "k": 0.045,
+   "n": 29448,
+   "base_rate": 0.23315675088291224,
+   "brier": {
+    "Ghostlyne": 0.16494727786042676,
+    "Textbook (ATR, normal)": 0.1685275755725121,
+    "EWMA RiskMetrics": 0.1682115314587143,
+    "GARCH(1,1)-t": 0.16681099672736843,
+    "Filtered historical simulation": 0.168290069077589,
+    "Rolling 1-year frequency": 0.17334009126181862
+   },
+   "auc": {
+    "Ghostlyne": 0.6839981153708696,
+    "Textbook (ATR, normal)": 0.6664872587982619,
+    "EWMA RiskMetrics": 0.6627293518603773,
+    "GARCH(1,1)-t": 0.6701055218947276,
+    "Filtered historical simulation": 0.6633397498834103,
+    "Rolling 1-year frequency": 0.6244873878163624
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.021244580893794773,
+    "EWMA RiskMetrics": 0.019405646984961278,
+    "GARCH(1,1)-t": 0.011172637916597838,
+    "Filtered historical simulation": 0.019863270812617406,
+    "Rolling 1-year frequency": 0.048418189584976457
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     0.0102331567436157,
+     0.032145206788145315
+    ],
+    "EWMA RiskMetrics": [
+     0.009563515605888279,
+     0.02983337991018716
+    ],
+    "GARCH(1,1)-t": [
+     0.002357339530248138,
+     0.02037362792528839
+    ],
+    "Filtered historical simulation": [
+     0.010148180676069275,
+     0.03006799961365616
+    ],
+    "Rolling 1-year frequency": [
+     0.03158124375057201,
+     0.0640894319285125
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.23662048356424883,
+   "deciles": [
+    [
+     0.0369,
+     0.0397
+    ],
+    [
+     0.1035,
+     0.126
+    ],
+    [
+     0.1431,
+     0.1478
+    ],
+    [
+     0.1788,
+     0.1856
+    ],
+    [
+     0.2082,
+     0.2183
+    ],
+    [
+     0.2296,
+     0.2188
+    ],
+    [
+     0.2659,
+     0.278
+    ],
+    [
+     0.3031,
+     0.2935
+    ],
+    [
+     0.3577,
+     0.3643
+    ],
+    [
+     0.4938,
+     0.4646
+    ]
+   ]
+  },
+  "short_15x": {
+   "k": 0.0617,
+   "n": 29448,
+   "base_rate": 0.1387530562347188,
+   "brier": {
+    "Ghostlyne": 0.11188374521237138,
+    "Textbook (ATR, normal)": 0.11482674040558777,
+    "EWMA RiskMetrics": 0.11447217330054758,
+    "GARCH(1,1)-t": 0.11350028306805933,
+    "Filtered historical simulation": 0.11446274155370466,
+    "Rolling 1-year frequency": 0.11691714830972723
+   },
+   "auc": {
+    "Ghostlyne": 0.6953578169505463,
+    "Textbook (ATR, normal)": 0.6693923625646117,
+    "EWMA RiskMetrics": 0.6665308699102102,
+    "GARCH(1,1)-t": 0.6770764228730586,
+    "Filtered historical simulation": 0.6668354657259892,
+    "Rolling 1-year frequency": 0.6234585994602367
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.025629876654350903,
+    "EWMA RiskMetrics": 0.022611854161100564,
+    "GARCH(1,1)-t": 0.014242588758290653,
+    "Filtered historical simulation": 0.02253131723324353,
+    "Rolling 1-year frequency": 0.04305102519282955
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     0.013321699113740593,
+     0.03805576528916879
+    ],
+    "EWMA RiskMetrics": [
+     0.01280155988424067,
+     0.031585493187567704
+    ],
+    "GARCH(1,1)-t": [
+     0.005952830502377193,
+     0.02236712435923899
+    ],
+    "Filtered historical simulation": [
+     0.012600677781625352,
+     0.03187138396508436
+    ],
+    "Rolling 1-year frequency": [
+     0.02765654161173447,
+     0.056974943173880396
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.14079054604726976,
+   "deciles": [
+    [
+     0.0149,
+     0.02
+    ],
+    [
+     0.0447,
+     0.0551
+    ],
+    [
+     0.0679,
+     0.0722
+    ],
+    [
+     0.094,
+     0.1018
+    ],
+    [
+     0.1132,
+     0.1373
+    ],
+    [
+     0.1299,
+     0.1261
+    ],
+    [
+     0.1502,
+     0.1459
+    ],
+    [
+     0.1821,
+     0.1817
+    ],
+    [
+     0.2294,
+     0.2226
+    ],
+    [
+     0.3551,
+     0.3262
+    ]
+   ]
+  },
+  "short_10x": {
+   "k": 0.095,
+   "n": 29448,
+   "base_rate": 0.05504618310241782,
+   "brier": {
+    "Ghostlyne": 0.049796860706084196,
+    "Textbook (ATR, normal)": 0.050974164218278814,
+    "EWMA RiskMetrics": 0.050908828426971385,
+    "GARCH(1,1)-t": 0.05038758143301058,
+    "Filtered historical simulation": 0.050985536479640686,
+    "Rolling 1-year frequency": 0.05157540025238547
+   },
+   "auc": {
+    "Ghostlyne": 0.7230302401368711,
+    "Textbook (ATR, normal)": 0.684489799682612,
+    "EWMA RiskMetrics": 0.6792835556836838,
+    "GARCH(1,1)-t": 0.6962200931830351,
+    "Filtered historical simulation": 0.679199999858117,
+    "Rolling 1-year frequency": 0.6183949358208568
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.023096082696976272,
+    "EWMA RiskMetrics": 0.021842335705727467,
+    "GARCH(1,1)-t": 0.011723538025172675,
+    "Filtered historical simulation": 0.023313979917248595,
+    "Rolling 1-year frequency": 0.03448426066686727
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     0.011970984758244879,
+     0.03566361808175563
+    ],
+    "EWMA RiskMetrics": [
+     0.012116907680630184,
+     0.031145358860534534
+    ],
+    "GARCH(1,1)-t": [
+     0.0033906769287429753,
+     0.01985963856338923
+    ],
+    "Filtered historical simulation": [
+     0.013206743213635953,
+     0.03235327901272401
+    ],
+    "Rolling 1-year frequency": [
+     0.019114828961747342,
+     0.049328100233082775
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.05677804944308612,
+   "deciles": [
+    [
+     0.0026,
+     0.0057
+    ],
+    [
+     0.014,
+     0.0228
+    ],
+    [
+     0.0207,
+     0.0218
+    ],
+    [
+     0.0272,
+     0.0293
+    ],
+    [
+     0.0355,
+     0.0393
+    ],
+    [
+     0.0424,
+     0.0473
+    ],
+    [
+     0.053,
+     0.0491
+    ],
+    [
+     0.0706,
+     0.0717
+    ],
+    [
+     0.0987,
+     0.1006
+    ],
+    [
+     0.2022,
+     0.1643
+    ]
+   ]
+  },
+  "short_7x": {
+   "k": 0.1379,
+   "n": 29448,
+   "base_rate": 0.020578647106764467,
+   "brier": {
+    "Ghostlyne": 0.01989437486770462,
+    "Textbook (ATR, normal)": 0.020035780422416466,
+    "EWMA RiskMetrics": 0.02006667074979201,
+    "GARCH(1,1)-t": 0.01991848142117117,
+    "Filtered historical simulation": 0.02002372321903073,
+    "Rolling 1-year frequency": 0.020095656780718014
+   },
+   "auc": {
+    "Ghostlyne": 0.7402154689153125,
+    "Textbook (ATR, normal)": 0.6916574952689777,
+    "EWMA RiskMetrics": 0.683219723574188,
+    "GARCH(1,1)-t": 0.7139298884121822,
+    "Filtered historical simulation": 0.679077347093977,
+    "Rolling 1-year frequency": 0.6021433665105641
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": 0.007057651448088342,
+    "EWMA RiskMetrics": 0.00858617177885268,
+    "GARCH(1,1)-t": 0.0012102606095727442,
+    "Filtered historical simulation": 0.006459755256863375,
+    "Rolling 1-year frequency": 0.010016189826974276
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     -0.02227426359656558,
+     0.029708363409861025
+    ],
+    "EWMA RiskMetrics": [
+     -0.022611013298244463,
+     0.030147578235204652
+    ],
+    "GARCH(1,1)-t": [
+     -0.02847394201833966,
+     0.022685489760449148
+    ],
+    "Filtered historical simulation": [
+     -0.02461549023776195,
+     0.02695672485814203
+    ],
+    "Rolling 1-year frequency": [
+     -0.02375426223521142,
+     0.037534165964463385
+    ]
+   },
+   "best_baseline": "GARCH(1,1)-t",
+   "last_price_base_rate": 0.021359684868242326,
+   "deciles": [
+    [
+     0.0003,
+     0.0039
+    ],
+    [
+     0.0035,
+     0.0047
+    ],
+    [
+     0.0066,
+     0.0074
+    ],
+    [
+     0.009,
+     0.0118
+    ],
+    [
+     0.0113,
+     0.0106
+    ],
+    [
+     0.0141,
+     0.0126
+    ],
+    [
+     0.0176,
+     0.0196
+    ],
+    [
+     0.0259,
+     0.0282
+    ],
+    [
+     0.0364,
+     0.0397
+    ],
+    [
+     0.0922,
+     0.068
+    ]
+   ]
+  },
+  "short_5x": {
+   "k": 0.195,
+   "n": 29448,
+   "base_rate": 0.007097256180385765,
+   "brier": {
+    "Ghostlyne": 0.007135446537566951,
+    "Textbook (ATR, normal)": 0.0070424358221802845,
+    "EWMA RiskMetrics": 0.007085680869443959,
+    "GARCH(1,1)-t": 0.007100717291771249,
+    "Filtered historical simulation": 0.007013171628364629,
+    "Rolling 1-year frequency": 0.007086532944047702
+   },
+   "auc": {
+    "Ghostlyne": 0.7484850557630064,
+    "Textbook (ATR, normal)": 0.6629117137414455,
+    "EWMA RiskMetrics": 0.6747152775402715,
+    "GARCH(1,1)-t": 0.712656180682843,
+    "Filtered historical simulation": 0.6780096911266348,
+    "Rolling 1-year frequency": 0.5834513318794408
+   },
+   "skill_vs": {
+    "Textbook (ATR, normal)": -0.01320717969395302,
+    "EWMA RiskMetrics": -0.007023413704334347,
+    "GARCH(1,1)-t": -0.004890948951868479,
+    "Filtered historical simulation": -0.017435037338567883,
+    "Rolling 1-year frequency": -0.006902330646798571
+   },
+   "skill_ci90_vs": {
+    "Textbook (ATR, normal)": [
+     -0.09419282407078912,
+     0.03834187180674357
+    ],
+    "EWMA RiskMetrics": [
+     -0.09304693603918265,
+     0.04535543014552138
+    ],
+    "GARCH(1,1)-t": [
+     -0.09016991029195424,
+     0.04844730520467193
+    ],
+    "Filtered historical simulation": [
+     -0.10255672414464025,
+     0.030166767991161678
+    ],
+    "Rolling 1-year frequency": [
+     -0.09691982204859946,
+     0.04976629906264134
+    ]
+   },
+   "best_baseline": "Filtered historical simulation",
+   "last_price_base_rate": 0.007165172507470796,
+   "deciles": [
+    [
+     0.0003,
+     0.0015
+    ],
+    [
+     0.0012,
+     0.0021
+    ],
+    [
+     0.002,
+     0.0036
+    ],
+    [
+     0.0036,
+     0.0027
+    ],
+    [
+     0.0056,
+     0.0064
+    ],
+    [
+     0.0071,
+     0.0069
+    ],
+    [
+     0.0084,
+     0.0101
+    ],
+    [
+     0.0115,
+     0.0121
+    ],
+    [
+     0.0364,
+     0.0245
+    ]
+   ]
+  }
+ },
+ "by_market": {
+  "long": {
+   "1000PEPEUSDT": {
+    "skill": 0.0040765922642460595,
+    "n": 2988
+   },
+   "1000SHIBUSDT": {
+    "skill": -0.0042149046310411276,
+    "n": 3168
+   },
+   "AAVEUSDT": {
+    "skill": 0.0019240799201452052,
+    "n": 3168
+   },
+   "ADAUSDT": {
+    "skill": -0.0021156287569101817,
+    "n": 3168
+   },
+   "ALGOUSDT": {
+    "skill": 0.01958553903084026,
+    "n": 3168
+   },
+   "APTUSDT": {
+    "skill": 0.013970273957145674,
+    "n": 3168
+   },
+   "ARBUSDT": {
+    "skill": 0.014193748401157502,
+    "n": 3168
+   },
+   "ATOMUSDT": {
+    "skill": 0.003515966893705813,
+    "n": 3168
+   },
+   "AVAXUSDT": {
+    "skill": -0.009114672202768626,
+    "n": 3168
+   },
+   "BCHUSDT": {
+    "skill": 0.013286539253652974,
+    "n": 3168
+   },
+   "BNBUSDT": {
+    "skill": -0.005529250019658205,
+    "n": 3168
+   },
+   "BTCUSDT": {
+    "skill": 0.027205681764139733,
+    "n": 3168
+   },
+   "DOGEUSDT": {
+    "skill": -0.00952188157166134,
+    "n": 3168
+   },
+   "DOTUSDT": {
+    "skill": -0.004451493282840557,
+    "n": 3168
+   },
+   "ETCUSDT": {
+    "skill": 0.0037687462072149014,
+    "n": 3168
+   },
+   "ETHUSDT": {
+    "skill": 0.028317501487073127,
+    "n": 3168
+   },
+   "FILUSDT": {
+    "skill": 0.009596414288760458,
+    "n": 3168
+   },
+   "INJUSDT": {
+    "skill": 0.013673546599423658,
+    "n": 3168
+   },
+   "LINKUSDT": {
+    "skill": 0.0051534680315789005,
+    "n": 3168
+   },
+   "LTCUSDT": {
+    "skill": 0.010021088807855683,
+    "n": 3168
+   },
+   "NEARUSDT": {
+    "skill": 0.0248196033331185,
+    "n": 3168
+   },
+   "OPUSDT": {
+    "skill": 0.021281290052198254,
+    "n": 3168
+   },
+   "SOLUSDT": {
+    "skill": 0.00896989878373855,
+    "n": 3168
+   },
+   "SUIUSDT": {
+    "skill": 0.006843070891854763,
+    "n": 2988
+   },
+   "TRXUSDT": {
+    "skill": 0.09832498961981495,
+    "n": 3168
+   },
+   "UNIUSDT": {
+    "skill": -0.014559331436091671,
+    "n": 3168
+   },
+   "XLMUSDT": {
+    "skill": 0.004598761570230758,
+    "n": 3168
+   },
+   "XRPUSDT": {
+    "skill": 0.0003418378762188867,
+    "n": 3168
+   }
+  },
+  "short": {
+   "1000PEPEUSDT": {
+    "skill": 0.020498362811309456,
+    "n": 2988
+   },
+   "1000SHIBUSDT": {
+    "skill": 0.019961348412060875,
+    "n": 3168
+   },
+   "AAVEUSDT": {
+    "skill": 0.013088558548975171,
+    "n": 3168
+   },
+   "ADAUSDT": {
+    "skill": 0.010998920313100014,
+    "n": 3168
+   },
+   "ALGOUSDT": {
+    "skill": 0.00387861518027266,
+    "n": 3168
+   },
+   "APTUSDT": {
+    "skill": 0.015505674527117375,
+    "n": 3168
+   },
+   "ARBUSDT": {
+    "skill": 0.02194791864582757,
+    "n": 3168
+   },
+   "ATOMUSDT": {
+    "skill": 0.018231192409791097,
+    "n": 3168
+   },
+   "AVAXUSDT": {
+    "skill": 0.01216746850048478,
+    "n": 3168
+   },
+   "BCHUSDT": {
+    "skill": 0.017584462176667204,
+    "n": 3168
+   },
+   "BNBUSDT": {
+    "skill": -0.007958749715975877,
+    "n": 3168
+   },
+   "BTCUSDT": {
+    "skill": 0.0032999024194531046,
+    "n": 3168
+   },
+   "DOGEUSDT": {
+    "skill": 0.0018799626663441593,
+    "n": 3168
+   },
+   "DOTUSDT": {
+    "skill": 0.027616952266268147,
+    "n": 3168
+   },
+   "ETCUSDT": {
+    "skill": 0.020251883419770245,
+    "n": 3168
+   },
+   "ETHUSDT": {
+    "skill": -0.002670787776149375,
+    "n": 3168
+   },
+   "FILUSDT": {
+    "skill": 0.01856117287739678,
+    "n": 3168
+   },
+   "INJUSDT": {
+    "skill": 0.006158783273548685,
+    "n": 3168
+   },
+   "LINKUSDT": {
+    "skill": -0.0010126695680257036,
+    "n": 3168
+   },
+   "LTCUSDT": {
+    "skill": -0.001333466791985538,
+    "n": 3168
+   },
+   "NEARUSDT": {
+    "skill": 0.004035252870665418,
+    "n": 3168
+   },
+   "OPUSDT": {
+    "skill": 0.003912291052335037,
+    "n": 3168
+   },
+   "SOLUSDT": {
+    "skill": 0.02102168916847036,
+    "n": 3168
+   },
+   "SUIUSDT": {
+    "skill": 0.02373766066171268,
+    "n": 2988
+   },
+   "TRXUSDT": {
+    "skill": 0.14033203352483048,
+    "n": 3168
+   },
+   "UNIUSDT": {
+    "skill": 0.015149451730488761,
+    "n": 3168
+   },
+   "XLMUSDT": {
+    "skill": -0.022843568542616044,
+    "n": 3168
+   },
+   "XRPUSDT": {
+    "skill": 0.011805808023621633,
+    "n": 3168
+   }
+  }
+ },
+ "monotonic_violation_share": {
+  "long": {
+   "Ghostlyne": 0.03304816594398219,
+   "Textbook (ATR, normal)": 0.06310793390366812,
+   "EWMA RiskMetrics": 0.07807922184460331,
+   "GARCH(1,1)-t": 0.17236024844720496,
+   "Filtered historical simulation": 0.06436774874018517,
+   "Rolling 1-year frequency": 0.10708426110394938
+  },
+  "short": {
+   "Ghostlyne": 0.008483730733763668,
+   "Textbook (ATR, normal)": 0.040785140297720984,
+   "EWMA RiskMetrics": 0.07912001053879594,
+   "GARCH(1,1)-t": 0.0849426952970623,
+   "Filtered historical simulation": 0.06668423132657093,
+   "Rolling 1-year frequency": 0.11416150704781979
+  }
+ }
+}
