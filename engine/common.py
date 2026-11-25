@@ -237,5 +237,31 @@ def rolling_freq(D, side, k, window=365):
         out[g.index] = y.loc[g.index].shift(1).rolling(window, min_periods=120).mean().values
     return out
 
+# ---------------------------------------------------------------- stress regime (pre-registered, research/PREREGISTRATION.md)
+def stress_flags(D):
+    """Per side, known at 23:15 UTC: over 30% of markets moved 5%+ against the side today, or today's log Parkinson
+    variance is more than 1 above its 30-day level."""
+    br_dn = D.groupby("Date").ret1.transform(lambda s: (s < -0.05).mean()).values
+    br_up = D.groupby("Date").ret1.transform(lambda s: (s > 0.05).mean()).values
+    hot = (D.v1 - D.v30).values > 1
+    return {"long": (br_dn > 0.3) | hot, "short": (br_up > 0.3) | hot}
+
+def regime_calibrator(raw, y, dates, stress, day, cal_months=12, stress_months=24):
+    """Calibration maps fit on rows before `day`: (normal_map, stress_map), each a function raw -> probability, or None
+    when even the pooled map lacks data. Identical to research/candidates.calibrate_walk_regime."""
+    iso = lambda a, b: IsotonicRegression(out_of_bounds="clip", y_min=1e-4, y_max=0.999).fit(a, b)
+    ok = ~np.isnan(raw) & ~np.isnan(y) & (dates < day - pd.Timedelta(days=1))
+    pa = np.where(ok & (dates >= day - pd.DateOffset(months=cal_months)))[0]
+    if len(pa) <= 1000 or y[pa].sum() < 20: return None
+    pooled = iso(raw[pa], y[pa])
+    pn = np.where(ok & (dates >= day - pd.DateOffset(months=cal_months)) & ~stress)[0]
+    ps = np.where(ok & (dates >= day - pd.DateOffset(months=stress_months)) & stress)[0]
+    normal = (iso(raw[pn], y[pn]) if len(pn) > 1000 and y[pn].sum() >= 20 else pooled).predict
+    if len(ps) > 300 and y[ps].sum() >= 15: smap = iso(raw[ps], y[ps]).predict
+    elif len(ps) > 100:
+        f = max((y[ps].sum() + 1) / (pooled.predict(raw[ps]).sum() + 1), 1.0); smap = lambda r: np.clip(pooled.predict(r) * f, 1e-4, 0.999)
+    else: smap = pooled.predict
+    return normal, smap
+
 def textbook(D, side, k):
     return reflection(np.exp(D.atr14.values) / 1.6, side, k)

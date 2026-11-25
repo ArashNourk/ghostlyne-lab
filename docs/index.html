@@ -19,7 +19,7 @@ body{font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
 .wrap{max-width:1040px;margin:0 auto;padding:0 max(4vw,16px)}
 header{padding:28px 0 0}
 .word{font:500 22px/1 "IBM Plex Mono",monospace;letter-spacing:.42em}
-.tag{color:var(--fg,#f2f2f2);margin-top:10px;font-size:17px}.tag2{color:var(--sub);margin-top:4px;font-size:14px}.none{color:var(--sub);font-style:italic}
+.tag{color:var(--fg,#f2f2f2);margin-top:10px;font-size:17px}.tag2{color:var(--sub);margin-top:4px;font-size:14px}.none{color:var(--sub);font-style:italic}.st{color:#ff8ab8;font-size:10px;margin-left:2px}
 .day{font:13px/1.5 "IBM Plex Mono",monospace;color:var(--dim);margin:34px 0 10px}
 .line{font-size:clamp(24px,3.6vw,36px);line-height:1.22;letter-spacing:-.01em;font-weight:500;max-width:30ch;margin:0 0 30px;text-wrap:balance}
 .num,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
@@ -68,7 +68,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <p class="note" id="boardnote"></p>
 
 <section><h2>What the number means</h2>
-<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. "None" means no tested leverage (5x to 20x) meets the threshold that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p></section>
+<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last 90 days, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. On a stress day for that side (over 30% of markets moved 5% or more against it today, or today's range is far above the month; marked <sup class="st">s</sup>) the limit is halved. "None" means no tested leverage (5x to 20x) meets the limit that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p></section>
 
 <section><h2>Reading the colours</h2>
 <p class="sub">Each market side gets a level from today's modeled 10x odds compared with its own 90-day normal. The day takes the most serious level on the board.</p>
@@ -81,7 +81,7 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <p class="note">In the record below, green means the position named in that day's line survived and pink means it was liquidated.</p></section>
 
 <section><h2>Proof, before you trust it</h2>
-<div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p><p class="note" id="mlnote"></p></div>
+<div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p><p class="note" id="mlnote">Max leverage, tested on untouched data: the rule was locked and <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/PREREGISTRATION.md">pre-registered</a> before being run once on 2022, a year never used to build it, including the LUNA and FTX collapses. At the 5% limit, recommended positions were liquidated 1.8% of the time for longs and 2.9% for shorts, and 0% and 2.3% on stress days, where the previous rule saw 4.1% and 5.4%. Ghostlyne declined to name a leverage on 17% of long days and 9% of short days. It did not reliably allow more leverage than GARCH-t at the same realized risk. <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/HOLDOUT_RESULTS.md">Full results</a>.</p></div>
 <div><p class="sub">Live record. Every forecast is written to a hash-chained public ledger, its public availability is verified and timestamped, and it is scored after the day closes. Only forecasts verified public before their window opens enter this table. Nothing is edited after publication.</p><div id="live"></div></div></div></section>
 
 <section><h2>Every line, and what happened</h2><p class="sub">Green: the position in the line survived the day. Pink: it was liquidated. A good forecaster gets pink on some high-odds days; the test is whether the odds match the frequency.</p><div id="hist"></div></section>
@@ -94,10 +94,10 @@ a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
 <script>
 {
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pct=p=>p==null?'—':p<0.001?'<0.1%':p<0.1?(100*p).toFixed(1)+'%':Math.round(100*p)+'%';
+const pct=p=>p==null?'—':p>0.95?'>95%':p<0.001?'<0.1%':p<0.1?(100*p).toFixed(1)+'%':Math.round(100*p)+'%';
 const name=s=>s.replace('USDT','').replace('1000','');
 let D=null,lev='10',thr=0.05;const THR=[0.02,0.05,0.10];
-const maxlev=(f,sd)=>{const ok=[20,15,10,7,5].filter(L=>f[sd][String(L)]!=null&&f[sd][String(L)]<=thr+1e-12);return ok.length?ok[0]:null};
+const maxlev=(f,sd)=>{const lim=thr/((f.stress&&f.stress[sd])?2:1),ok=[20,15,10,7,5].filter(L=>f[sd][String(L)]!=null&&f[sd][String(L)]<=lim+1e-12);return ok.length?ok[0]:null};
 function thrchips(){document.getElementById('thr').innerHTML=THR.map(x=>`<button class="chip" aria-pressed="${x===thr}" data-t="${x}">≤${Math.round(100*x)}%</button>`).join('');document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{thr=+b.dataset.t;thrchips();board()}))}
 const LV={calm:'Calm',normal:'Normal',elevated:'Elevated',severe:'Severe'};
 const level=(p,r)=>r==null?'normal':(r>=2.5&&p>=0.10)?'severe':(r>=1.5&&p>=0.03)?'elevated':r<0.8?'calm':'normal';
@@ -105,7 +105,7 @@ function board(){
   const F=D.forecasts,rows=Object.keys(F).sort((a,b)=>(b==='BTCUSDT')-(a==='BTCUSDT')||(b==='ETHUSDT')-(a==='ETHUSDT')||F[b].long['10']+F[b].short['10']-F[a].long['10']-F[a].short['10']);
   document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
     const on=!!D.day_level,ll=on?level(f.long['10'],rl):'normal',ls=on?level(f.short['10'],rs):'normal';const c=x=>` class="lv-${x}"`;
-    return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'long'))} / ${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'short'))}</td></tr>`}).join('');
+    return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'long'))}${f.stress&&f.stress.long?'<sup class="st">s</sup>':''} / ${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'short'))}${f.stress&&f.stress.short?'<sup class="st">s</sup>':''}</td></tr>`}).join('');
   document.getElementById('mlh').textContent=`Max lev. ≤${Math.round(100*thr)}%`;
   document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Colours show each side's level (see Reading the colours).`;
 }
@@ -121,8 +121,7 @@ function bt(){
     o+=`<text x="${ml+(W-ml-mr)/2}" y="${H-2}" text-anchor="middle">said (deciles) → happened ↑ · white longs, grey shorts</text>`;s.innerHTML=o};
   new ResizeObserver(draw).observe(s);
   const L=T['long_10x'],S=T['short_10x'];
-  const f=(x)=>(x>0?'+':'')+(100*x).toFixed(1)+'%';const M=D.backtest.maxlev;if(M&&M.long&&M.short){const q=x=>(100*x).toFixed(1)+'%';document.getElementById('mlnote').textContent=`Max leverage ≤5%, tested: on days where Ghostlyne named a leverage at or below 5% modeled odds, that position was actually liquidated ${q(M.long.realized)} of the time for longs (90% interval ${q(M.long.realized_ci90[0])} to ${q(M.long.realized_ci90[1])}) and ${q(M.short.realized)} for shorts (${q(M.short.realized_ci90[0])} to ${q(M.short.realized_ci90[1])}).`;}
-  document.getElementById('btnote').textContent=L.best_baseline?`${D.backtest.eval_from} to ${D.backtest.through}. Compared with the best of five conventional forecasters, each calibrated the same way (longs: ${L.best_baseline}; shorts: ${S.best_baseline}), Ghostlyne's Brier skill is ${f(L.skill_best)} for longs (90% interval ${f(L.ci_best[0])} to ${f(L.ci_best[1])}) and ${f(S.skill_best)} for shorts (${f(S.ci_best[0])} to ${f(S.ci_best[1])}); positive means more accurate than that forecaster.`:`${D.backtest.eval_from} to ${D.backtest.through}.`;
+  const f=(x)=>(x>0?'+':'')+(100*x).toFixed(1)+'%';document.getElementById('btnote').textContent=L.best_baseline?`${D.backtest.eval_from} to ${D.backtest.through}. Compared with the best of five conventional forecasters, each calibrated the same way (longs: ${L.best_baseline}; shorts: ${S.best_baseline}), Ghostlyne's Brier skill is ${f(L.skill_best)} for longs (90% interval ${f(L.ci_best[0])} to ${f(L.ci_best[1])}) and ${f(S.skill_best)} for shorts (${f(S.ci_best[0])} to ${f(S.ci_best[1])}); positive means more accurate than that forecaster.`:`${D.backtest.eval_from} to ${D.backtest.through}.`;
 }
 function live(){
   const Lg=D.ledger,cal=Lg.calibration.filter(c=>c.n>0);

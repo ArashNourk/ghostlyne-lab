@@ -22,35 +22,43 @@ START = pd.Timestamp("2023-01-01")
 def ts(x): t = pd.Timestamp(x); return t.tz_convert(None) if t.tzinfo else t
 
 def forecast(D, info_day):
-    """Calibrated, leverage-monotone odds for rows dated info_day."""
-    rows = np.where(D.Date == info_day)[0]; out = {}; method = {}
+    """Calibrated, leverage-monotone odds for rows dated info_day. Stress-day rows use the stress calibration map, and the
+    max-leverage limit is halved for them (pre-registered rules, research/PREREGISTRATION.md)."""
+    rows = np.where(D.Date == info_day)[0]; out = {}; method = {}; SF = G.stress_flags(D); dates = D.Date
     for side in ["long", "short"]:
-        Pm = np.full((len(rows), len(G.LEVERAGE)), np.nan); norm = {}; tb = {}
+        st = SF[side]; Pm = np.full((len(rows), len(G.LEVERAGE)), np.nan); norm = {}; tb = {}
         for j, L in enumerate(G.LEVERAGE):
             k = G.DIST[L]; y = G.target(D, side, k).values
-            raw, _ = G.model_walk(D, side, k, (info_day - pd.DateOffset(months=13)).replace(day=1))
-            past = np.where((D.Date > info_day - pd.DateOffset(months=12)) & (D.Date < info_day) & ~np.isnan(raw) & ~np.isnan(y))[0]
-            from sklearn.isotonic import IsotonicRegression
+            raw, _ = G.model_walk(D, side, k, (info_day - pd.DateOffset(months=25)).replace(day=1))
             tr = np.where(~np.isnan(y) & (D.Date < info_day))[0]
             if np.nansum(y[tr]) >= 25:
                 pr = G.fit(D.loc[tr, G.TEX], y[tr]).predict_proba(D.loc[rows, G.TEX])[:, 1]
             else:
                 pr = G.textbook(D.loc[rows], side, k); method[f"{side}_{L}"] = "textbook (too few events to fit)"
-            if len(past) >= 500 and y[past].sum() >= 10:
-                iso = IsotonicRegression(out_of_bounds="clip", y_min=1e-4, y_max=0.999).fit(raw[past], y[past]); Pm[:, j] = iso.predict(pr)
+            cal = G.regime_calibrator(raw, y, dates, st, info_day + pd.Timedelta(days=1))
+            if cal is None:                                     # thin data (rare at 5x): one pooled map, the v2 fallback
+                past = np.where((D.Date > info_day - pd.DateOffset(months=12)) & (D.Date < info_day) & ~np.isnan(raw) & ~np.isnan(y))[0]
+                if len(past) >= 500 and y[past].sum() >= 10:
+                    from sklearn.isotonic import IsotonicRegression
+                    m = IsotonicRegression(out_of_bounds="clip", y_min=1e-4, y_max=0.999).fit(raw[past], y[past]).predict; cal = (m, m)
+                    method[f"{side}_{L}"] = "pooled calibration (too few events for regime maps)"
+            if cal is not None:
+                Pm[:, j] = np.where(st[rows], cal[1](pr), cal[0](pr))
             else:
-                iso = None; Pm[:, j] = pr; method.setdefault(f"{side}_{L}", "uncalibrated (too few recent events)")
+                Pm[:, j] = pr; method.setdefault(f"{side}_{L}", "uncalibrated (too few recent events)")
             if L == 10:
                 rec = np.where((D.Date > info_day - pd.Timedelta(days=90)) & (D.Date < info_day) & ~np.isnan(raw))[0]
-                norm = pd.Series(iso.predict(raw[rec]) if iso is not None else raw[rec], index=D.sym.values[rec]).groupby(level=0).mean().to_dict()
+                nv = (np.where(st[rec], cal[1](raw[rec]), cal[0](raw[rec])) if cal is not None else raw[rec])
+                norm = pd.Series(nv, index=D.sym.values[rec]).groupby(level=0).mean().to_dict()
                 tb = dict(zip(D.sym.values[rows], G.textbook(D.loc[rows], side, k)))
         Pm, _ = G.monotone(Pm)
         for i, r in enumerate(rows):
-            s = D.sym.values[r]; o = out.setdefault(s, {"long": {}, "short": {}, "normal10": {}, "textbook10": {}, "safe": {}})
+            s = D.sym.values[r]; o = out.setdefault(s, {"long": {}, "short": {}, "normal10": {}, "textbook10": {}, "safe": {}, "stress": {}})
             for j, L in enumerate(G.LEVERAGE): o[side][str(L)] = round(float(Pm[i, j]), 5)
             o["normal10"][side] = round(float(norm[s]), 5) if s in norm else None
             o["textbook10"][side] = round(float(tb[s]), 5)
-            safe = [L for L in G.LEVERAGE if L <= G.MAXLEV_CAP and o[side][str(L)] <= 0.05]; o["safe"][side] = max(safe) if safe else None
+            o["stress"][side] = bool(st[r]); lim = 0.05 / (2 if st[r] else 1)
+            safe = [L for L in G.LEVERAGE if L <= G.MAXLEV_CAP and o[side][str(L)] <= lim + 1e-12]; o["safe"][side] = max(safe) if safe else None
     return out, method
 
 # Risk levels (shared with the page). Ratio = today's modeled 10x odds / that market's 90-day normal 10x odds.
@@ -73,8 +81,9 @@ def daily_line(F):
     calm_share = sum(v == "calm" for v in lv.values()) / max(len(lv), 1)
     if sev or ele:
         day = "severe" if sev else "elevated"; p, r, s, sd = (sev or ele)[0]; safe = F[s]["safe"][sd]; others = len(sev) + len(ele) - 1
-        line = (f"{'Severe' if sev else 'Elevated'} risk. {NAME(s)} {sd}s lead: {100*p:.0f}% modeled odds of a 10x liquidation, {r:.1f}× normal. "
-                + (f"At or below 5% odds, the most leverage is {safe}x." if safe else "No tested leverage (5x to 20x) is at or below 5% odds.") + (f" {others} other market side{'s' if others != 1 else ''} also elevated." if others else ""))
+        line = (f"{'Severe' if sev else 'Elevated'} risk. {NAME(s)} {sd}s lead: {'over 95' if p > 0.95 else f'{100*p:.0f}'}% modeled odds of a 10x liquidation, {r:.1f}× normal. "
+                + ((f"At or below 5% odds, the most leverage is {safe}x" if safe else "No tested leverage (5x to 20x) is at or below 5% odds")
+                   + (" (stress conditions: limit halved to 2.5%)." if F[s].get("stress", {}).get(sd) else ".")) + (f" {others} other market side{'s' if others != 1 else ''} also elevated." if others else ""))
     else:
         p, r, s, sd = sorted(c, reverse=True)[0]
         day = "calm" if calm_share >= 0.5 else "normal"
@@ -88,10 +97,11 @@ def render_static(site):
     run JavaScript see the same numbers. The page's script replaces them with the live data.json on load."""
     import html, re
     p = ROOT / "docs/index.html"; h = p.read_text(); e = html.escape
-    pct = lambda x: "—" if x is None else ("<0.1%" if x < 0.001 else (f"{100*x:.1f}%" if x < 0.1 else f"{100*x:.0f}%"))
+    pct = lambda x: "—" if x is None else (">95%" if x > 0.95 else "<0.1%" if x < 0.001 else (f"{100*x:.1f}%" if x < 0.1 else f"{100*x:.0f}%"))
     lv = site.get("day_level"); F = site["forecasts"]
     def ml(f, sd):
-        ok = [L for L in (20, 15, 10, 7, 5) if f[sd].get(str(L)) is not None and f[sd][str(L)] <= 0.05 + 1e-12]
+        lim = 0.05 / (2 if f.get("stress", {}).get(sd) else 1)
+        ok = [L for L in (20, 15, 10, 7, 5) if f[sd].get(str(L)) is not None and f[sd][str(L)] <= lim + 1e-12]
         return f"{ok[0]}x" if ok else '<span class="none">none</span>'
     order = sorted(F, key=lambda s: (s != "BTCUSDT", s != "ETHUSDT", -(F[s]["long"]["10"] + F[s]["short"]["10"])))
     rows = "".join(f"<tr><td>{e(NAME(s))}</td><td>{pct(F[s]['long']['10'])}</td><td>{pct(F[s]['short']['10'])}</td>"
