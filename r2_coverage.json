@@ -1,0 +1,295 @@
+{
+ "coverage": {
+  "MU": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "000660.KS": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6723
+  },
+  "005930.KS": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6723
+  },
+  "2408.TW": {
+   "src": "yahoo",
+   "first": "2000-08-18",
+   "last": "2026-11-26",
+   "n": 6524
+  },
+  "2344.TW": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6687
+  },
+  "3260.TWO": {
+   "src": "yahoo",
+   "first": "2007-12-31",
+   "last": "2026-11-26",
+   "n": 4631
+  },
+  "4967.TW": {
+   "src": "yahoo",
+   "first": "2012-07-26",
+   "last": "2026-11-26",
+   "n": 3497
+  },
+  "ACWI": {
+   "src": "yahoo",
+   "first": "2008-03-28",
+   "last": "2026-11-25",
+   "n": 4697
+  },
+  "SOXX": {
+   "src": "yahoo",
+   "first": "2001-07-13",
+   "last": "2026-11-25",
+   "n": 6381
+  },
+  "AMAT": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "8035.T": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6709
+  },
+  "ASML": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "ETN": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "ABBN.SW": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6828
+  },
+  "HG=F": {
+   "src": "yahoo",
+   "first": "2000-08-30",
+   "last": "2026-11-26",
+   "n": 6591
+  },
+  "SI=F": {
+   "src": "yahoo",
+   "first": "2000-08-30",
+   "last": "2026-11-26",
+   "n": 6588
+  },
+  "ALI=F": {
+   "src": "yahoo",
+   "first": "2014-05-06",
+   "last": "2026-11-26",
+   "n": 3124
+  },
+  "PA=F": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6309
+  },
+  "LIN": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "APD": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "4063.T": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6709
+  },
+  "3436.T": {
+   "src": "yahoo",
+   "first": "2003-08-15",
+   "last": "2026-11-26",
+   "n": 5766
+  },
+  "ENTG": {
+   "src": "yahoo",
+   "first": "2000-07-11",
+   "last": "2026-11-25",
+   "n": 6635
+  },
+  "REMX": {
+   "src": "yahoo",
+   "first": "2010-10-28",
+   "last": "2026-11-25",
+   "n": 4044
+  },
+  "CL=F": {
+   "src": "yahoo",
+   "first": "2000-08-23",
+   "last": "2026-11-26",
+   "n": 6595
+  },
+  "NG=F": {
+   "src": "yahoo",
+   "first": "2000-08-30",
+   "last": "2026-11-26",
+   "n": 6592
+  },
+  "1919.HK": {
+   "src": "yahoo",
+   "first": "2005-06-30",
+   "last": "2026-11-26",
+   "n": 5281
+  },
+  "MAERSK-B.CO": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6794
+  },
+  "2603.TW": {
+   "src": "yahoo",
+   "first": "2000-01-04",
+   "last": "2026-11-26",
+   "n": 6687
+  },
+  "FDX": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "UNP": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "XLU": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "BHP": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "FCX": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "CAT": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "URA": {
+   "src": "yahoo",
+   "first": "2010-11-05",
+   "last": "2026-11-25",
+   "n": 4038
+  },
+  "BTC-USD": {
+   "src": "yahoo",
+   "first": "2014-09-17",
+   "last": "2026-11-26",
+   "n": 4454
+  },
+  "ZC=F": {
+   "src": "yahoo",
+   "first": "2000-07-17",
+   "last": "2026-11-25",
+   "n": 6597
+  },
+  "TM": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "ALB": {
+   "src": "yahoo",
+   "first": "2000-01-03",
+   "last": "2026-11-25",
+   "n": 6766
+  },
+  "OJ=F": {
+   "src": "yahoo",
+   "first": "2001-09-17",
+   "last": "2026-11-25",
+   "n": 6323
+  },
+  "HE=F": {
+   "src": "yahoo",
+   "first": "2000-12-15",
+   "last": "2026-11-25",
+   "n": 6520
+  },
+  "LE=F": {
+   "src": "yahoo",
+   "first": "2001-03-01",
+   "last": "2026-11-25",
+   "n": 6452
+  },
+  "NINO34_W": {
+   "src": "noaa-cpc",
+   "first": "1981-09-02",
+   "last": "2026-11-18",
+   "n": 2360
+  }
+ },
+ "missing": {
+  "DEXKOUS": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))",
+  "DEXTAUS": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))",
+  "DEXJPUS": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))",
+  "DEXCHUS": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))",
+  "DTWEXBGS": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))",
+  "DCOILWTICO": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))",
+  "DHHNGSP": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)\"))"
+ },
+ "mops_monthly_revenue": {
+  "102_1": [
+   true,
+   true,
+   323632
+  ],
+  "108_6": [
+   true,
+   true,
+   398774
+  ],
+  "114_9": [
+   true,
+   true,
+   441251
+  ]
+ },
+ "trendforce_robots": "User-agent: *\nDisallow: /images/hp_final.jpg\nDisallow: /images/LoboChiang_final_20220901.jpg\nDisallow: /search\nDisallow: /searchNews\nDisallow: /research/feedback/*\nDisallow: /api/*\n\nSitemap: https://www.trendforce.com/sitemap.xml\nSitemap: https://www.trendforce.com/sitemap_insights.xml\nSitemap: https://www.trendforce.com/sitemap-research.xml\nSitemap: https://www.trendforce.com/sitemap-research-tags.xml"
+}
