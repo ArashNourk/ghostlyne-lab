@@ -1,0 +1,34 @@
+name: cascade-experiment
+on:
+  push:
+    paths: ["cascade/**", ".github/workflows/cascade.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy scipy scikit-learn requests pyarrow
+      - uses: actions/cache@v4
+        with:
+          path: data
+          key: binance-data-v1-${{ github.run_id }}
+          restore-keys: binance-data-v1-
+      - name: Download Binance public data
+        run: python cascade/fetch.py 2021-12-01 2026-10-31
+      - name: Run experiment
+        run: python cascade/experiment.py data results 2023-01-01
+      - name: Commit results
+        run: |
+          git config user.name "ghostlyne-lab-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add results
+          git commit -m "Cascade experiment results" || echo "nothing to commit"
+          git pull --rebase || true
+          git push
