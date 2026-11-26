@@ -13,7 +13,7 @@ FRED = [
  # D3 indirect: mining, machinery, freight, energy
  "IPMINE","PCU333333","PCU483111483111","PCU481112481112","FRGSHPUSM649NCIS","TSIFRGHT","DCOILWTICO","MHHNGSP","PCU221122221122","WPU0543","IPG2211S",
  # D4 remote: exchange rates, trade flows
- "DEXKOUS","DEXTAUS","DEXJPUS","DEXCHUS","DTWEXBGS","IMPTW","IMPKR","IMPCH","IMPJP",
+ "DEXKOUS","DEXTAUS","DEXJPUS","DEXCHUS","DTWEXBGS","IMP5830","IMPKR","IMPCH","IMPJP",
  # D5 distant: competing demand
  "IPG3361T3S","ALTSALES","HOUST","PMAIZMTUSDM","PWHEAMTUSDM","PURANUSDM",
 ]
@@ -40,7 +40,7 @@ def oni():
 def gscpi():
     u = "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx"
     r = requests.get(u, headers=UA, timeout=60); r.raise_for_status()
-    x = pd.read_excel(io.BytesIO(r.content), sheet_name=None, header=None)
+    x = pd.read_excel(io.BytesIO(r.content), sheet_name=None, header=None, engine="openpyxl")
     for name, s in x.items():
         s = s.dropna(how="all")
         d = pd.to_datetime(s.iloc[:, 0], errors="coerce"); v = pd.to_numeric(s.iloc[:, 1], errors="coerce")

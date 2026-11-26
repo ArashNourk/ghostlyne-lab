@@ -4,7 +4,7 @@ on:
     inputs:
       step: {description: "probe or fetch", default: "probe"}
   push:
-    paths: ["registry/probe.py", "registry/sources.py", "registry/fetch.py", ".github/workflows/registry.yml"]
+    paths: ["registry/STEP", "registry/probe.py", "registry/sources.py", "registry/fetch.py", ".github/workflows/registry.yml"]
 permissions:
   contents: write
 jobs:
@@ -18,8 +18,7 @@ jobs:
       - run: pip install pandas requests openpyxl
       - name: Run step
         run: |
-          STEP="${{ github.event.inputs.step || 'probe' }}"
-          if [ -f registry/fetch.py ] && [ "$STEP" = "fetch" ] || grep -q '^STEP=fetch' registry/STEP 2>/dev/null; then STEP=fetch; fi
+          STEP=$(cat registry/STEP)
           cd registry && python $STEP.py && cd ..
           echo "STEP=$STEP" >> $GITHUB_ENV
       - name: Push output to the registry-data branch

@@ -8,6 +8,6 @@ for k, df in out.items():
     step = d.diff().dt.days.median()
     cov[k] = {"first": str(d.iloc[0].date()), "last": str(d.iloc[-1].date()), "n": int(len(d)),
               "freq": "daily" if step < 5 else "weekly" if step < 10 else "monthly" if step < 40 else "quarterly+"}
-os.makedirs("registry/out", exist_ok=True)
-json.dump({"coverage": cov, "missing": errors}, open("registry/out/coverage.json", "w"), indent=1)
+os.makedirs("out", exist_ok=True)
+json.dump({"coverage": cov, "missing": errors}, open("out/coverage.json", "w"), indent=1)
 print(json.dumps({"ok": len(cov), "missing": errors}, indent=1))
