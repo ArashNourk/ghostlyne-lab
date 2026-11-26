@@ -1,3 +1,13 @@
+# Ghostlyne
+
+**The hidden lines behind AI infrastructure, tested in public.** The live page is the Registry: every hypothesis is registered before its data is seen, tested once, and either enters the Registry or goes to the graveyard with its cause of death. Code, pre-registrations and results are in `registry/`.
+
+Run R1 (26 Nov 2026): 185 lines tested, 0 survived, 0 of 15 placebos survived. See `registry/R1_RESULTS.md`.
+
+The earlier liquidation-odds research below is archived; its page is `docs/odds.html`.
+
+---
+
 # ghostlyne-lab
 
 Research lab for Ghostlyne: calibrated odds that a leveraged crypto position gets liquidated.

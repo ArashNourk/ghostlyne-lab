@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ghostlyne</title>
+<!--S:meta--><meta name="description" content="A calm day: no market has elevated 10x liquidation odds. The highest is APT longs at 8.1%, 1.4× normal. Know your leverage. Know your risk: daily, calibrated liquidation odds for 28 crypto perpetuals, every forecast on a public ledger.">
+<meta property="og:title" content="Ghostlyne: know your leverage, know your risk"><meta property="og:description" content="A calm day: no market has elevated 10x liquidation odds. The highest is APT longs at 8.1%, 1.4× normal. Know your leverage. Know your risk: daily, calibrated liquidation odds for 28 crypto perpetuals, every forecast on a public ledger."><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><!--/S:meta-->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE quiet, exact, a little cold: a number you can trust, said once
+   IDEA Ghostlyne's black page: one line a day, then the odds board, then the receipts
+   PICTURE the odds board: every market's liquidation odds at the chosen leverage, longs and shorts side by side
+   COLOUR black ground, white ink; neon pink = elevated risk or a liquidation that happened, neon green = survived
+   TYPE IBM Plex Sans for words, IBM Plex Mono for every number
+   LAYOUT masthead, compact editorial hero (under 250px on desktop), edition rule, daily line, chips, board; then proof; phone stacks */
+:root{color-scheme:dark;--bg:#000;--ink:#f2f2f2;--sub:#b5b5b5;--dim:#7d7d7d;--rule:#1c1c1c;--pink:#ff3d8b;--green:#39ff7a}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1040px;margin:0 auto;padding:0 max(4vw,16px)}
+header{padding:28px 0 0}
+.word{font:500 22px/1 "IBM Plex Mono",monospace;letter-spacing:.42em}
+.tag{color:var(--fg,#f2f2f2);margin-top:10px;font-size:17px}.tag2{color:var(--sub);margin-top:4px;font-size:14px}.none{color:var(--sub);font-style:italic}.st{color:#ff8ab8;font-size:10px;margin-left:2px}
+.mast{display:flex;justify-content:space-between;align-items:center;padding:22px 0 16px;border-bottom:1px solid var(--rule)}
+.mast .meta{font:12px "IBM Plex Mono",monospace;color:var(--dim);letter-spacing:.06em}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px 48px;align-items:end;padding:26px 0 26px}
+.eyebrow{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--dim);margin:0 0 12px}
+.hero h1{font-size:clamp(32px,4.3vw,48px);line-height:1.04;letter-spacing:-.025em;font-weight:500;margin:0}
+.hero h1 span{display:block;color:var(--sub)}
+.lede{color:var(--sub);font-size:15.5px;line-height:1.55;margin:0 0 18px;max-width:46ch}
+.acts{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;background:var(--ink);color:#000;font-weight:500;font-size:15px;text-decoration:none}
+.btn:hover{background:#fff}
+.tlink{font:500 13px "IBM Plex Mono",monospace;color:var(--ink);text-decoration:none;border-bottom:1px solid #444;padding-bottom:2px}
+.tlink:hover{border-color:var(--ink)}
+.edition{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);padding:9px 0;font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.16em;color:var(--sub);scroll-margin-top:12px}
+.edition b{font-weight:500;color:var(--ink)}
+@media(max-width:720px){.hero{grid-template-columns:minmax(0,1fr);padding:22px 0 24px;gap:14px}.mast .meta{display:none}.lede{font-size:15px}}
+.today{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:8px 48px;align-items:end;margin-bottom:22px}.today .line{margin:0}.ctrls .chips{margin:0 0 12px}.ctrls .chips>span{flex-basis:100%;font:500 11px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;margin:0}.ctrls .chip{min-width:48px;padding:0 10px}.ctrls .chips:last-child{margin:0}
+@media(max-width:860px){.today{grid-template-columns:minmax(0,1fr);gap:22px}}
+.day{font:13px/1.5 "IBM Plex Mono",monospace;color:var(--dim);margin:16px 0 10px}
+.line{font-size:clamp(22px,3vw,32px);line-height:1.22;letter-spacing:-.01em;font-weight:500;max-width:30ch;margin:0 0 30px;text-wrap:balance}
+.num,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+.chips span{color:var(--dim);font-size:14px;margin-right:4px}
+.chip{min-height:40px;min-width:52px;padding:0 12px;background:transparent;border:1px solid #3a3a3a;color:var(--sub);font:500 15px "IBM Plex Mono",monospace;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--ink);color:var(--ink);background:#111}
+.chip:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+table{border-collapse:collapse;width:100%}
+th,td{padding:11px 10px 11px 0;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th{font-weight:500;color:var(--dim);font-size:13px}
+th:first-child,td:first-child{text-align:left}
+td{font:15px "IBM Plex Mono",monospace}
+td:first-child{font-family:"IBM Plex Sans",sans-serif;font-weight:500}
+.lv-calm{color:#39ff7a}.lv-normal{color:#f2f2f2}.lv-elevated{color:#ff8ab8}.lv-severe{color:#ff3d8b;font-weight:600}
+.chip-lv{display:inline-flex;align-items:center;gap:8px;font:500 13px "IBM Plex Mono",monospace;border:1px solid currentColor;padding:6px 10px;margin:0 0 12px}
+.chip-lv i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(13em,1fr));gap:14px 24px;margin-top:12px}
+.legend div{border-top:2px solid currentColor;padding-top:8px}.legend b{display:block;font-weight:500}.legend span{color:var(--sub);font-size:14px}
+.board{overflow-x:auto}
+.note{color:var(--dim);font-size:13px;margin:10px 0 0;max-width:80ch}
+section{padding:44px 0 8px;border-top:1px solid var(--rule);margin-top:44px}
+h2{font-weight:500;font-size:22px;margin:0 0 6px}
+.sub{color:var(--sub);max-width:70ch}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.fig{position:relative;height:260px;margin-top:10px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font:12px "IBM Plex Mono",monospace;fill:var(--dim)}
+.rec{display:grid;grid-template-columns:7.5em minmax(0,1fr) 5.5em;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.rec .num{text-align:right}
+.cta{display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:500}
+.cta:hover{background:#111}
+footer{color:var(--dim);font-size:13px;padding:40px 0 60px;border-top:1px solid var(--rule);margin-top:44px}
+footer p{max-width:85ch}
+a{color:inherit;text-underline-offset:3px;text-decoration-color:#555}
+.empty{color:var(--dim);border:1px dashed #333;padding:14px 16px}
+@media(max-width:720px){.two{grid-template-columns:minmax(0,1fr)}th,td{padding:10px 6px 10px 0}td{font-size:14px}.hide-s{display:none}}
+</style></head><body>
+<div class="wrap">
+<header>
+<div class="mast"><div class="word">GHOSTLYNE</div><div class="meta">28 crypto perpetuals · 6 leverage levels · daily at 23:15 UTC</div></div>
+<div class="hero">
+<div><p class="eyebrow">QUANTITATIVE RISK INTELLIGENCE</p><h1>Know your leverage.<span>Know your risk.</span></h1></div>
+<div><p class="lede">Daily liquidation-risk forecasts for leveraged crypto traders. Find the maximum modeled leverage for your chosen risk tolerance, backed by a publicly verifiable forecasting record.</p>
+<div class="acts"><a class="btn" href="#today">Explore today’s risk</a><a class="tlink" href="methodology.html">Methodology →</a></div></div>
+</div>
+</header>
+<div class="edition" id="today"><span>DAILY RISK INTELLIGENCE / <b>LATEST EDITION</b></span><span id="edno"></span></div>
+<p class="day" id="day"><!--S:day-->Odds for UTC day 2026-11-25<!--/S:day--></p>
+<div class="today"><div class="lead"><div id="lvchip"><!--S:chip--><!--/S:chip--></div>
+<h2 class="line" id="line"><!--S:line-->A calm day: no market has elevated 10x liquidation odds. The highest is APT longs at 8.1%, 1.4× normal.<!--/S:line--></h2></div>
+<div class="ctrls"><div class="chips" role="group" aria-label="Leverage"><span>Leverage</span><div id="chips" style="display:contents"></div></div>
+<div class="chips" role="group" aria-label="Risk threshold"><span>Risk limit</span><div id="thr" style="display:contents"></div></div></div></div>
+<div class="board"><table><thead><tr><th>Market</th><th>Long odds</th><th>Short odds</th><th class="hide-s">Long vs normal</th><th class="hide-s">Short vs normal</th><th id="mlh">Max lev. ≤5%</th></tr></thead><tbody id="board"><!--S:board--><tr><td>BTC</td><td>1.9%</td><td>2.3%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ETH</td><td>1.9%</td><td>2.3%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>PEPE</td><td>8.1%</td><td>6.8%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>INJ</td><td>8.1%</td><td>6.8%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>NEAR</td><td>8.1%</td><td>6.8%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>UNI</td><td>8.1%</td><td>5.7%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 7x</td></tr><tr><td>APT</td><td>8.1%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>7x / 10x</td></tr><tr><td>AAVE</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ARB</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>DOT</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>FIL</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>OP</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>SUI</td><td>4.8%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>XLM</td><td>4.5%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ALGO</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ATOM</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>AVAX</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ADA</td><td>3.4%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>BCH</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>DOGE</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>LTC</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>SOL</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>XRP</td><td>3.2%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>SHIB</td><td>3.0%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>LINK</td><td>3.0%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>ETC</td><td>1.9%</td><td>4.0%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>BNB</td><td>1.6%</td><td>2.3%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>10x / 10x</td></tr><tr><td>TRX</td><td><0.1%</td><td>0.6%</td><td class="hide-s">—</td><td class="hide-s">—</td><td>20x / 20x</td></tr><!--/S:board--></tbody></table></div>
+<p class="note" id="boardnote"></p>
+
+<section id="method"><h2>What the number means</h2>
+<p class="sub">A modeled liquidation-barrier probability under standardized assumptions: the chance that Binance's mark price reaches the liquidation level of an isolated-margin position with a 0.5% maintenance margin rate, entered at the UTC open, before that UTC day ends. Your real liquidation level depends on the exchange, your maintenance tier, position size, fees and entry price, so treat these odds as a standardized risk measure, not your exact liquidation price. Forecasts use information up to 23:15 UTC the evening before, and only forecasts verifiably public before their window opens count toward the record. "Vs normal" compares the odds with that market's average over the last year, at 10x. "Max lev." is the highest leverage, up to 20x, whose modeled odds are at or below your risk limit (2%, 5% or 10%; 5% by default), for longs / shorts. A modeled odds level is not a guarantee: at 5% roughly one position in twenty would still be liquidated. On a stress day for that side (over 30% of markets moved 5% or more against it today, or today's range is far above the month; marked <sup class="st">s</sup>) the limit is halved. "None" means no tested leverage (5x to 20x) meets the limit that day, and Ghostlyne does not name one. It never names 40x: in testing, the rare days when 40x looked safe were liquidated more often than 5%.</p><p><a class="tlink" href="methodology.html">Full methodology: definition, model, pre-registered test, limitations →</a></p></section>
+
+<section><h2>Reading the colours</h2>
+<p class="sub">Each market side gets a level from today's modeled 10x odds compared with its own normal over the past year. The day takes the most serious level on the board.</p>
+<div class="legend">
+<div class="lv-calm"><b>Calm</b><span>Odds below 0.8× normal. A calm day: nothing elevated, and most markets quieter than usual.</span></div>
+<div class="lv-normal"><b>Normal</b><span>Within the usual range for that market.</span></div>
+<div class="lv-elevated"><b>Elevated</b><span>At least 1.5× normal and at least 3% at 10x.</span></div>
+<div class="lv-severe"><b>Severe</b><span>At least 2.5× normal and at least 10% at 10x.</span></div>
+</div>
+<p class="note">In the record below, green means the position named in that day's line survived and pink means it was liquidated.</p></section>
+
+<section><h2>Proof, before you trust it</h2>
+<div class="two"><div><p class="sub">Walk-forward backtest at 10x, on exactly the information the live model uses (a 23:15 UTC cut) and mark-price liquidation labels. Every forecast and every calibration used only earlier data. When Ghostlyne said a given chance, this is how often it happened.</p><div class="fig"><svg id="bt" aria-label="Backtest calibration"></svg></div><p class="note" id="btnote"></p><p class="note" id="mlnote">Max leverage, tested on untouched data: the rule was locked and <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/PREREGISTRATION.md">pre-registered</a> before being run once on 2022, a year never used to build it, including the LUNA and FTX collapses. At the 5% limit, recommended positions were liquidated 1.8% of the time for longs and 2.9% for shorts, and 0% and 2.3% on stress days, where the previous rule saw 4.1% and 5.4%. Ghostlyne declined to name a leverage on 17% of long days and 9% of short days. It did not reliably allow more leverage than GARCH-t at the same realized risk. <a href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/research/HOLDOUT_RESULTS.md">Full results</a>.</p></div>
+<div><p class="sub">Live record. Every forecast is written to a hash-chained public ledger, its public availability is verified and timestamped, and it is scored after the day closes. Only forecasts verified public before their window opens enter this table. Nothing is edited after publication.</p><div id="live"></div></div></div></section>
+
+<section><h2>Every line, and what happened</h2><p class="sub">Green: the position in the line survived the day. Pink: it was liquidated. A good forecaster gets pink on some high-odds days; the test is whether the odds match the frequency.</p><div id="hist"></div></section>
+
+<section id="access"><h2>Early access</h2><p class="sub">Ghostlyne is free while the record builds. Paid access is planned to add odds for your own position (your entry, leverage and how long you hold) and the daily edition in your inbox.</p><div id="ctabox" style="margin-top:14px"></div></section>
+
+<footer><p>Ghostlyne publishes statistical estimates for information only. They involve uncertainty, can be wrong, and are not investment advice or a recommendation to trade any asset or to use leverage. Leveraged trading can lose more than you expect.</p>
+<p><a href="methodology.html">Methodology</a></p><p id="foot"></p></footer>
+</div>
+<script>
+{
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=p=>p==null?'—':p>0.95?'>95%':p<0.001?'<0.1%':p<0.1?(100*p).toFixed(1)+'%':Math.round(100*p)+'%';
+const name=s=>s.replace('USDT','').replace('1000','');
+let D=null,lev='10',thr=0.05;const THR=[0.02,0.05,0.10];
+const maxlev=(f,sd)=>{const lim=thr/((f.stress&&f.stress[sd])?2:1),ok=[20,15,10,7,5].filter(L=>f[sd][String(L)]!=null&&f[sd][String(L)]<=lim+1e-12);return ok.length?ok[0]:null};
+function thrchips(){document.getElementById('thr').innerHTML=THR.map(x=>`<button class="chip" aria-pressed="${x===thr}" data-t="${x}">≤${Math.round(100*x)}%</button>`).join('');document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{thr=+b.dataset.t;thrchips();board()}))}
+const LV={calm:'Calm',normal:'Normal',elevated:'Elevated',severe:'Severe'};
+const level=(p,r)=>r==null?'normal':(r>=2.5&&p>=0.10)?'severe':(r>=1.5&&p>=0.03)?'elevated':r<0.8?'calm':'normal';
+function board(){
+  const F=D.forecasts,rows=Object.keys(F).sort((a,b)=>(b==='BTCUSDT')-(a==='BTCUSDT')||(b==='ETHUSDT')-(a==='ETHUSDT')||F[b].long['10']+F[b].short['10']-F[a].long['10']-F[a].short['10']);
+  document.getElementById('board').innerHTML=rows.map(s=>{const f=F[s],rl=f.normal10?.long?f.long['10']/f.normal10.long:null,rs=f.normal10?.short?f.short['10']/f.normal10.short:null;
+    const on=!!D.day_level,ll=on?level(f.long['10'],rl):'normal',ls=on?level(f.short['10'],rs):'normal';const c=x=>` class="lv-${x}"`;
+    return `<tr><td>${esc(name(s))}</td><td${c(ll)}>${pct(f.long[lev])}</td><td${c(ls)}>${pct(f.short[lev])}</td><td class="hide-s"${c(ll)}>${rl?rl.toFixed(1)+'×':'—'}</td><td class="hide-s"${c(ls)}>${rs?rs.toFixed(1)+'×':'—'}</td><td>${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'long'))}${f.stress&&f.stress.long?'<sup class="st">s</sup>':''} / ${(m=>m?m+'x':'<span class="none">none</span>')(maxlev(f,'short'))}${f.stress&&f.stress.short?'<sup class="st">s</sup>':''}</td></tr>`}).join('');
+  document.getElementById('mlh').textContent=`Max lev. ≤${Math.round(100*thr)}%`;
+  document.getElementById('boardnote').textContent=`Modeled odds that the mark price moves ${(100*D.liq_distance[lev]).toFixed(1)}% against a ${lev}x position during the day. Colours show each side's level (see Reading the colours).`;
+}
+function chips(){document.getElementById('chips').innerHTML=D.leverage.map(L=>`<button class="chip" type="button" aria-pressed="${String(L)===lev}" data-l="${L}">${L}x</button>`).join('');
+  document.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',()=>{lev=b.dataset.l;chips();board()}))}
+function bt(){
+  const s=document.getElementById('bt'),T=D.backtest&&D.backtest.tests;if(!T||!T['long_10x']){s.parentElement.innerHTML='<p class="empty">Backtest results will appear after the first full run.</p>';return}
+  const draw=()=>{const W=s.clientWidth,H=s.clientHeight,ml=44,mr=10,mt=10,mb=34,ser=[['long_10x','#f2f2f2','longs'],['short_10x','#8a8a8a','shorts']];
+    const mx=Math.max(...ser.flatMap(([k])=>T[k].deciles.flat()))*1.08,x=v=>ml+(W-ml-mr)*v/mx,y=v=>mt+(H-mt-mb)*(1-v/mx);let o='';
+    const st=mx>0.3?0.1:mx>0.12?0.05:0.02;for(let v=0;v<=mx;v+=st)o+=`<line x1="${ml}" x2="${W-mr}" y1="${y(v)}" y2="${y(v)}" stroke="#151515"/><text x="${ml-6}" y="${y(v)+4}" text-anchor="end">${Math.round(v*100)}%</text><text x="${x(v)}" y="${H-18}" text-anchor="middle">${Math.round(v*100)}%</text>`;
+    o+=`<line x1="${x(0)}" y1="${y(0)}" x2="${x(mx)}" y2="${y(mx)}" stroke="#444" stroke-dasharray="4 4"/>`;
+    ser.forEach(([k,c])=>{const d=T[k].deciles;o+=`<path d="${d.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+','+y(p[1]).toFixed(1)).join('')}" fill="none" stroke="${c}" stroke-width="1.6"/>`+d.map(p=>`<circle cx="${x(p[0])}" cy="${y(p[1])}" r="3.2" fill="${c}"/>`).join('')});
+    o+=`<text x="${ml+(W-ml-mr)/2}" y="${H-2}" text-anchor="middle">said (deciles) → happened ↑ · white longs, grey shorts</text>`;s.innerHTML=o};
+  new ResizeObserver(draw).observe(s);
+  const L=T['long_10x'],S=T['short_10x'];
+  const f=(x)=>(x>0?'+':'')+(100*x).toFixed(1)+'%';document.getElementById('btnote').textContent=L.best_baseline?`${D.backtest.eval_from} to ${D.backtest.through}. Compared with the best of five conventional forecasters, each calibrated the same way (longs: ${L.best_baseline}; shorts: ${S.best_baseline}), Ghostlyne's Brier skill is ${f(L.skill_best)} for longs (90% interval ${f(L.ci_best[0])} to ${f(L.ci_best[1])}) and ${f(S.skill_best)} for shorts (${f(S.ci_best[0])} to ${f(S.ci_best[1])}); positive means more accurate than that forecaster.`:`${D.backtest.eval_from} to ${D.backtest.through}.`;
+}
+function live(){
+  const Lg=D.ledger,cal=Lg.calibration.filter(c=>c.n>0);
+  let h=`<p class="mono" style="font-size:14px">${Lg.days} day${Lg.days===1?'':'s'} published · ${Lg.scored_days} scored · ${Lg.on_time_scored||0} on time</p>`;
+  h+=cal.length?`<table><thead><tr><th>Said</th><th>Forecasts</th><th>Average said</th><th>Happened</th></tr></thead><tbody>${cal.map(c=>`<tr><td class="mono">${pct(c.lo)}–${pct(c.hi)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)}</td></tr>`).join('')}</tbody></table><p class="note">Small samples are noisy; the table converges as days accumulate.</p>`:`<p class="empty">The first forecast is scored after today's UTC day closes.</p>`;
+  document.getElementById('live').innerHTML=h;
+  const R=Lg.recent;document.getElementById('hist').innerHTML=R.length?R.map(r=>`<div class="rec"><span class="mono">${esc(r.date)}</span><span>${esc(r.line)}${r.on_time===false?' <span style="color:var(--dim)">(late: excluded from calibration)</span>':''}</span><span class="num ${r.hit===true?'hot':r.hit===false?'':''}" style="${r.hit===false?'color:var(--green)':''}">${r.hit===true?'liquidated':r.hit===false?'survived':'pending'}</span></div>`).join(''):'<p class="empty">The record starts today.</p>';
+}
+function cta(){const b=document.getElementById('ctabox');
+  if(D.waitlist_url)b.innerHTML=`<a class="cta" href="${esc(D.waitlist_url)}">Request early access</a>`;
+  else if(D.contact_email)b.innerHTML=`<p>Write to <span class="mono">${esc(D.contact_email)}</span> to request access.</p>`;
+  else b.innerHTML='<p class="empty">Access requests open shortly.</p>'}
+fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;
+  const cut=d.information_cut_utc?d.information_cut_utc.replace('T',' ').slice(0,16):'';
+  document.getElementById('edno').textContent=`NO. ${String(d.ledger&&d.ledger.days||1).padStart(3,'0')} · ${new Date(d.day+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).toUpperCase()}`;
+  const dayEl=document.getElementById('day');dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · checking publication time…`;
+  fetch('ledger/publications.jsonl',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(tx=>{const p=tx.trim().split('\n').filter(Boolean).map(l=>JSON.parse(l)).find(x=>x.forecast_hash===d.hash);
+    dayEl.textContent=`Odds for UTC day ${d.day}${cut?' · information to '+cut+' UTC':''} · `+(p?`verified public ${p.verified_public_utc.replace('T',' ').slice(0,16)} UTC, ${p.on_time?'before':'after'} the window opened`:'publication being verified');}).catch(()=>{});
+  document.getElementById('line').textContent=d.line;
+  // The chip and line colour come only from the level the engine wrote into the hashed record, so they can never contradict the line.
+  const dl=d.day_level; document.getElementById('lvchip').innerHTML=dl?`<span class="chip-lv lv-${dl}"><i></i>${LV[dl]} day</span>`:'<p class="note" style="margin:0 0 12px">This edition was sealed before colour levels existed, so it is shown uncoloured. Colour levels start with the next edition, published at 23:15 UTC.</p>';
+  document.getElementById('line').className='line'+(dl?' lv-'+dl:'');
+  chips();thrchips();board();bt();live();cta();
+  document.getElementById('foot').innerHTML=`Today's ledger hash <span class="mono" style="overflow-wrap:anywhere">${esc(d.hash)}</span>. The full ledger, the model and its backtest are public in the <a href="https://github.com/ArashNourk/ghostlyne-lab">ghostlyne-lab repository</a>.`;
+}).catch(()=>{document.getElementById('day').textContent='Today’s odds are not available yet.'});
+}
+</script>
+</body></html>
