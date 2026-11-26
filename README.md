@@ -1,8 +1,9 @@
 # Ghostlyne
 
-**The hidden lines behind AI infrastructure, tested in public.** The live page is the Registry: every hypothesis is registered before its data is seen, tested once, and either enters the Registry or goes to the graveyard with its cause of death. Code, pre-registrations and results are in `registry/`.
+Ghostlyne discovers and monitors statistical relationships between AI-infrastructure markets and the wider economy. Two modules: the **Discovery Lab** (`registry/`, private computation in GitHub Actions) and the **Relationship Observatory** (`docs/index.html`). The append-only **Relationship Registry** (`registry/registry.jsonl`) keeps every investigation, positive, negative or inconclusive.
 
-Run R1 (26 Nov 2026): 185 lines tested, 0 survived, 0 of 15 placebos survived. See `registry/R1_RESULTS.md`.
+- R1 (26 Nov 2026): forecasting test on broad monthly US indices. 185 tested, 0 validated. `registry/R1_RESULTS.md`, page `docs/r1.html`.
+- R2 (26 Nov 2026): semiconductor memory, separate association, lead-lag, conditional and predictive paths. 28 market-adjusted associations validated (all D1-D3, conventional); no lead-lag; no remote relationship. `registry/r2/R2_REPORT.md`.
 
 The earlier liquidation-odds research below is archived; its page is `docs/odds.html`.
 
