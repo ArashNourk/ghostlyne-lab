@@ -32,15 +32,15 @@ Validated over tested pairs with enough data:
 ### 1. Distant markets do move with AI infrastructure
 
 There are 840 validated co-movement relationships, 76 of them with currencies, El Niño or competing demand. Medians of the confirmed correlations:
-- weekly: 0.24–0.27;
+- weekly: 0.23–0.27;
 - monthly: about 0.3;
-- quarterly: about 0.45.
+- quarterly: 0.34–0.46.
 
 The strongest D4 relationships involve the Taiwan dollar and the won. AI equipment, chip and data-centre stocks fall when Asian currencies weaken: correlations of −0.30 to −0.44 monthly and quarterly, stable in the latest 36 months.
 
 ### 2. Most of it is the shared global cycle
 
-The negative controls show it. Live cattle validated weekly against 11 AI stocks (r 0.08–0.20), and one synthetic random series passed quarterly. That is the expected 1-in-20-style false discovery at this sample size. Total co-movement is therefore real but not specific: unrelated markets also reach it through the cycle.
+The negative controls show it. Live cattle validated weekly against 11 AI stocks (r 0.08–0.20), and one synthetic random series passed quarterly. That is within the false-discovery rate the gate allows. Total co-movement is therefore real but not specific: unrelated markets also reach it through the cycle.
 
 Each relationship is marked against a **control line**: the 95th percentile of correlation between the same stocks and unrelated control series. That is 0.19 weekly and 0.30 monthly; at the quarterly horizon the controls are too noisy for a line. 498 relationships clear it. The control line is a descriptive benchmark added after the run, not a pre-registered gate.
 
