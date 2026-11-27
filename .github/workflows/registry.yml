@@ -1,0 +1,33 @@
+name: ghostlyne-registry
+on:
+  workflow_dispatch:
+    inputs:
+      step: {description: "probe or fetch", default: "probe"}
+  push:
+    paths: ["registry/STEP", "registry/r2run.py", "registry/probe.py", "registry/sources.py", "registry/fetch.py", ".github/workflows/registry.yml"]
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install pandas requests openpyxl scipy numpy xlrd
+      - name: Run step
+        run: |
+          STEP=$(cat registry/STEP)
+          echo "STEP=$STEP" >> $GITHUB_ENV
+          if [ "$STEP" = "hold" ]; then exit 0; fi
+          cd registry && python $STEP.py && cd ..
+          echo "STEP=$STEP" >> $GITHUB_ENV
+      - name: Push output to the registry-data branch
+        if: env.STEP != 'hold'
+        run: |
+          git config user.name "ghostlyne-bot"; git config user.email "actions@users.noreply.github.com"
+          mv registry/out /tmp/out
+          git checkout --orphan registry-$STEP; git rm -rq --cached . ; rm -rf ./*
+          cp -r /tmp/out/* . ; git add -A
+          git commit -qm "Registry $STEP $(date -u +%FT%TZ)"; git push -f origin registry-$STEP
