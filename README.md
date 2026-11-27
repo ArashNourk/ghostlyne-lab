@@ -1,8 +1,9 @@
 # Ghostlyne
 
-Ghostlyne discovers and monitors statistical relationships between AI-infrastructure markets and the wider economy. Two modules: the **Discovery Lab** (`registry/`, private computation in GitHub Actions) and the **Relationship Observatory** (`docs/index.html`). The append-only **Relationship Registry** (`registry/registry.jsonl`) keeps every investigation, positive, negative or inconclusive.
+Ghostlyne is an energy-market intelligence company (from 26 Nov 2026): it discovers and monitors statistical relationships between North American wholesale power and natural gas and the wider economy. Earlier runs (R1-R3) studied AI infrastructure and are preserved. Two modules: the **Discovery Lab** (`registry/`, private computation in GitHub Actions) and the **Relationship Observatory** (`docs/index.html`). The append-only **Relationship Registry** (`registry/registry.jsonl`) keeps every investigation, positive, negative or inconclusive.
 
 - R1 (26 Nov 2026): forecasting test on broad monthly US indices. 185 tested, 0 validated. `registry/R1_RESULTS.md`, page `docs/r1.html`.
+- R4 (27 Nov 2026): ERCOT North and Henry Hub. Lab validity 6/6 in exploration, 4/6 in confirmation; 113 validated relationships (79 physical drivers, 33 energy complex, 1 agriculture, 0 AI/crypto); markets lead weather; no actionable lead; scarcity breaks normal links. `registry/r4/R4_REPORT.md`. Observatory `docs/index.html` (R3 page `docs/r3.html`).
 - R3 (27 Nov 2026): the AI-infrastructure stack. 840 validated co-movements with distant markets (76 at D4/D5), 498 above the control line; 0 of 119 lead-lag candidates replicated; 2 multi-hop paths validated. `registry/r3/R3_REPORT.md`. Observatory `docs/index.html` (R2 page `docs/r2.html`).
 - R2 (26 Nov 2026): semiconductor memory, separate association, lead-lag, conditional and predictive paths. 28 market-adjusted associations validated (all D1-D3, conventional); no lead-lag; no remote relationship. `registry/r2/R2_REPORT.md`.
 

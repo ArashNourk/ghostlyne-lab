@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ghostlyne Observatory</title>
+<meta name="description" content="Validated relationships between North American power and gas prices and the wider economy: how strongly they move together, who leads, when they hold, and when they change.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE quiet, exact, a little cold: what is connected, who leads, what is changing; what we have not found
+   IDEA Ghostlyne's black page as an observatory: pick an energy market, choose how far out to look, tighten or widen strength, open a relationship and watch it move
+   PICTURE the relationship detail: rolling strength inside its uncertainty band, against the confirmed estimate, with timing and divergence beside it
+   COLOUR black ground, white ink; neon green = validated; pink only for drift or reversal warnings; always with a word
+   TYPE IBM Plex Sans for words, IBM Plex Mono for every number
+   LAYOUT masthead, hero + verdict, observatory (segment, market, type, distance, strength; list | detail), chains, lab record, who it is for. Phone stacks */
+:root{color-scheme:dark;--bg:#000;--ink:#f2f2f2;--sub:#b5b5b5;--dim:#8a8a8a;--rule:#1c1c1c;--pink:#ff3d8b;--green:#39ff7a}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1160px;margin:0 auto;padding:0 max(4vw,16px)}
+.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.mast{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:24px 0 16px;border-bottom:1px solid var(--rule)}
+.word{font:500 20px/1 "IBM Plex Mono",monospace;letter-spacing:.42em}
+.mast .meta{font:12px "IBM Plex Mono",monospace;color:var(--dim);letter-spacing:.06em}
+.hero{padding:34px 0 6px;max-width:820px}
+.eyebrow{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--dim);margin:0 0 12px;text-transform:uppercase}
+h1{font-size:clamp(32px,4.6vw,52px);line-height:1.04;letter-spacing:-.025em;font-weight:500;margin:0;text-wrap:balance}
+h1 span{display:block;color:var(--sub)}
+.lede{color:var(--sub);font-size:16px;margin:18px 0 0;max-width:66ch}
+.verdict{border-left:2px solid var(--ink);padding:2px 0 2px 16px;margin:22px 0 0;max-width:72ch;font-size:15px;color:var(--sub)}
+.verdict b{color:var(--ink);font-weight:500}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0 0}
+.kpis div{background:var(--bg);padding:16px}
+.kpis b{display:block;font:500 clamp(26px,3.4vw,36px)/1 "IBM Plex Mono",monospace}
+.kpis span{display:block;color:var(--sub);font-size:13.5px;margin-top:8px}
+h2{font-size:22px;font-weight:500;letter-spacing:-.01em;margin:0 0 6px}
+h3{font-size:15px;font-weight:600;margin:0 0 6px}
+.sec{padding:34px 0;border-top:1px solid var(--rule);margin-top:28px}
+.subt{color:var(--sub);font-size:15px;margin:0 0 18px;max-width:68ch}
+.ctl{display:grid;gap:12px;margin-bottom:18px}
+.lab{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 14px "IBM Plex Sans",sans-serif;color:var(--sub);background:transparent;border:1px solid #2a2a2a;min-height:40px;padding:0 13px;cursor:pointer}
+.chip[aria-pressed=true]{color:#000;background:var(--ink);border-color:var(--ink)}
+.chip.sm{min-height:36px;font-size:13.5px}
+.chip:disabled{opacity:.35;cursor:default}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.row2{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-end}
+.slider{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--sub)}
+.slider input{width:180px;accent-color:#f2f2f2}
+.count{font:13px "IBM Plex Mono",monospace;color:var(--dim)}
+.obs{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.3fr);gap:24px 36px;align-items:start}
+.list{display:grid;border-top:1px solid var(--rule);max-height:760px;overflow:auto}
+.it{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 7.4em;gap:3px 14px;padding:12px 10px;border-bottom:1px solid var(--rule)}
+.it:hover{background:#0b0b0b}.it[aria-current=true]{background:#111;box-shadow:inset 2px 0 0 var(--ink)}
+.it:focus-visible{outline:2px solid var(--green);outline-offset:-2px}
+.it .n{font-weight:500}.it .m{font:12.5px "IBM Plex Mono",monospace;color:var(--dim)}
+.it .r{grid-row:1/3;grid-column:2;align-self:center}
+.rb{position:relative;height:10px;background:#111}
+.rb .ci{position:absolute;top:3px;height:4px;background:#3a3a3a}
+.rb .pt{position:absolute;top:0;width:3px;height:10px;background:var(--ink);margin-left:-1px}
+.rb .z{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#444}
+.rv{font:500 13px "IBM Plex Mono",monospace;text-align:right;margin-top:4px}
+.warn{color:var(--pink)}
+.empty{color:var(--sub);padding:16px 0}
+.detail{border:1px solid var(--rule);padding:20px}
+.dh{font-size:19px;font-weight:500;line-height:1.3}.dh i{font-style:normal;color:var(--dim);padding:0 6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px 14px;font:12.5px "IBM Plex Mono",monospace;color:var(--sub);margin:8px 0 14px}
+.ok{color:var(--green)}
+.chart{position:relative}
+.chart svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:#0d0d0d;border:1px solid #2a2a2a;padding:8px 10px;font-size:12.5px;display:none;white-space:nowrap;z-index:2}
+.tip b{font:500 13px "IBM Plex Mono",monospace;display:block}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px;margin-top:16px}
+.fact span{display:block;font:500 11px "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.fact b{font:500 15px "IBM Plex Mono",monospace;display:block}
+.fact p{margin:2px 0 0;font-size:14px;color:var(--sub)}
+.note{font-size:14px;color:var(--sub);margin-top:14px}
+.note b{color:var(--ink);font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:right;padding:0 0 10px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+td{padding:9px 0 9px 10px;border-bottom:1px solid var(--rule);text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child{font-family:"IBM Plex Sans",sans-serif;white-space:normal}
+.tw{overflow-x:auto}
+.chains{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.ch{border:1px solid var(--rule);padding:16px}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:500}
+.path i{font-style:normal;color:var(--dim)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 36px;margin-top:24px}
+.grid3 p,.grid3 li{margin:0;color:var(--sub);font-size:14.5px}
+.grid3 ul{margin:0;padding-left:18px}
+.tlink{font:500 13px "IBM Plex Mono",monospace;color:var(--ink);text-decoration:none;border-bottom:1px solid #444;padding-bottom:2px;margin-right:16px;display:inline-block;margin-top:8px}
+footer{padding:30px 0 50px;border-top:1px solid var(--rule);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:920px){.obs,.grid3{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.list{max-height:none}}
+@media(max-width:520px){.facts{grid-template-columns:minmax(0,1fr)}.detail{padding:14px}}
+</style></head>
+<body>
+<div class="wrap">
+<header class="mast"><span class="word">GHOSTLYNE</span><span class="meta" id="edition"></span></header>
+<section class="hero">
+ <p class="eyebrow">Relationship intelligence for North American power and gas</p>
+ <h1>What moves Texas power and US gas.<span>Validated, timed, and watched.</span></h1>
+ <p class="lede">Ghostlyne tests how weather, demand, wind, gas, crude, European gas, currencies, copper, crypto miners and the AI build-out relate to ERCOT North power and Henry Hub gas. Each relationship is registered before it is tested, checked first against known energy relationships, confirmed on data it has never seen, and kept in a permanent record with the ones that failed.</p>
+ <p class="verdict" id="verdict"></p>
+ <div class="kpis" id="kpis"></div>
+</section>
+
+<section class="sec" id="observatory" aria-labelledby="oh">
+ <h2 id="oh">Relationship Observatory</h2>
+ <p class="subt">Choose a market and the kind of relationship. Choose how far from the market to look, and widen or tighten the strength filter. The filter changes what you see, never what counts as validated.</p>
+ <div class="ctl">
+  <div><div class="lab">Market</div><div class="chips" id="mkts"></div></div>
+  <div><div class="lab">Relationship</div><div class="chips" id="types"></div></div>
+  <div class="row2">
+   <div id="horwrap"><div class="lab">Horizon</div><div class="chips" id="hors"></div></div>
+   <div><div class="lab">Economic distance</div><div class="chips" id="rings"></div></div>
+   <div><div class="lab" id="thrlab">Minimum strength</div><label class="slider"><input type="range" id="thr" min="0" max="0.8" step="0.02" value="0" aria-describedby="thrv"><span class="mono" id="thrv"></span></label></div>
+   <span class="count" id="count"></span>
+  </div>
+ </div>
+ <div class="obs"><div><div class="list" id="list"></div></div><div class="detail" id="detail" aria-live="polite"></div></div>
+ <p class="note">Strength is the rank correlation in the confirmation period with its 95% interval. Rank correlation is used because power prices spike. Conditional relationships show how much stronger or weaker a link is inside a regime than outside it.</p>
+</section>
+
+<section class="sec" aria-labelledby="vh">
+ <h2 id="vh">Lab validity</h2>
+ <p class="subt">Before searching for anything unconventional, the lab had to recover relationships every energy analyst knows. All were tested in exploration before registration, and again on the confirmation data.</p>
+ <div class="tw"><table><thead><tr><th>Known relationship</th><th>Expected</th><th>Exploration</th><th>Confirmation</th><th>Result</th></tr></thead><tbody id="pcs"></tbody></table></div>
+</section>
+
+<section class="sec" aria-labelledby="lh">
+ <h2 id="lh">Discovery Lab record · run R4</h2>
+ <p class="subt" id="labsub"></p>
+ <div class="tw"><table><thead><tr><th>Relationship</th><th>D1 physical drivers</th><th>D2 energy complex</th><th>D3 industry and finance</th><th>D4 climate and agriculture</th><th>D5 AI and crypto</th><th>Benchmarks and controls</th></tr></thead><tbody id="tbl"></tbody></table></div>
+ <div class="grid3">
+  <div><h3>Predictive value</h3><p id="predp"></p></div>
+  <div><h3>Limits of this run</h3><p id="power"></p></div>
+  <div><h3>Not available yet</h3><ul id="unav"></ul></div>
+ </div>
+ <p style="margin-top:20px"><a class="tlink" href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/registry/r4/PREREGISTRATION_R4.md">Pre-registration</a><a class="tlink" href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/registry/r4/R4_REPORT.md">Report</a><a class="tlink" href="https://github.com/ArashNourk/ghostlyne-lab/blob/main/registry/registry.jsonl">Registry</a><a class="tlink" href="https://arashnourk.github.io/ghostlyne-lab/r3.html">Earlier research (R1–R3)</a></p>
+</section>
+
+<section class="sec" aria-labelledby="wh">
+ <h2 id="wh">Who it is for</h2>
+ <div class="grid3" style="margin-top:6px">
+  <div><h3>Independent traders and analysts</h3><p>See which drivers, near and far, move ERCOT and Henry Hub, at which horizon, who leads, and when a relationship weakens, reverses or diverges.</p></div>
+  <div><h3>Advisors, brokers and smaller energy firms</h3><p>Relationships are labelled for short-term wholesale exposure, spread trading, or forward and procurement decisions, so spot findings are never passed off as contract intelligence.</p></div>
+  <div><h3>Why it can be trusted</h3><p>Every claim was registered before testing, checked against known energy relationships, and confirmed on later data. The full record, failures included, is public. Associations are not forecasts or causes, and each one says which it is.</p></div>
+ </div>
+</section>
+<footer><span>Ghostlyne publishes research, not investment advice.</span><span class="mono" id="foot"></span></footer>
+</div>
+<script>
+{
+const D=/*DATA*/null;
+const $=id=>document.getElementById(id);
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+const N=k=>D.names[k]||k, RING={1:"D1 physical drivers",2:"D2 energy complex",3:"D3 industry and finance",4:"D4 climate and agriculture",5:"D5 AI and crypto"};
+const f2=v=>(v>0?"+":"")+(+v).toFixed(2);
+const R=D.rels;
+$("edition").textContent="OBSERVATORY · RUN R4 · DATA TO "+new Date(D.asof).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}).toUpperCase();
+$("foot").textContent="R4 · registered "+D.prereg;
+const cnt=f=>R.filter(f).length;
+const conv=cnt(r=>r.ring===1),unconv=cnt(r=>r.ring>=2),leads=cnt(r=>r.fam.startsWith("B_")),cond=cnt(r=>r.fam.startsWith("S_"));
+const pcp=D.pc.filter(p=>p.passE&&p.passC).length;
+const v=$("verdict");v.append(el("b",null,`${R.length} relationships passed confirmation: ${conv} conventional physical drivers and ${unconv} from further out. `),
+ `${leads} lead–lag relationships and ${cond} conditional relationships held on unseen data. ${D.pred.length?D.pred.filter(p=>p.state==="Validated").length+" of "+D.pred.length+" leads tested also improved forecasts.":"None of the leads was long enough to act on, so forecasting value was not tested."} The lab recovered ${pcp} of ${D.pc.length} known energy relationships on both windows; the two it lost are shown below.`);
+[[R.length,"validated relationships"],[unconv,"beyond the physical drivers"],[leads,"lead–lag relationships"],[pcp+" / "+D.pc.length,"known relationships recovered"]].forEach(([b,s])=>{const d=el("div");d.append(el("b",null,String(b)),el("span",null,s));$("kpis").append(d)});
+const TYPES=[["together","Moves together"],["leads","Leads and lags"],["cond","Conditional"]];
+let S={mkt:Object.keys(D.focal)[0],type:"together",hor:"d",rings:new Set([1,2,3,4,5]),thr:0,sel:null};
+function fam(r){if(S.type==="together")return r.fam==="A_"+S.hor;if(S.type==="leads")return r.fam==="B_"+S.hor;return r.fam.startsWith("S_")}
+function chips(id,items,cur,on,cls){const c=$(id);c.replaceChildren();items.forEach(([k,n,dis])=>{const b=el("button","chip"+(cls?" "+cls:""),n);b.setAttribute("aria-pressed",cur(k));if(dis)b.disabled=true;b.onclick=()=>on(k);c.append(b)})}
+const tcount=k=>R.filter(r=>r.f===S.mkt&&(k==="together"?r.fam.startsWith("A_"):k==="leads"?r.fam.startsWith("B_"):r.fam.startsWith("S_"))).length;
+function timing(r){if(r.fam.startsWith("S_"))return r.fam==="S_season"?"summer vs rest of year":"scarcity days vs other days";if(!r.lag)return"same "+(r.fam.endsWith("_w")?"week":"day");const u=r.fam.endsWith("_w")?"week":"day",m=Math.abs(r.lag)+" "+u+(Math.abs(r.lag)>1?"s":"");return r.lag>0?`${N(r.x)} leads by ${m}`:`${N(r.f)} leads by ${m}`}
+function sub(r){const s=[RING[r.ring].split(" ")[0],timing(r)];if(r.st.correlation&&r.st.correlation!=="stable")s.push(r.st.correlation);if(r.fam.startsWith("A_")&&r.st.divergence&&r.st.divergence!=="within normal range")s.push(r.st.divergence);return s.join(" · ")}
+function rbar(r){const w=el("div","rb");w.append(el("i","z"));if(r.ci){const c=el("i","ci"),x=v=>(v+1)/2*100;c.style.left=x(r.ci[0])+"%";c.style.width=(x(r.ci[1])-x(r.ci[0]))+"%";w.append(c)}const p=el("i","pt");p.style.left=((r.e+1)/2*100)+"%";w.append(p);return w}
+function render(){
+ chips("mkts",Object.keys(D.focal).map(k=>[k,N(k)]),k=>k===S.mkt,k=>{S.mkt=k;S.sel=null;render()},"sm");
+ chips("types",TYPES.map(([k,n])=>[k,n+" · "+tcount(k)]),k=>k===S.type,k=>{S.type=k;S.sel=null;render()});
+ $("horwrap").hidden=S.type==="cond";
+ chips("hors",[["d","Daily"],["w","Weekly"]],k=>k===S.hor,k=>{S.hor=k;S.sel=null;render()},"sm");
+ chips("rings",[1,2,3,4,5].map(g=>[g,"D"+g]),g=>S.rings.has(g),g=>{S.rings.has(g)?S.rings.delete(g):S.rings.add(g);S.sel=null;render()},"sm");
+ $("thrlab").textContent=S.type==="cond"?"Minimum difference":"Minimum strength";$("thr").value=S.thr;$("thrv").textContent=(+S.thr).toFixed(2);
+ const all=R.filter(r=>r.f===S.mkt&&fam(r)&&S.rings.has(r.ring)),rs=all.filter(r=>Math.abs(r.e)>=S.thr-1e-9).sort((a,b)=>Math.abs(b.e)-Math.abs(a.e));
+ $("count").textContent=`${rs.length} of ${all.length} validated shown`;
+ const L=$("list");L.replaceChildren();
+ if(!rs.length){L.append(el("div","empty",all.length?"No validated relationship at this strength. Lower the filter to see weaker ones.":"No validated relationship of this kind for this market and distance. The investigations stay in the registry and are reassessed."));$("detail").replaceChildren(el("div","empty","Nothing selected."));return}
+ if(!S.sel||!rs.includes(S.sel))S.sel=rs[0];
+ rs.forEach(r=>{const b=el("button","it");b.setAttribute("aria-current",r===S.sel);b.append(el("span","n",N(r.x)),el("span","m",sub(r)));const rr=el("span","r");rr.append(rbar(r),el("div","rv",f2(r.e)));b.append(rr);b.onclick=()=>{S.sel=r;render()};L.append(b)});
+ detail(S.sel);
+}
+$("thr").oninput=e=>{S.thr=+e.target.value;S.sel=null;render()};
+const TN={A_d:"Moves together, daily",A_w:"Moves together, weekly",B_d:"Lead–lag, daily",B_w:"Lead–lag, weekly",S_season:"Conditional on season",S_scarcity:"Conditional on scarcity"};
+function detail(r){
+ const P=$("detail");P.replaceChildren();const h=el("div","dh");h.append(N(r.f),el("i",null,"↔"),N(r.x));P.append(h);
+ const t=el("div","tags");t.append(el("span","ok","Validated"),el("span",null,TN[r.fam]),el("span",null,RING[r.ring]),el("span",null,timing(r)));P.append(t);
+ const slot=el("div");P.append(slot);if(!r.fam.startsWith("S_"))loadHist(r).then(h=>{if(h&&h.length&&S.sel===r){r.h=h;slot.append(chart(r))}});
+ const F=el("div","facts");const fact=(k,v,p,cls)=>{const d=el("div","fact");d.append(el("span",null,k));if(v)d.append(el("b",cls||null,v));if(p)d.append(el("p",null,p));F.append(d)};
+ const per=r.split==="early"?"2019 on":"2022 on",pe=r.split==="early"?"2011–2018":"to 2021";
+ if(r.fam.startsWith("S_")){
+  fact("Difference",f2(r.e),`Rank correlation ${r.fam==="S_season"?"in summer":"on scarcity days"} ${f2(r.rin)} vs ${f2(r.rout)} otherwise, ${per}, q ${r.q<0.001?"< 0.001":r.q.toFixed(3)}`);
+  fact("Found in exploration",f2(r.ee),pe);
+ }else{
+  fact("Confirmed strength",`${f2(r.e)}  [${f2(r.ci[0])}, ${f2(r.ci[1])}]`,`${per}, ${r.n} ${r.fam.endsWith("_w")?"weeks":"days"}, q ${r.q<0.001?"< 0.001":r.q.toFixed(3)}`);
+  fact("Found in exploration",f2(r.ee),`${pe}; ${r.stable?"no significant change since":"changed significantly since"}`,r.stable?null:"warn");
+  const stale=r.last&&r.last.date&&(new Date(D.asof)-new Date(r.last.date))>60*864e5;
+  if(r.last&&r.last.r!=null)fact(stale?"Latest available":"Now",`${f2(r.last.r)}  [${f2(r.last.lo)}, ${f2(r.last.hi)}]`,`Rolling ${r.fam.endsWith("_w")?"104-week":"365-day"} strength to ${r.last.date}: ${r.st.correlation||""} against the confirmed estimate${stale?". This series currently ends there (data-source format change).":""}`,r.st.correlation==="reversing"||r.st.correlation==="weakening"?"warn":null);
+  if(r.fam.startsWith("A_")&&r.last&&r.last.div_z!=null)fact("Divergence",`z ${f2(r.last.div_z)}`,`${(r.st.divergence||"").replace(/^./,c=>c.toUpperCase())}. Gap between the two over the last ${r.fam==="A_w"?"4 weeks":"20 days"} against a trailing two-year reference fit. Convergence is not implied.`,r.st.divergence==="diverging"?"warn":null);
+  if(r.fam.startsWith("B_"))fact("Predictive value",r.pred?(r.pred.state==="Validated"?`validated, out-of-sample R² +${(r.pred.r2*100).toFixed(1)}%`:"tested, not validated"):(r.lag>0?"not tested (lead too short to act on)":"not applicable"),r.lag>0?"Separate test on unseen data, using only information available at the time.":"The market itself leads, so this is not a forecasting signal for it.",r.pred&&r.pred.state==="Validated"?"ok":null);
+ }
+ fact("Use",r.use,null);fact("Why it was investigated",null,r.why);fact("Possible explanation (hypothesis)",null,r.hyp);
+ P.append(F);const n=el("p","note");n.append(el("b",null,"Statistical relationship, not cause. "),r.pred&&r.pred.state==="Validated"?"Predictive value was validated separately; past relationships can change.":"Predictive value has not been demonstrated.");P.append(n);
+}
+function chart(r){
+ const W=620,H=230,pl=40,pr=12,pt=14,pb=28,box=el("div","chart"),NS="http://www.w3.org/2000/svg",mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+ const hs=r.h,n=hs.length,X=i=>pl+(W-pl-pr)*i/Math.max(1,n-1),Y=v=>pt+(H-pt-pb)*(1-(v+1)/2);
+ const s=mk("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":`Rolling strength over time, latest ${hs[n-1][1]}`});
+ [-1,-.5,0,.5,1].forEach(v=>{s.append(mk("line",{x1:pl,x2:W-pr,y1:Y(v),y2:Y(v),stroke:v===0?"#333":"#161616"}));const tx=mk("text",{x:pl-8,y:Y(v)+4,"text-anchor":"end",fill:"#8a8a8a","font-size":11,"font-family":"IBM Plex Mono"});tx.textContent=v.toFixed(1);s.append(tx)});
+ let yr="";hs.forEach((h,i)=>{const y=h[0].slice(0,4);if(y!==yr&&i>0){const tx=mk("text",{x:X(i),y:H-8,"text-anchor":"middle",fill:"#8a8a8a","font-size":11,"font-family":"IBM Plex Mono"});tx.textContent=y;s.append(tx)}yr=y});
+ s.append(mk("path",{d:"M"+hs.map((h,i)=>`${X(i)},${Y(h[3])}`).join("L")+"L"+hs.map((h,i)=>`${X(n-1-i)},${Y(hs[n-1-i][2])}`).join("L")+"Z",fill:"#ffffff",opacity:.08}));
+ s.append(mk("line",{x1:pl,x2:W-pr,y1:Y(r.e),y2:Y(r.e),stroke:"#8a8a8a","stroke-dasharray":"4 4"}));
+ const lb=mk("text",{x:W-pr,y:Y(r.e)-6,"text-anchor":"end",fill:"#b5b5b5","font-size":11});lb.textContent="confirmed "+f2(r.e);s.append(lb);
+ s.append(mk("path",{d:"M"+hs.map((h,i)=>`${X(i)},${Y(h[1])}`).join("L"),fill:"none",stroke:"#f2f2f2","stroke-width":2,"stroke-linejoin":"round"}));
+ const vl=mk("line",{y1:pt,y2:H-pb,stroke:"#555",visibility:"hidden"}),dot=mk("circle",{r:4,fill:"#f2f2f2",stroke:"#000","stroke-width":2,visibility:"hidden"});s.append(vl,dot);
+ const tip=el("div","tip");box.append(s,tip);const hit=mk("rect",{x:pl,y:pt,width:W-pl-pr,height:H-pt-pb,fill:"transparent"});s.append(hit);
+ hit.addEventListener("pointermove",e=>{const b=s.getBoundingClientRect(),x=(e.clientX-b.left)*W/b.width,i=Math.max(0,Math.min(n-1,Math.round((x-pl)/(W-pl-pr)*(n-1)))),h=hs[i];
+  vl.setAttribute("x1",X(i));vl.setAttribute("x2",X(i));vl.setAttribute("visibility","visible");dot.setAttribute("cx",X(i));dot.setAttribute("cy",Y(h[1]));dot.setAttribute("visibility","visible");
+  tip.replaceChildren(el("b",null,f2(h[1])),el("span",null,`to ${h[0]} · 95% ${f2(h[2])} to ${f2(h[3])}${h[4]!=null&&r.fam.startsWith("A_")?" · divergence z "+f2(h[4]):""}`));tip.style.display="block";
+  const px=X(i)/W*b.width,tw=tip.offsetWidth;tip.style.left=(px+12+tw>b.width?Math.max(0,px-12-tw):px+12)+"px";tip.style.top="6px"});
+ hit.addEventListener("pointerleave",()=>{tip.style.display="none";vl.setAttribute("visibility","hidden");dot.setAttribute("visibility","hidden")});
+ const cap=el("p","note",`Rolling ${r.fam.endsWith("_w")?"104-week":"365-day"} rank strength using only data available at each date, with its 95% band. Dashed: the confirmed estimate.`);cap.style.marginTop="6px";box.append(cap);return box;
+}
+const HC={};
+async function loadHist(r){const k=r.f;try{if(!HC[k]){const res=await fetch("hist4/"+encodeURIComponent(k)+".json");HC[k]=res.ok?await res.json():{}}return HC[k][r.hk]}catch(e){return null}}
+render();
+D.pc.forEach(p=>{const tr=el("tr");tr.append(el("td",null,`${N(p.x)} → ${N(p.f)}`),el("td",null,p.sign>0?"positive":"negative"),el("td",null,f2(p.rE)),el("td",null,p.rC==null?"n/a":f2(p.rC)),el("td",p.passE&&p.passC?"ok":"warn",p.passE&&p.passC?"recovered":"not recovered"));$("pcs").append(tr)});
+const FN=[["A_d","Moves together, daily"],["A_w","Moves together, weekly"],["B_d","Lead–lag, 1–10 days"],["B_w","Lead–lag, 1–8 weeks"],["S_season","Conditional on season"],["S_scarcity","Conditional on scarcity"]];
+FN.forEach(([k,n])=>{const tr=el("tr");tr.append(el("td",null,n));[1,2,3,4,5,0].forEach(g=>{const u=(D.units[k]||{})[g]||0,vv=(D.val[k]||{})[g]||0;tr.append(el("td",null,`${vv} / ${u}`))});$("tbl").append(tr)});
+$("labsub").textContent=`Seven ERCOT and gas measurements against 40 external series, from weather and demand to crypto miners and data-centre operators. Explored on early data with false-discovery control per relationship type and distance ring, confirmed on later data it had never seen. Registered before testing (${D.prereg}). Cells show validated over tested pairs.`;
+const pv=D.pred.filter(p=>p.state==="Validated");$("predp").textContent=D.pred.length?`${D.pred.length} validated leads where the external side leads by enough to act on were tested on unseen data, using only information available at the time; ${pv.length} improved forecasts.${pv.length?" "+pv.map(p=>`${N(p.external)} → ${N(p.focal)} (${p.lag} ${p.family==="B_w"?"weeks":"days"}, R² +${(p.r2_oos*100).toFixed(1)}%)`).join("; ")+".":""}`:"No validated lead was long enough to test for forecasting value.";
+$("power").textContent="Daily tests have thousands of observations, so weak relationships are detectable. Wind and solar data end in June 2024 because of an EIA format change. Benchmarks such as orange juice are real distant series, not guaranteed negatives; synthetic series are the true negative controls.";
+Object.entries(D.unavailable).forEach(([k,v])=>{const li=el("li");li.append(el("span",null,k+": "),document.createTextNode(v));$("unav").append(li)});
+}
+</script>
+</body></html>

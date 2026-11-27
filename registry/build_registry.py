@@ -56,3 +56,21 @@ if os.path.exists("r3/results/R3.json"):
     with open(P, "a") as f:
         for e in new[n0:]: f.write(json.dumps(e) + "\n")
     print("R3 appended", len(new) - n0)
+
+# ---- R4 ----
+if os.path.exists("r4/results/R4.json"):
+    n0 = len(new); r4 = json.load(open("r4/results/R4.json")); c4 = {(c["focal"], c["external"], c["family"]): c for c in r4["confirm"]}
+    for u in r4["units"]:
+        k = (u["focal"], u["external"], u["family"]); c = c4.get(k)
+        st = c["state"] if c else ("Insufficient Data" if not u.get("ok") else "Not Detected")
+        add(dict(exp_id=eid(*k, "energy"), run="R4", date="2026-11-27", event="result", market="energy", focal=u["focal"], external=u["external"], ring=u["ring"], role=u["role"], family=u["family"],
+                 lag=c["lag"] if c else u["lag"], split=u.get("split"), effect_explore=u["r"], p_explore=u["p"], q_explore=u.get("q"), n_explore=u["n"],
+                 effect_confirm=c["e_confirm"] if c else None, q_confirm=c["q_confirm"] if c else None, n_confirm=c["n_confirm"] if c else None, state=st,
+                 reason=c["reason"] if c else ("insufficient data" if st == "Insufficient Data" else "not a candidate in exploration (false-discovery control)")))
+    for w in ("explore", "confirm"):
+        for p in r4["positive_controls"][w]:
+            add(dict(exp_id=eid(p["focal"], p["external"], p["family"], "positive-control"), run="R4", date="2026-11-27", event="lab_validity", window=w, focal=p["focal"], external=p["external"],
+                     family=p["family"], expected=p["expected"], effect=p["r"], p=p["p"], state="Recovered" if p["passed"] else "Not recovered"))
+    with open(P, "a") as f:
+        for e in new[n0:]: f.write(json.dumps(e) + "\n")
+    print("R4 appended", len(new) - n0)
