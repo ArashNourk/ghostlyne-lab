@@ -113,3 +113,26 @@ For anyone exposed to price spikes, knowing that the usual relationships break d
 2. Test at the hourly and peak-hour level, where scarcity and renewables act.
 3. Pre-register the scarcity-conditional and neighbouring-grid findings as confirmatory claims on fresh data as it arrives (prospective monitoring).
 4. Test whether weather forecasts lead prices, if a forecast archive can be licensed.
+
+## Correction R4.1 (27 Nov 2026, after external review)
+
+External reviews (Gemini, ChatGPT) found defects in the monitoring and in parts of the interpretation. Each was checked against the code; all were confirmed.
+
+1. **Sign changes labelled "strengthening".** `behaviour()` checked magnitude before sign, so a relationship that crossed zero (for example the basis with Boston and Philadelphia temperatures, or North day-ahead with Henry Hub) was called strengthening. Now a sign change is "possible sign change (direction uncertain)" when the interval includes zero, and "reversed" when it does not. The report's statement that the eastern-temperature link "is strengthening" was wrong. It is a possible sign change.
+2. **Lead–lag monitoring used a different statistic from validation.** It used raw shifted anomalies rather than the Fourier-deseasonalised, dual-filter prewhitened correlation. That created the only two "diverging" flags. Lead–lag monitoring now uses the validation statistic, and divergence is computed only for same-period associations.
+3. **El Niño was never tested** (n = 0 on all 14 units). The weekly series is dated Wednesday while other weekly series are dated Friday. Fixed in the code for R5. R4's universe effectively had 39 external series, not 40.
+4. **The scarcity regime conditioned on the outcome.** It was defined by the North real-time price itself, which restricts the range and can mechanically weaken correlations with drivers. Its p-values also assumed independent days, though scarcity days cluster. The six S_scarcity results are kept in the registry but flagged. R5 will define stress by physical conditions and use block-bootstrap inference.
+5. **Day-of-week means were computed on the full sample** before the exploration/confirmation split: a minor look-ahead. Fixed in monitoring; to be fixed in validation in R5.
+6. **Interpretation.** The West–North basis leading eastern temperatures by two days may reflect weather systems moving west to east across North America, not markets pricing forecasts. Both remain hypotheses.
+7. **Data freshness.** From 2024 H2, EIA splits wind and solar into "with" and "without integrated battery storage". Summing the sub-columns restores coverage to Nov 2026. The R4 input panel is preserved on branch `registry-r4fetch-v1-R4-input`.
+
+Validation results and states are unchanged.
+
+Corrected monitoring (`results/R4_monitoring_v2.json`):
+- 64 stable, 6 strengthening, 6 weakening;
+- 6 possible sign changes, 1 reversed (the North day-ahead minus real-time spread with ERCOT nuclear output);
+- no diverging flags; 5 converging.
+
+Every monitored relationship now runs to November 2026.
+
+**Classification.** 112 of the 113 validated relationships are conventional energy relationships (D1 physical drivers, D2 energy complex). Only one is unconventional: corn with NYMEX gas, +0.06. The Observatory now labels conventional and unconventional explicitly.

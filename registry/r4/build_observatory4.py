@@ -29,7 +29,10 @@ def name(k):
     if k in U.FOCAL: return U.FOCAL[k]["name"]
     return U.EXTERNALS.get(k, {}).get("name", k)
 
-def build(res, out, histdir):
+def build(res, out, histdir, mon=None, correction=None):
+    if mon:
+        M = {(m["focal"], m["external"], m["family"], m["lag"]): m["monitor"] for m in mon["monitors"]}
+        for v in res["validated"]: v["monitor"] = M.get((v["focal"], v["external"], v["family"], v["lag"]), v.get("monitor"))
     asof = min(res["inventory"][k]["last"] for k in ("ERCOT_N_DA", "HH_SPOT") if k in res["inventory"])
     fixd = lambda d: d if d <= asof else asof
     pred = {(p["focal"], p["external"], p["family"], p["lag"]): p for p in res.get("predictive", [])}
@@ -55,9 +58,11 @@ def build(res, out, histdir):
         if u.get("ok"): units.setdefault(u["family"], {}).setdefault(u["ring"], 0); units[u["family"]][u["ring"]] += 1
     for v in res["validated"]: val.setdefault(v["family"], {}).setdefault(v["ring"], 0); val[v["family"]][v["ring"]] += 1
     data = dict(names={k: name(k) for k in list(U.FOCAL) + list(U.EXTERNALS)}, focal={k: 1 for k in U.FOCAL}, rels=rels, pc=pcs, units=units, val=val,
-                pred=res.get("predictive", []), unavailable=U.UNAVAILABLE, asof=asof, prereg="dda8c2c")
+                pred=res.get("predictive", []), unavailable=U.UNAVAILABLE, asof=asof, prereg="dda8c2c", correction=correction)
     html = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "observatory4_template.html")).read().replace("/*DATA*/null", json.dumps(data, separators=(",", ":"), default=float))
     open(out, "w").write(html); return len(html), len(rels)
 
 if __name__ == "__main__":
-    print(build(json.load(open(sys.argv[1])), sys.argv[2], sys.argv[3]))
+    mon = json.load(open(sys.argv[4])) if len(sys.argv) > 4 else None
+    corr = dict(date="27 Nov 2026", text="After external review, monitoring was corrected (R4.1): a change of sign is no longer labelled strengthening; lead–lag monitoring now uses the same prewhitened statistic as validation; day-of-week effects are removed within each window; wind and solar data are restored after mid-2024. The scarcity regime is defined by the price itself, which can bias those results, and will be redefined in R5. Validation results are unchanged.") if mon else None
+    print(build(json.load(open(sys.argv[1])), sys.argv[2], sys.argv[3], mon, corr))

@@ -154,24 +154,25 @@ footer{padding:30px 0 50px;border-top:1px solid var(--rule);color:var(--dim);fon
 const D=/*DATA*/null;
 const $=id=>document.getElementById(id);
 const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
-const N=k=>D.names[k]||k, RING={1:"D1 physical drivers",2:"D2 energy complex",3:"D3 industry and finance",4:"D4 climate and agriculture",5:"D5 AI and crypto"};
+const N=k=>D.names[k]||k, RING={1:"D1 physical drivers · conventional",2:"D2 energy complex · conventional",3:"D3 industry and finance · unconventional",4:"D4 climate and agriculture · unconventional",5:"D5 AI and crypto · unconventional"};
 const f2=v=>(v>0?"+":"")+(+v).toFixed(2);
 const R=D.rels;
 $("edition").textContent="OBSERVATORY · RUN R4 · DATA TO "+new Date(D.asof).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}).toUpperCase();
 $("foot").textContent="R4 · registered "+D.prereg;
 const cnt=f=>R.filter(f).length;
-const conv=cnt(r=>r.ring===1),unconv=cnt(r=>r.ring>=2),leads=cnt(r=>r.fam.startsWith("B_")),cond=cnt(r=>r.fam.startsWith("S_"));
-const pcp=D.pc.filter(p=>p.passE&&p.passC).length;
-const v=$("verdict");v.append(el("b",null,`${R.length} relationships passed confirmation: ${conv} conventional physical drivers and ${unconv} from further out. `),
- `${leads} lead–lag relationships and ${cond} conditional relationships held on unseen data. ${D.pred.length?D.pred.filter(p=>p.state==="Validated").length+" of "+D.pred.length+" leads tested also improved forecasts.":"None of the leads was long enough to act on, so forecasting value was not tested."} The lab recovered ${pcp} of ${D.pc.length} known energy relationships on both windows; the two it lost are shown below.`);
-[[R.length,"validated relationships"],[unconv,"beyond the physical drivers"],[leads,"lead–lag relationships"],[pcp+" / "+D.pc.length,"known relationships recovered"]].forEach(([b,s])=>{const d=el("div");d.append(el("b",null,String(b)),el("span",null,s));$("kpis").append(d)});
+const conv=cnt(r=>r.ring<=2),unconv=cnt(r=>r.ring>=3),leads=cnt(r=>r.fam.startsWith("B_")),cond=cnt(r=>r.fam.startsWith("S_"));
+const pairs=new Set(R.map(r=>r.f+"|"+r.x)).size, pcp=D.pc.filter(p=>p.passE&&p.passC).length;
+const v=$("verdict");v.append(el("b",null,`${R.length} relationships passed confirmation, covering ${pairs} distinct pairs. ${conv} are conventional energy relationships (physical drivers and the energy complex); ${unconv} ${unconv===1?"is":"are"} unconventional. `),
+ `No industry, finance, AI or crypto variable showed a validated link. None of the ${leads} lead–lag relationships gives an external signal far enough ahead to act on, so forecasting value was not tested. The lab recovered ${pcp} of ${D.pc.length} known energy relationships on both windows.`);
+[[R.length,"validated relationships"],[pairs,"distinct pairs"],[unconv,"unconventional (D3–D5)"],[pcp+" / "+D.pc.length,"known relationships recovered"]].forEach(([b,s])=>{const d=el("div");d.append(el("b",null,String(b)),el("span",null,s));$("kpis").append(d)});
+if(D.correction){const c=el("p","note");c.append(el("b",null,"Correction, "+D.correction.date+". "),D.correction.text);$("verdict").after(c)}
 const TYPES=[["together","Moves together"],["leads","Leads and lags"],["cond","Conditional"]];
 let S={mkt:Object.keys(D.focal)[0],type:"together",hor:"d",rings:new Set([1,2,3,4,5]),thr:0,sel:null};
 function fam(r){if(S.type==="together")return r.fam==="A_"+S.hor;if(S.type==="leads")return r.fam==="B_"+S.hor;return r.fam.startsWith("S_")}
 function chips(id,items,cur,on,cls){const c=$(id);c.replaceChildren();items.forEach(([k,n,dis])=>{const b=el("button","chip"+(cls?" "+cls:""),n);b.setAttribute("aria-pressed",cur(k));if(dis)b.disabled=true;b.onclick=()=>on(k);c.append(b)})}
 const tcount=k=>R.filter(r=>r.f===S.mkt&&(k==="together"?r.fam.startsWith("A_"):k==="leads"?r.fam.startsWith("B_"):r.fam.startsWith("S_"))).length;
 function timing(r){if(r.fam.startsWith("S_"))return r.fam==="S_season"?"summer vs rest of year":"scarcity days vs other days";if(!r.lag)return"same "+(r.fam.endsWith("_w")?"week":"day");const u=r.fam.endsWith("_w")?"week":"day",m=Math.abs(r.lag)+" "+u+(Math.abs(r.lag)>1?"s":"");return r.lag>0?`${N(r.x)} leads by ${m}`:`${N(r.f)} leads by ${m}`}
-function sub(r){const s=[RING[r.ring].split(" ")[0],timing(r)];if(r.st.correlation&&r.st.correlation!=="stable")s.push(r.st.correlation);if(r.fam.startsWith("A_")&&r.st.divergence&&r.st.divergence!=="within normal range")s.push(r.st.divergence);return s.join(" · ")}
+function sub(r){const s=[RING[r.ring].split(" ")[0]+(r.ring<=2?" conventional":" unconventional"),timing(r)];if(r.st.correlation&&r.st.correlation!=="stable")s.push(r.st.correlation);if(r.fam.startsWith("A_")&&r.st.divergence&&r.st.divergence!=="within normal range")s.push(r.st.divergence);return s.join(" · ")}
 function rbar(r){const w=el("div","rb");w.append(el("i","z"));if(r.ci){const c=el("i","ci"),x=v=>(v+1)/2*100;c.style.left=x(r.ci[0])+"%";c.style.width=(x(r.ci[1])-x(r.ci[0]))+"%";w.append(c)}const p=el("i","pt");p.style.left=((r.e+1)/2*100)+"%";w.append(p);return w}
 function render(){
  chips("mkts",Object.keys(D.focal).map(k=>[k,N(k)]),k=>k===S.mkt,k=>{S.mkt=k;S.sel=null;render()},"sm");
@@ -227,7 +228,7 @@ function chart(r){
   tip.replaceChildren(el("b",null,f2(h[1])),el("span",null,`to ${h[0]} · 95% ${f2(h[2])} to ${f2(h[3])}${h[4]!=null&&r.fam.startsWith("A_")?" · divergence z "+f2(h[4]):""}`));tip.style.display="block";
   const px=X(i)/W*b.width,tw=tip.offsetWidth;tip.style.left=(px+12+tw>b.width?Math.max(0,px-12-tw):px+12)+"px";tip.style.top="6px"});
  hit.addEventListener("pointerleave",()=>{tip.style.display="none";vl.setAttribute("visibility","hidden");dot.setAttribute("visibility","hidden")});
- const cap=el("p","note",`Rolling ${r.fam.endsWith("_w")?"104-week":"365-day"} rank strength using only data available at each date, with its 95% band. Dashed: the confirmed estimate.`);cap.style.marginTop="6px";box.append(cap);return box;
+ const cap=el("p","note",`Rolling ${r.fam.endsWith("_w")?"104-week":"365-day"} ${r.fam.startsWith("B_")?"prewhitened lagged correlation (the same statistic used for validation)":"rank strength"} using only data available at each date, with its 95% band. Dashed: the confirmed estimate.`);cap.style.marginTop="6px";box.append(cap);return box;
 }
 const HC={};
 async function loadHist(r){const k=r.f;try{if(!HC[k]){const res=await fetch("hist4/"+encodeURIComponent(k)+".json");HC[k]=res.ok?await res.json():{}}return HC[k][r.hk]}catch(e){return null}}
