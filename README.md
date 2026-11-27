@@ -3,6 +3,7 @@
 Ghostlyne discovers and monitors statistical relationships between AI-infrastructure markets and the wider economy. Two modules: the **Discovery Lab** (`registry/`, private computation in GitHub Actions) and the **Relationship Observatory** (`docs/index.html`). The append-only **Relationship Registry** (`registry/registry.jsonl`) keeps every investigation, positive, negative or inconclusive.
 
 - R1 (26 Nov 2026): forecasting test on broad monthly US indices. 185 tested, 0 validated. `registry/R1_RESULTS.md`, page `docs/r1.html`.
+- R3 (27 Nov 2026): the AI-infrastructure stack. 840 validated co-movements with distant markets (76 at D4/D5), 498 above the control line; 0 of 119 lead-lag candidates replicated; 2 multi-hop paths validated. `registry/r3/R3_REPORT.md`. Observatory `docs/index.html` (R2 page `docs/r2.html`).
 - R2 (26 Nov 2026): semiconductor memory, separate association, lead-lag, conditional and predictive paths. 28 market-adjusted associations validated (all D1-D3, conventional); no lead-lag; no remote relationship. `registry/r2/R2_REPORT.md`.
 
 The earlier liquidation-odds research below is archived; its page is `docs/odds.html`.

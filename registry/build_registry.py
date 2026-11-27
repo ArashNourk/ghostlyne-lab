@@ -36,3 +36,23 @@ for e in r2["replay"]["events"]:
 with open(P, "a") as f:
     for e in new: f.write(json.dumps(e) + "\n")
 print("appended", len(new), "events; total", len(seen))
+
+# ---- R3 ----
+if os.path.exists("r3/results/R3.json"):
+    n0 = len(new)
+    sys.path.insert(0, "r3")
+    r3 = json.load(open("r3/results/R3.json")); c3 = {(c["focal"], c["external"], c["family"], c.get("dir", "")): c for c in r3["confirm"]}
+    for u in r3["units"]:
+        k = (u["focal"], u["external"], u["family"], u.get("dir", "")); c = c3.get(k)
+        st = c["state"] if c else ("Insufficient Data" if not u.get("ok") else "Not Detected")
+        add(dict(exp_id=eid(*k), run="R3", date="2026-11-27", event="result", focal=u["focal"], external=u["external"], ring=u["ring"], role=u["role"], family=u["family"],
+                 dir=u.get("dir", ""), lag=c["lag"] if c else u["lag"], effect_explore=u["r"], p_explore=u["p"], q_explore=u.get("q"), n_explore=u["n"],
+                 effect_confirm=c["e_confirm"] if c else None, q_confirm=c["q_confirm"] if c else None, n_confirm=c["n_confirm"] if c else None,
+                 state=st, reason=c["reason"] if c else ("insufficient data" if st == "Insufficient Data" else "not a candidate in exploration (false-discovery control)")))
+    for ch in r3["chains"]:
+        add(dict(exp_id=eid(*ch["chain"], "chain"), run="R3", date="2026-11-27", event="result", focal=ch["chain"][2], external=ch["chain"][0], via=ch["chain"][1], family="chain",
+                 effect_explore=ch.get("E", {}).get("indirect_std"), effect_confirm=ch.get("C", {}).get("indirect_std"), q_explore=ch.get("q_explore"), q_confirm=ch.get("q_confirm"),
+                 state=ch.get("state"), reason=ch.get("reason")))
+    with open(P, "a") as f:
+        for e in new[n0:]: f.write(json.dumps(e) + "\n")
+    print("R3 appended", len(new) - n0)
