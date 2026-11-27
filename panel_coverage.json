@@ -1,0 +1,414 @@
+{
+ "coverage": {
+  "RT_HB_HOUSTON": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "RT_HB_HOUSTON_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "RT_HB_NORTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "RT_HB_NORTH_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "RT_HB_SOUTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "RT_HB_SOUTH_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "RT_HB_WEST": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "RT_HB_WEST_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "LOAD_CISO": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 4148
+  },
+  "LOAD_ERCO": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 4154
+  },
+  "LOAD_ISNE": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 4166
+  },
+  "LOAD_MISO": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 4162
+  },
+  "LOAD_PJM": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 4155
+  },
+  "LOAD_SWPP": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 4062
+  },
+  "LOADFC_CISO": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 4158
+  },
+  "LOADFC_ERCO": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 4161
+  },
+  "LOADFC_ISNE": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 4167
+  },
+  "LOADFC_MISO": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 4163
+  },
+  "LOADFC_PJM": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 4151
+  },
+  "LOADFC_SWPP": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 4123
+  },
+  "WIND_CISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3063
+  },
+  "WIND_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 3065
+  },
+  "WIND_ISNE": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3070
+  },
+  "WIND_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3067
+  },
+  "WIND_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 2990
+  },
+  "WIND_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3069
+  },
+  "SOLAR_CISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3064
+  },
+  "SOLAR_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 3065
+  },
+  "SOLAR_ISNE": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3070
+  },
+  "SOLAR_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3067
+  },
+  "SOLAR_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 2989
+  },
+  "SOLAR_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3069
+  },
+  "GASGEN_CISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3061
+  },
+  "GASGEN_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 3065
+  },
+  "GASGEN_ISNE": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3070
+  },
+  "GASGEN_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3067
+  },
+  "GASGEN_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 2990
+  },
+  "GASGEN_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3069
+  },
+  "NUC_CISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3064
+  },
+  "NUC_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 3065
+  },
+  "NUC_ISNE": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3070
+  },
+  "NUC_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3067
+  },
+  "NUC_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 2989
+  },
+  "NUC_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 3069
+  },
+  "DA_HB_HOUSTON": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "DA_HB_HOUSTON_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "DA_HB_NORTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "DA_HB_NORTH_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "DA_HB_SOUTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "DA_HB_SOUTH_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "DA_HB_WEST": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 5835
+  },
+  "DA_HB_WEST_PEAK": {
+   "first": "2010-12-01",
+   "last": "2026-11-20",
+   "n": 4168
+  },
+  "HH_SPOT": {
+   "first": "1997-01-07",
+   "last": "2026-11-24",
+   "n": 5737
+  },
+  "STORAGE_L48": {
+   "first": "2010-01-01",
+   "last": "2026-11-20",
+   "n": 882
+  },
+  "T_DFW": {
+   "first": "2009-01-01",
+   "last": "2026-11-15",
+   "n": 6528
+  },
+  "T_IAH": {
+   "first": "2009-01-01",
+   "last": "2026-11-15",
+   "n": 6528
+  },
+  "T_PHL": {
+   "first": "2009-01-01",
+   "last": "2026-11-15",
+   "n": 6528
+  },
+  "T_BOS": {
+   "first": "2009-01-01",
+   "last": "2026-11-15",
+   "n": 6528
+  },
+  "NINO34": {
+   "first": "1981-09-02",
+   "last": "2026-11-18",
+   "n": 2360
+  }
+ },
+ "missing": {},
+ "eia930_wind_solar_columns": {
+  "2018_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2018_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2019_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2019_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2019_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2019_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2020_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2020_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2020_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2020_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2021_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2021_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2021_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2021_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2022_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2022_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2022_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2022_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2023_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2023_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2023_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2023_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2024_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind"
+  ],
+  "2024_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar"
+  ],
+  "2024_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind without Integrated Battery Storage",
+   "Net Generation (MW) from Wind with Integrated Battery Storage"
+  ],
+  "2024_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar without Integrated Battery Storage",
+   "Net Generation (MW) from Solar with Integrated Battery Storage"
+  ],
+  "2025_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind without Integrated Battery Storage",
+   "Net Generation (MW) from Wind with Integrated Battery Storage"
+  ],
+  "2025_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar without Integrated Battery Storage",
+   "Net Generation (MW) from Solar with Integrated Battery Storage"
+  ],
+  "2025_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind without Integrated Battery Storage",
+   "Net Generation (MW) from Wind with Integrated Battery Storage"
+  ],
+  "2025_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar without Integrated Battery Storage",
+   "Net Generation (MW) from Solar with Integrated Battery Storage"
+  ],
+  "2026_Jan_Jun_Wind": [
+   "Net Generation (MW) from Wind without Integrated Battery Storage",
+   "Net Generation (MW) from Wind with Integrated Battery Storage"
+  ],
+  "2026_Jan_Jun_Solar": [
+   "Net Generation (MW) from Solar without Integrated Battery Storage",
+   "Net Generation (MW) from Solar with Integrated Battery Storage"
+  ],
+  "2026_Jul_Dec_Wind": [
+   "Net Generation (MW) from Wind without Integrated Battery Storage",
+   "Net Generation (MW) from Wind with Integrated Battery Storage"
+  ],
+  "2026_Jul_Dec_Solar": [
+   "Net Generation (MW) from Solar without Integrated Battery Storage",
+   "Net Generation (MW) from Solar with Integrated Battery Storage"
+  ]
+ }
+}

@@ -1,0 +1,36 @@
+name: ghostlyne-intraday-data
+on:
+  workflow_dispatch:
+    inputs:
+      smoke:
+        description: "Smoke test (2 markets, 2 months)"
+        type: boolean
+        default: true
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy requests pyarrow
+      - uses: actions/cache@v4
+        if: ${{ !inputs.smoke }}
+        with:
+          path: intraday_out
+          key: intraday-v1-${{ github.run_id }}
+          restore-keys: intraday-v1-
+      - name: Build hourly tables
+        run: python research/intraday/fetch.py intraday_out ${{ inputs.smoke && '--smoke' || '' }}
+      - name: Summarize
+        run: python -c "import pandas as pd,glob;[print(f, len(d:=pd.read_parquet(f)), d.index.min() if len(d) else '-', d.index.max() if len(d) else '-', round(d.isna().mean().mean(),3)) for f in sorted(glob.glob('intraday_out/*.parquet'))]"
+      - name: Push tables to the research-intraday branch
+        run: |
+          git config user.name "ghostlyne-bot"; git config user.email "actions@users.noreply.github.com"
+          BR=research-intraday${{ inputs.smoke && '-smoke' || '' }}
+          git checkout --orphan $BR; git rm -rq --cached . ; git add -f intraday_out/*.parquet
+          git commit -qm "Intraday hourly tables $(date -u +%F)"; git push -f origin $BR
