@@ -22,7 +22,8 @@ def build(panel, storage, nino, yahoo):
         if k in P: S[k] = P[k].where(P[k] > 0)
     st = storage.sort_index(); chg = st.diff(); woy = chg.index.isocalendar().week.values
     norm = pd.Series([chg[(woy == w) & (chg.index < t) & (chg.index >= t - pd.DateOffset(years=5))].mean() for t, w in zip(chg.index, woy)], index=chg.index)
-    S["STORAGE_SURPRISE"] = (chg - norm).dropna(); S["NINO34"] = nino
+    sur = (chg - norm).dropna(); sur.index = sur.index + pd.Timedelta(days=7)  # dated by release: EIA reports the week ending Friday on the following Thursday
+    S["STORAGE_SURPRISE"] = sur; S["NINO34"] = nino
     for k, v in yahoo.items(): S["NG_FRONT" if k == "NG=F" else k] = v
     idx = pd.bdate_range("2009-01-01", "2026-12-31")
     for k, sd in (("SYN_1", 11), ("SYN_2", 22), ("SYN_3", 33)):

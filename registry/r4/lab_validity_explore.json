@@ -1,0 +1,74 @@
+[
+ {
+  "focal": "ERCOT_N_DA",
+  "external": "HH_SPOT",
+  "family": "A_d",
+  "expected": 1,
+  "window": "E",
+  "r": 0.1398486241734719,
+  "p": 5.124842772374905e-10,
+  "n": 2018,
+  "r_pearson": 0.0807794064092583,
+  "passed": true
+ },
+ {
+  "focal": "ERCOT_N_DA",
+  "external": "DD_DFW",
+  "family": "A_d",
+  "expected": 1,
+  "window": "E",
+  "r": 0.21427963677481912,
+  "p": 0.0,
+  "n": 2922,
+  "r_pearson": 0.10468255377507905,
+  "passed": true
+ },
+ {
+  "focal": "LOAD_ERCO",
+  "external": "DD_DFW",
+  "family": "A_d",
+  "expected": 1,
+  "window": "E",
+  "r": 0.5531645692277775,
+  "p": 0.0,
+  "n": 2365,
+  "r_pearson": 0.5698003782246485,
+  "passed": true
+ },
+ {
+  "focal": "ERCOT_N_DA",
+  "external": "LOAD_ERCO",
+  "family": "A_d",
+  "expected": 1,
+  "window": "E",
+  "r": 0.11876815702551415,
+  "p": 1.9395121220178169e-07,
+  "n": 2365,
+  "r_pearson": 0.0164352573090914,
+  "passed": true
+ },
+ {
+  "focal": "ERCOT_N_DA",
+  "external": "WIND_ERCO",
+  "family": "A_d",
+  "expected": -1,
+  "window": "E",
+  "r": -0.3693848985660712,
+  "p": 0.0,
+  "n": 1276,
+  "r_pearson": -0.0589485205640685,
+  "passed": true
+ },
+ {
+  "focal": "HH_SPOT",
+  "external": "STORAGE_SURPRISE",
+  "family": "A_w",
+  "expected": -1,
+  "window": "E",
+  "r": -0.1434388328517829,
+  "p": 0.0009201982226039185,
+  "n": 415,
+  "r_pearson": -0.14565614163588728,
+  "passed": true
+ }
+]
