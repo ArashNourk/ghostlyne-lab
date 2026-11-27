@@ -1,0 +1,25 @@
+name: ghostlyne-depth-data
+on:
+  workflow_dispatch:
+    inputs:
+      start: {default: "2024-01-01", type: string}
+      end: {default: "2025-06-30", type: string}
+      symbols: {default: "", type: string}
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install pandas numpy requests pyarrow
+      - run: python research/intraday/fetch_depth.py depth_out ${{ inputs.start }} ${{ inputs.end }} ${{ inputs.symbols }}
+      - name: Push to the research-depth branch
+        run: |
+          git config user.name "ghostlyne-bot"; git config user.email "actions@users.noreply.github.com"
+          BR=research-depth${{ inputs.symbols != '' && '-smoke' || '' }}
+          git checkout --orphan $BR; git rm -rq --cached . ; git add -f depth_out/*.parquet
+          git commit -qm "Order-book depth $(date -u +%F)"; git push -f origin $BR
