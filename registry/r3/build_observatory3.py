@@ -25,7 +25,7 @@ def name(k):
     return U.EXTERNALS.get(k, {}).get("name", k)
 
 def build(res, out, histdir=None):
-    asof = max(v["last"] for k, v in res["inventory"].items() if k in U.FOCAL)
+    asof = min(v["last"] for k, v in res["inventory"].items() if k in U.FOCAL)  # every instrument has data to this date
     fixd = lambda d: d if d <= asof else asof
     pred = {(p["focal"], p["external"], p["family"], p["lag"]): p for p in res.get("predictive", [])}
     rels = []
