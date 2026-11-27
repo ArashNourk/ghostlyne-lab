@@ -1,0 +1,174 @@
+{
+ "coverage": {
+  "DA_HB_HOUSTON": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "DA_HB_NORTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "DA_HB_SOUTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "DA_HB_WEST": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "RT_HB_HOUSTON": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "RT_HB_NORTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "RT_HB_SOUTH": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "RT_HB_WEST": {
+   "first": "2010-12-01",
+   "last": "2026-11-21",
+   "n": 140024
+  },
+  "LOAD_ERCO": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 99697
+  },
+  "LOAD_MISO": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 99888
+  },
+  "LOAD_PJM": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 99718
+  },
+  "LOAD_SWPP": {
+   "first": "2015-07-01",
+   "last": "2026-11-25",
+   "n": 97501
+  },
+  "LOADFC_ERCO": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 99865
+  },
+  "LOADFC_MISO": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 99912
+  },
+  "LOADFC_PJM": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 99625
+  },
+  "LOADFC_SWPP": {
+   "first": "2015-07-01",
+   "last": "2026-11-26",
+   "n": 98955
+  },
+  "WIND_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 73561
+  },
+  "WIND_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73607
+  },
+  "WIND_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 71749
+  },
+  "WIND_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73656
+  },
+  "SOLAR_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 73561
+  },
+  "SOLAR_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73607
+  },
+  "SOLAR_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 71744
+  },
+  "SOLAR_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73656
+  },
+  "GASGEN_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 73561
+  },
+  "GASGEN_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73607
+  },
+  "GASGEN_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 71749
+  },
+  "GASGEN_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73656
+  },
+  "NUC_ERCO": {
+   "first": "2018-07-02",
+   "last": "2026-11-25",
+   "n": 73561
+  },
+  "NUC_MISO": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73607
+  },
+  "NUC_PJM": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 71744
+  },
+  "NUC_SWPP": {
+   "first": "2018-07-01",
+   "last": "2026-11-25",
+   "n": 73656
+  },
+  "HASHPRICE": {
+   "first": "2009-01-17",
+   "last": "2026-11-26",
+   "n": 6520
+  }
+ },
+ "missing": {},
+ "terms": {
+  "blockchain_com_terms": "data-site='home'] body { font-family: 'Overused Grotesk', 'Grotesk Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; } html[data-site='wealth'] body { font-family: 'gotham', 'Helvetica Neue', Helvetica, Arial, sans-serif; } window.NONCE=\"BHNCrvzMMhHaFvgU38QvV5myu5ABTKao\"; {\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"potentialAction\":{\"@type\":\"SearchAction\",\"query-input\":\"required name=search_term_string\",\"target\":\"https://www.blockchain.com/search?search={search_term_string}\"},\"url\":\"https://www.blockchain.com/\"} function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag(\"consent\",\"default\",{ad_personalization:\"denied\",ad_storage:\"denied\",ad_user_data:\"denied\",analytics_storage:\"denied\",functionality_storage:\"denied\",personalization_storage:\"denied\",security_storage:\"granted\",wait_for_update:500}),gtag(\"set\",\"ads_data_redaction\",!0),gtag(\"set\",\"url_passthrough\",!1); // GOOGLE TAG MANAGER (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/g",
+  "cloudminecrypto_download": "data, and we can\u2019t help with those. How do I install the APK? Android asks for your permission once, because the app doesn\u2019t come from Google Play. Tap through it: Installing the APK \u00b7 5 steps 1 Download from this site Open cloudminecrypto.com/apk/ on your phone. Your browser may warn that this type of file can harm your device. It says that about every APK, which is why you should only take ours from here. 2 Open the file Tap the finished download in the notification or in your Downloads folder. 3 Allow installs from your browser Android blocks apps from outside Google Play by default. Tap Settings and switch on \u201cAllow from this source\u201d for the browser you used. 4 Tap Install Go back and tap Install. Google Play Protect may scan the app first. Then open it and sign in. 5 Switch the setting off again Optional, but tidy: turn \u201cAllow from this source\u201d back off. You\u2019ll need it again only when you update. 12:00 \u25be \u25ae \ud83d\udd12 cloudminecrypto.com/apk/ File might be harmful Do you want to download bitcoin_cloud_mining.apk anyway? Cancel Download anyway Back 1 / 5 Next The exact wording depends on your phone and Android version. On some phones the setting is under Settings, Apps, Special app acces"
+ }
+}

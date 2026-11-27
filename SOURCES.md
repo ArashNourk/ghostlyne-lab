@@ -1,0 +1,1 @@
+ERCOT NP4-180-ER / NP6-785-ER hub prices (hourly; real-time 15-minute intervals averaged to hourly by Ghostlyne). EIA-930 hourly grid monitor (public domain). Hashprice computed by Ghostlyne from blockchain.com public charts (miners-revenue, hash-rate).
