@@ -1,6 +1,7 @@
 """R4 step 1: build the public daily panel (ERCOT, EIA, NOAA). These sources permit use in analyses and redistribution.
 Market series from Yahoo are fetched later, inside the analysis job only, and never published."""
 import io, json, os, re, time, zipfile, numpy as np, pandas as pd, requests
+USED = {}
 UA = {"User-Agent": "Mozilla/5.0 (research; ghostlyne-lab)"}
 def get(u, **kw):
     for a in range(4):
@@ -38,8 +39,13 @@ def eia930():
             except Exception as e:
                 print("eia930 skip", y, half, repr(e)[:80], flush=True); continue
             x = x[x["Balancing Authority"].isin(["ERCO", "PJM", "MISO", "SWPP", "ISNE", "CISO"])]
-            cols = {"Demand (MW)": "LOAD", "Demand Forecast (MW)": "LOADFC", "Net Generation (MW) from Wind": "WIND", "Net Generation (MW) from Solar": "SOLAR", "Net Generation (MW) from Natural Gas": "GASGEN", "Net Generation (MW) from Nuclear": "NUC"}
+            cols = {"Demand (MW)": "LOAD", "Demand Forecast (MW)": "LOADFC", "__Wind": "WIND", "__Solar": "SOLAR", "Net Generation (MW) from Natural Gas": "GASGEN", "Net Generation (MW) from Nuclear": "NUC"}
             x["date"] = pd.to_datetime(x["Data Date"])
+            # From 2024 H2 EIA splits wind and solar into 'with/without integrated battery storage': sum all raw sub-columns
+            for fuel in ("Wind", "Solar"):
+                sub = [c for c in x.columns if re.match(r"^Net Generation \(MW\) from " + fuel, c) and "(Adjusted)" not in c and "(Imputed)" not in c]
+                if sub:
+                    x["__" + fuel] = x[sub].apply(pd.to_numeric, errors="coerce").sum(axis=1, min_count=1); USED.setdefault(f"{y}_{half}_{fuel}", sub)
             for c, n in cols.items():
                 if c not in x: continue
                 g = x.groupby(["Balancing Authority", "date"])[c].sum(min_count=20)
@@ -76,6 +82,6 @@ if __name__ == "__main__":
     daily.index.name = "date"; daily.to_csv("out/panel_daily.csv.gz", compression="gzip")
     S["STORAGE_L48"].rename("STORAGE_L48").to_csv("out/storage_weekly.csv"); S["NINO34"].rename("NINO34").to_csv("out/nino_weekly.csv")
     cov = {k: dict(first=str(v.dropna().index.min().date()), last=str(v.dropna().index.max().date()), n=int(v.notna().sum())) for k, v in S.items()}
-    json.dump(dict(coverage=cov, missing=miss), open("out/panel_coverage.json", "w"), indent=1)
+    json.dump(dict(coverage=cov, missing=miss, eia930_wind_solar_columns=USED), open("out/panel_coverage.json", "w"), indent=1)
     open("out/SOURCES.md", "w").write("ERCOT public MIS reports NP4-180-ER and NP6-785-ER (historical DAM and RTM load zone and hub prices); ERCOT terms permit use of public raw data in compilations, charts and analyses. U.S. Energy Information Administration: EIA-930 hourly grid monitor, Henry Hub spot price, weekly working gas storage (public domain; Source: U.S. Energy Information Administration). NOAA NCEI GHCN-Daily and NOAA CPC weekly Nino 3.4 (public domain). Daily values are averages of hourly data computed by Ghostlyne.\n")
     print(json.dumps(dict(n=len(cov), missing=miss)))
