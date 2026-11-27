@@ -64,6 +64,13 @@ Every validated co-movement is tracked weekly:
 
 All of it uses only data available at each date. This is a historical replay, not live monitoring.
 
+## Limitations found in review
+
+- **Controls.** Under total association, real control series can pass, because they share the global cycle. 11 weekly and 1 quarterly control relationships did, including one synthetic series (a false discovery within the allowed rate). The Observatory copy no longer implies controls must fail.
+- **Independence from R2.** Memory instruments (Micron, SK hynix, Samsung) were tested against some of the same distant variables in R2, whose confirmation window (2020 onward) overlaps R3's (2017 onward). For those pairs, R3's confirmation is not fully fresh data.
+- **Counting.** The 840 relationships cover 472 unique pairs; many pairs qualify at more than one horizon.
+- **Dates.** Weekly series are labelled by the Friday that ends each week. The final, partial week is now shown with the last actual data date.
+
 ## Assessment
 
 On the evidence:

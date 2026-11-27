@@ -25,6 +25,8 @@ def name(k):
     return U.EXTERNALS.get(k, {}).get("name", k)
 
 def build(res, out, histdir=None):
+    asof = max(v["last"] for k, v in res["inventory"].items() if k in U.FOCAL)
+    fixd = lambda d: d if d <= asof else asof
     pred = {(p["focal"], p["external"], p["family"], p["lag"]): p for p in res.get("predictive", [])}
     rels = []
     for v in res["validated"]:
@@ -34,7 +36,7 @@ def build(res, out, histdir=None):
         p = pred.get((v["focal"], v["external"], fam, v["lag"]))
         rels.append(dict(f=v["focal"], x=v["external"], fam=fam, lag=v["lag"], dir=v.get("dir", ""), ring=v["ring"], seg=seg,
                          e=round(v["e_confirm"], 4), ee=round(v["e_explore"], 4), ci=ci(v["e_confirm"], v["n_confirm"]) if fam != "X_shock" else None,
-                         q=v["q_confirm"], n=v["n_confirm"], ev=v.get("events", 0), st=m.get("state") or {}, last=m.get("latest") or {},
+                         q=v["q_confirm"], n=v["n_confirm"], ev=v.get("events", 0), st=m.get("state") or {}, last=dict(m.get("latest") or {}, date=fixd((m.get("latest") or {}).get("date", asof))),
                          hk=f"{fam}|{v['external']}|{v['lag']}|{v.get('dir','')}", lag_now=m.get("lag") or {}, shocks=m.get("shocks") or [],
                          pred=dict(state=p["state"], r2=round(p["r2_oos"], 4), q=p["q"]) if p else None,
                          why=U.EXTERNALS[v["external"]]["why"], hyp=HYP.get(v["external"], "no explanation proposed"), role=U.EXTERNALS[v["external"]]["role"]))
@@ -42,6 +44,7 @@ def build(res, out, histdir=None):
     for v in res["validated"]:
         m = v.get("monitor") or {}; H = m.get("history") or []; step = 4 if v["family"] == "A_w" else 1
         H = H[::step] + ([H[-1]] if H and (len(H) - 1) % step else [])
+        H = [[fixd(h[0])] + list(h[1:]) for h in H]
         hist.setdefault(v["focal"], {})[f"{v['family']}|{v['external']}|{v['lag']}|{v.get('dir','')}"] = H
     if histdir:
         os.makedirs(histdir, exist_ok=True)
@@ -68,7 +71,7 @@ def build(res, out, histdir=None):
                 focal={k: v["segment"] for k, v in {**U.FOCAL, **U.REVENUE}.items()}, rels=[r for r in rels if r["role"] == "candidate"],
                 ctrl_rel=ctrl_rel, ctrl_line=ctrl_line, bm=dict(cand=len(bm), flipped=sum("direction changed" in c["reason"] for c in bm), val=sum(c["state"] == "Validated" for c in bm)), shock=dict(cand=sum(c["family"] == "X_shock" for c in res["confirm"])), chains=chains, chains_tested=len(res["chains"]), units=units, val=val, ctrl=ctrl,
                 pred=[dict(p, nf=name(p["focal"]), nx=name(p["external"])) for p in res.get("predictive", [])],
-                unavailable=U.UNAVAILABLE, generated=res["meta"]["generated"][:10], prereg="aaf2869")
+                unavailable=U.UNAVAILABLE, generated=asof, prereg="aaf2869")
     html = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "observatory3_template.html")).read().replace("/*DATA*/null", json.dumps(data, separators=(",", ":"), default=float))
     open(out, "w").write(html); return len(html), len(data["rels"])
 
