@@ -70,7 +70,7 @@ that is, about 2.4% in both periods. This is real but not differentiated: anyone
 
 ## Across R1–R5
 
-Five pre-registered runs, two markets, about 1,000 hypotheses, over 30,000 statistical tests. Using free public data:
+Five pre-registered runs, two markets, 9,329 experiment units in the registry and well over 30,000 statistical tests. Using free public data:
 - Ghostlyne reliably recovers the conventional structure of each market.
 - It finds no unconventional relationship that adds usable information beyond that structure.
 
