@@ -1,0 +1,28 @@
+name: ghostlyne-research-export
+on:
+  workflow_dispatch:
+  push:
+    paths: ["research/export.py", ".github/workflows/research.yml"]
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy scipy scikit-learn requests pyarrow
+      - uses: actions/cache/restore@v4
+        with:
+          path: data
+          key: data-v2-none
+          restore-keys: data-v2-
+      - run: python research/export.py
+      - name: Push the table to the research-data branch
+        run: |
+          git config user.name "ghostlyne-bot"; git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan research-data; git rm -rq --cached . ; git add -f export/features.parquet
+          git commit -qm "Feature table $(date -u +%F)"; git push -f origin research-data

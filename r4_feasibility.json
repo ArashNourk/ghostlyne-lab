@@ -1,0 +1,346 @@
+{
+ "ercot_dam_hist": {
+  "ok": true,
+  "n_docs": 17,
+  "docs": [
+   "DAMLZHBSPP_2010",
+   "DAMLZHBSPP_2011",
+   "DAMLZHBSPP_2012",
+   "DAMLZHBSPP_2013",
+   "DAMLZHBSPP_2014",
+   "DAMLZHBSPP_2015",
+   "DAMLZHBSPP_2016",
+   "DAMLZHBSPP_2017",
+   "DAMLZHBSPP_2018",
+   "DAMLZHBSPP_2019",
+   "DAMLZHBSPP_2020",
+   "DAMLZHBSPP_2021",
+   "DAMLZHBSPP_2022",
+   "DAMLZHBSPP_2023",
+   "DAMLZHBSPP_2024",
+   "DAMLZHBSPP_2025",
+   "DAMLZHBSPP_2026"
+  ],
+  "sample_file": "rpt.00013060.0000000000000000.DAMLZHBSPP_2026.xlsx",
+  "sheets": [
+   "Jan",
+   "Feb",
+   "Mar",
+   "Apr",
+   "May",
+   "Jun",
+   "Jul",
+   "Aug",
+   "Sep",
+   "Oct",
+   "Nov",
+   "Dec"
+  ],
+  "columns": [
+   [
+    "Delivery Date",
+    "Hour Ending",
+    "Repeated Hour Flag",
+    "Settlement Point",
+    "Settlement Point Price"
+   ]
+  ]
+ },
+ "ercot_rtm_hist": {
+  "ok": true,
+  "n_docs": 17,
+  "docs": [
+   "RTMLZHBSPP_2010",
+   "RTMLZHBSPP_2011",
+   "RTMLZHBSPP_2012",
+   "RTMLZHBSPP_2013",
+   "RTMLZHBSPP_2014",
+   "RTMLZHBSPP_2015",
+   "RTMLZHBSPP_2016",
+   "RTMLZHBSPP_2017",
+   "RTMLZHBSPP_2018",
+   "RTMLZHBSPP_2019",
+   "RTMLZHBSPP_2020",
+   "RTMLZHBSPP_2021",
+   "RTMLZHBSPP_2022",
+   "RTMLZHBSPP_2023",
+   "RTMLZHBSPP_2024",
+   "RTMLZHBSPP_2025",
+   "RTMLZHBSPP_2026"
+  ],
+  "sample_file": "rpt.00013061.0000000000000000.RTMLZHBSPP_2026.xlsx",
+  "sheets": [
+   "Jan",
+   "Feb",
+   "Mar",
+   "Apr",
+   "May",
+   "Jun",
+   "Jul",
+   "Aug",
+   "Sep",
+   "Oct",
+   "Nov",
+   "Dec"
+  ],
+  "columns": [
+   [
+    "Delivery Date",
+    "Delivery Hour",
+    "Delivery Interval",
+    "Repeated Hour Flag",
+    "Settlement Point Name",
+    "Settlement Point Type",
+    "Settlement Point Price"
+   ]
+  ]
+ },
+ "ercot_load_hist": {
+  "ok": true,
+  "n": 30,
+  "links": [
+   "https://www.ercot.com/files/docs/2002/12/11/1999ferc714.zip",
+   "https://www.ercot.com/files/docs/2002/12/11/97frc714.zip",
+   "https://www.ercot.com/files/docs/2002/12/11/ferc714.zip",
+   "https://www.ercot.com/files/docs/2004/07/26/erceei97.xls",
+   "https://www.ercot.com/files/docs/2005/11/10/2000ferc714.zip",
+   "https://www.ercot.com/files/docs/2015/10/22/2002_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2003_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2004_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2005_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2006_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2007_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2008_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2009_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2010_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2011_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2012_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2013_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2015/10/22/2014_ercot_hourly_load_data.xls",
+   "https://www.ercot.com/files/docs/2016/01/07/native_load_2015.xls",
+   "https://www.ercot.com/files/docs/2017/01/10/native_Load_2016.zip",
+   "https://www.ercot.com/files/docs/2018/01/09/native_load_2017.zip",
+   "https://www.ercot.com/files/docs/2019/01/07/native_load_2018.zip",
+   "https://www.ercot.com/files/docs/2020/01/09/Native_Load_2019.zip",
+   "https://www.ercot.com/files/docs/2021/01/12/Native_Load_2020.zip",
+   "https://www.ercot.com/files/docs/2021/11/12/Native_Load_2021.zip",
+   "https://www.ercot.com/files/docs/2022/02/08/Native_Load_2022.zip",
+   "https://www.ercot.com/files/docs/2023/02/09/Native_Load_2023.zip",
+   "https://www.ercot.com/files/docs/2024/02/06/Native_Load_2024.zip",
+   "https://www.ercot.com/files/docs/2025/02/11/Native_Load_2025.zip",
+   "https://www.ercot.com/files/docs/2026/02/10/Native_Load_2026.zip"
+  ]
+ },
+ "eia930_balance": {
+  "ok": true,
+  "status": 200,
+  "header": "\"Balancing Authority\",\"Data Date\",\"Hour Number\",\"Local Time at End of Hour\",\"UTC Time at End of Hour\",\"Demand Forecast (MW)\",\"Demand (MW)\",\"Net Generation (MW)\",\"Total Interchange (MW)\",\"Sum(Valid DIBAs) (MW)\",\"Demand (MW) (Imputed)\",\"Net Generation (MW) (Imputed)\",\"Total Interchange (MW) (Imputed)\",\"Demand (MW) (Adjusted)\",\"Net Generation (MW) (Adjusted)\",\"Total Interchange (MW) (Adjusted)\",\"Net Generation (MW) from Coal\",\"Net Generation (MW) from Natural Gas\",\"Net Generation (MW) from Nuclear\",\"Net Generation (MW) from All Petroleum Products\",\"Net Generation (MW) from Hydropower and Pumped S"
+ },
+ "eia930_2018": {
+  "ok": true,
+  "status": 200
+ },
+ "eia_henryhub_daily": {
+  "ok": true,
+  "first": "1997-01-07",
+  "last": "2026-11-24",
+  "n": 5738,
+  "cols": [
+   "Date",
+   "Henry Hub Natural Gas Spot Price (Dollars per Million Btu)"
+  ]
+ },
+ "eia_storage_weekly": {
+  "ok": true,
+  "first": "2010-01-01",
+  "last": "2026-11-20",
+  "n": 882,
+  "cols": [
+   "Date",
+   "Weekly Lower 48 States Natural Gas Working Underground Storage (Billion Cubic Feet)"
+  ]
+ },
+ "noaa_dfw": {
+  "ok": true,
+  "first": "1948-01-01",
+  "last": "2026-11-15",
+  "n": 28778,
+  "tmax_missing": 0.06640489262631176
+ },
+ "noaa_iah": {
+  "ok": true,
+  "first": "1969-06-01",
+  "last": "2026-11-15",
+  "n": 20987,
+  "tmax_missing": 0.0
+ },
+ "noaa_phl": {
+  "ok": true,
+  "first": "1940-07-01",
+  "last": "2026-11-15",
+  "n": 31388,
+  "tmax_missing": 0.0
+ },
+ "noaa_bos": {
+  "ok": true,
+  "first": "1936-01-01",
+  "last": "2026-11-15",
+  "n": 33192,
+  "tmax_missing": 0.0
+ },
+ "pjm_dataminer": {
+  "ok": false,
+  "status": 401,
+  "body": ""
+ },
+ "isone_da_lmp": {
+  "ok": true,
+  "status": 200,
+  "head": "\"C\",\"Day-Ahead Energy Market Hourly LMP Report\"\n\"C\",\"Filename: WW_DALMP_ISO_20240102.csv\"\n\"C\",\"Report for: 01/02/2024 - 01/02/2024\"\n\"C\",\"Report generated: 01/01/2024 12:37:52 EST\"\n\"H\",\"Date\",\"Hour Ending\",\"Location ID\",\"Location Name\",\"Location Type\",\"Locational Marginal Price\",\"Energy Component\",\"C"
+ },
+ "nrc_reactor_status_2015": {
+  "ok": true,
+  "status": 200,
+  "len": 156805
+ },
+ "yahoo_NG=F": {
+  "ok": true,
+  "first": "2000-08-30",
+  "last": "2026-11-27",
+  "n": 6670
+ },
+ "yahoo_TTF=F": {
+  "ok": true,
+  "first": "2017-10-23",
+  "last": "2026-11-26",
+  "n": 2292
+ },
+ "yahoo_BZ=F": {
+  "ok": true,
+  "first": "2007-07-30",
+  "last": "2026-11-27",
+  "n": 4871
+ },
+ "yahoo_CL=F": {
+  "ok": true,
+  "first": "2000-08-23",
+  "last": "2026-11-27",
+  "n": 6675
+ },
+ "yahoo_HG=F": {
+  "ok": true,
+  "first": "2000-08-30",
+  "last": "2026-11-27",
+  "n": 6670
+ },
+ "yahoo_ZC=F": {
+  "ok": true,
+  "first": "2000-07-17",
+  "last": "2026-11-25",
+  "n": 6701
+ },
+ "yahoo_BTC-USD": {
+  "ok": true,
+  "first": "2014-09-17",
+  "last": "2026-11-27",
+  "n": 4455
+ },
+ "yahoo_CAD=X": {
+  "ok": true,
+  "first": "2003-09-16",
+  "last": "2026-11-27",
+  "n": 6053
+ },
+ "yahoo_MXN=X": {
+  "ok": true,
+  "first": "2003-12-01",
+  "last": "2026-11-27",
+  "n": 6000
+ },
+ "yahoo_SOXX": {
+  "ok": true,
+  "first": "2001-07-13",
+  "last": "2026-11-25",
+  "n": 6381
+ },
+ "yahoo_NVDA": {
+  "ok": true,
+  "first": "2000-01-03",
+  "last": "2026-11-25",
+  "n": 6766
+ },
+ "yahoo_DLR": {
+  "ok": true,
+  "first": "2004-10-29",
+  "last": "2026-11-25",
+  "n": 5554
+ },
+ "yahoo_EQIX": {
+  "ok": true,
+  "first": "2000-08-11",
+  "last": "2026-11-25",
+  "n": 6612
+ },
+ "yahoo_MARA": {
+  "ok": true,
+  "first": "2012-05-04",
+  "last": "2026-11-25",
+  "n": 3662
+ },
+ "yahoo_RIOT": {
+  "ok": true,
+  "first": "2016-03-31",
+  "last": "2026-11-25",
+  "n": 2681
+ },
+ "yahoo_VST": {
+  "ok": true,
+  "first": "2016-10-05",
+  "last": "2026-11-25",
+  "n": 2550
+ },
+ "yahoo_XLU": {
+  "ok": true,
+  "first": "2000-01-03",
+  "last": "2026-11-25",
+  "n": 6766
+ },
+ "yahoo_UNG": {
+  "ok": true,
+  "first": "2007-04-18",
+  "last": "2026-11-25",
+  "n": 4935
+ },
+ "yahoo_BDRY": {
+  "ok": true,
+  "first": "2018-03-22",
+  "last": "2026-11-25",
+  "n": 2183
+ },
+ "yahoo_LNG": {
+  "ok": true,
+  "first": "2000-01-03",
+  "last": "2026-11-25",
+  "n": 6766
+ },
+ "yahoo_TELL": {
+  "ok": false,
+  "err": "TypeError(\"'NoneType' object is not subscriptable\")"
+ },
+ "terms_ercot": {
+  "ok": true,
+  "excerpt": "Terms of Use (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-PH5D2W5'); var pageProxyContext = \"\"; var pageProxyStaticContext = \"\"; var pageProxySecureContextRequest = \"https://mis.ercot.com/secure/data-products\"; var dataProductsPathPublic = \"/mp/data-products\"; var dataProductsPathSecure = \"/data-products\"; var isMIS = false var pageWWWBase = \"\"; function showTab(parent_id, anchor_tag) { if ($(parent_id).length > 0) { let tab_id = anchor_tag.split('#')[1]; // default is first tab if (tab_id === undefined) { tab_id = $(parent_id + ' .tabNav li a').first().attr('href').replace('#',''); } // reset active tab $(parent_id + ' .tabNav li').removeClass(); // set active tab $(parent_id + ' .tabNav a[href=\"#' + tab_id + '\"]').parent().attr('class', 'active'); // show content for tab $('#tab-' + tab_id).show().siblings().hide(); } } $(function() { showTab('#tabsBar', window.location.href); $(\"ul.tabNav li a\").click(function() { showTab('#tabsBar', this.href); }); $(\".tabs a.nav\").click(function() { showTab('#tabsBar', this.href); }); }); #mainContainer > div > header > mainheader > nav > ul > li { transition-delay: 375ms; } MIS LOG IN function searchSubmit(){ var theSearchQuery = document.frmSearch.sQuery."
+ },
+ "terms_eia": {
+  "ok": true,
+  "excerpt": "Copyrights and Reuse Public domain and use of EIA content U.S. government publications are in the public domain and are not subject to copyright protection. You may use and/or distribute any of our data, files, databases, reports, graphs, charts, and other information products that are on our website or that you receive through our email distribution service. However, if you use or reproduce any of our information products, you should use an acknowledgment, which includes the publication date, such as: &quot;Source: U.S. Energy Information Administration (Oct 2008).&quot; Quoting EIA content and translations When quoting EIA text, the acknowledgment should clearly indicate which text is EIA content and which is not. When translating EIA content into another language, please indicate the organization responsible for the translation and provide a link back to the original EIA web page in the acknowledgment. Protected materials You may see on our website documents, illustrations, photographs, or other information resources contributed or licensed by private individuals, companies, or organizations that may be protected by U.S. and foreign copyright laws. Transmission or reproduction of protected items beyond that allowed by fair use as defined in the copyright laws requires the written permission of the copyright owners. The EIA logo is a registered trademark (Registration Number 4019501) of the U.S. Department of Energy and may not be used without the expressed consent of the U"
+ },
+ "terms_isone": {
+  "ok": true,
+  "excerpt": "Copyright &copy;2026 ISO New England Inc. LinkedIn X/Twitter YouTube Facebook About Us News and Media Careers Legal and Privacy Participant Support Contact Us Training Skip to main navigation. var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-28609028-1']); _gaq.push(['_setDomainName', 'iso-ne.com']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); "
+ },
+ "terms_pjm": {
+  "ok": true,
+  "excerpt": " (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window, document, 'script', 'dataLayer', 'GTM-TN8W6MJ'); PJM - Page Not Found jQuery.noConflict(); // Learn More > &nbsp; or &nbsp; Close X It looks like you have JavaScript disabled. For the best experience, please enable JavaScript. \" class=\"bsaButton\" type=\"button\" />&nbsp; or &nbsp; It looks like you have JavaScript disabled and you\u2019re using an outdated browser, which PJM no longer supports. For the best experience, please enable JavaScript and upgrade to a modern browser. \" id=\"PjmBrowserSupportAlert_Button1\" class=\"bsaButton\" type=\"button\" />&nbsp; or &nbsp; function msieversion() { var ua = window.navigator.userAgent; var msie = ua.indexOf(\"MSIE \"); if (msie > 0) // If Internet Explorer, return version number return parseInt(ua.substring(msie + 5, ua.indexOf(\".\", msie))); else if (window.navigator.userAgent.match(/Trident\\/7\\./)) return 11; else // If another browser, return 0 return 0; } if (getCookie('browserCompatabilityBox') === \"\") { var x = document.getElementById('PjmBrowserSupportAlert_noScriptBrowserSupportAlert'); x.style.display = \"none\"; var y = document.getElementById('PjmBrowserSupportAlert_noScriptBrowserSupport_JavascriptAlert'); y.style.display = \"none\"; if (msieversi"
+ }
+}
