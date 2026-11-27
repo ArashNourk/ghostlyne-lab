@@ -17,7 +17,8 @@ def ercot(rid, kind):
             sp = "Settlement Point" if "Settlement Point" in x else "Settlement Point Name"; hr = "Hour Ending" if "Hour Ending" in x else "Delivery Hour"
             x = x[x[sp].isin(HUBS)]
             if x.empty: continue
-            h = x[hr].astype(str).str.slice(0, 2).astype(int)
+            hs = x[hr].astype(str).str.strip()
+            h = pd.to_numeric(hs.str.split(":").str[0], errors="coerce").fillna(pd.to_numeric(hs, errors="coerce")).astype(float)
             frames.append(pd.DataFrame({"date": pd.to_datetime(x["Delivery Date"]), "hub": x[sp], "hour": h, "p": pd.to_numeric(x["Settlement Point Price"], errors="coerce")}))
         print(kind, d["FriendlyName"], flush=True)
     a = pd.concat(frames); out = {}
@@ -30,9 +31,12 @@ def eia930():
     for y in range(2015, 2027):
         for half in ("Jan_Jun", "Jul_Dec"):
             u = f"https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/EIA930_BALANCE_{y}_{half}.csv"
-            try: r = get(u)
-            except Exception: continue
-            x = pd.read_csv(io.StringIO(r.text), thousands=",", low_memory=False)
+            try:
+                r = get(u)
+                if not r.text.lstrip().startswith('"Balancing'): continue
+                x = pd.read_csv(io.StringIO(r.text), thousands=",", low_memory=False)
+            except Exception as e:
+                print("eia930 skip", y, half, repr(e)[:80], flush=True); continue
             x = x[x["Balancing Authority"].isin(["ERCO", "PJM", "MISO", "SWPP", "ISNE", "CISO"])]
             cols = {"Demand (MW)": "LOAD", "Demand Forecast (MW)": "LOADFC", "Net Generation (MW) from Wind": "WIND", "Net Generation (MW) from Solar": "SOLAR", "Net Generation (MW) from Natural Gas": "GASGEN", "Net Generation (MW) from Nuclear": "NUC"}
             x["date"] = pd.to_datetime(x["Data Date"])
@@ -56,7 +60,7 @@ def nino():
     return pd.Series(rows)
 if __name__ == "__main__":
     S, miss = {}, {}
-    for name, f in (("ercot_dam", lambda: ercot(13060, "DA")), ("ercot_rtm", lambda: ercot(13061, "RT")), ("eia930", eia930)):
+    for name, f in (("ercot_rtm", lambda: ercot(13061, "RT")), ("eia930", eia930), ("ercot_dam", lambda: ercot(13060, "DA"))):
         try: S.update(f())
         except Exception as e: miss[name] = repr(e)[:200]
     for k, u in (("HH_SPOT", "https://www.eia.gov/dnav/ng/hist_xls/RNGWHHDd.xls"), ("STORAGE_L48", "https://www.eia.gov/dnav/ng/hist_xls/NW2_EPG0_SWO_R48_BCFw.xls")):
