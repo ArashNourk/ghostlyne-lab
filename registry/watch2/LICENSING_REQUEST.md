@@ -1,4 +1,4 @@
-# Licensing confirmation request to CoinGecko (Amendment 4, point 5)
+# Licensing confirmation request to CoinGecko (Amendment 4, point 5; point 4 added 2026-11-28 at the founder's request)
 
 Submitted through CoinGecko's support form before any purchase. The data is not bought until CoinGecko replies in writing.
 
@@ -15,5 +15,8 @@ We are considering one month of the Analyst plan to download historical hourly B
    The fitted parameters and calibration maps would be used in a commercial subscription product that alerts users when these probabilities change.
 2. **Publication of aggregated results.** We would publish aggregate performance statistics computed from the data: accuracy scores (Brier score, log loss), alert hit rates, false-warning rates and counts of outcomes. These would carry attribution to CoinGecko. No CoinGecko prices, candles or time series would be published.
 3. **Storage.** The data would be stored privately, never redistributed, and deleted when the subscription ends.
+4. **After the subscription ends.** Please confirm:
+   - whether we may keep and continue to use the fitted model parameters, calibration maps and derived performance records (the published aggregate statistics) after the Analyst subscription expires, once the raw data itself has been deleted;
+   - which plan we would need for ongoing commercial operation, in which the product computes these probabilities from live hourly BTC/USD prices and shows users alert outcomes with attribution.
 
 Thank you.
