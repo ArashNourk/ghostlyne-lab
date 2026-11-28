@@ -1,10 +1,13 @@
 {
  "frozen_on": "2026-11-28",
+ "amendment": 3,
+ "supersedes_commit": "10a53d4",
  "files": {
-  "PREREGISTRATION_WATCH2.md": "a22071188b30453542b7dfef256390225675a1ba2c402143a00a2767af4cd36e",
-  "watch2.py": "8aabf5266e771fdb7e1ef28ee09aa79616ad95100dfe71e0c2765d63d5c9e410",
+  "PREREGISTRATION_WATCH2.md": "8b4b1a2ba6f482d1a334caa1c0ac2b8c6e20c16ad9ac3c0b7ca296c173cc1710",
+  "watch2.py": "0816cf373ff2d3870ed907d73313582d8720f79993a9f8f63af5f08e627b64c4",
   "fp3.py": "51195094477ce5ffe65a3800a44960809a150ec1029de0d45432d5f785e37bee",
-  "confirm.py": "8a05bed29cc1fd35665905d462e9337ae791b61d753be826c498dbf2eb5f9afa",
-  "fetch_coingecko.py": "943ae19330e582716267a91fb47352541325d5377b968211391378a2c7484c2a"
+  "confirm.py": "5dddb14e91c659e841ddbbea6fd708889aca96fc3efcd33a4612bcad20beea1d",
+  "fetch_coingecko.py": "943ae19330e582716267a91fb47352541325d5377b968211391378a2c7484c2a",
+  "../daily1/daily1.py": "2a8410b6ab4fd2ffd9cde17d20aa7e458a23ea7d141b0765612f6a53b9c85569"
  }
 }

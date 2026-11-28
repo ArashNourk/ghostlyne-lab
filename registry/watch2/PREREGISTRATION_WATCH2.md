@@ -82,3 +82,44 @@ These changes come from the lab check on simulated markets (`LAB_CHECK.md`). No 
 - **Specification frozen.** From this amendment on, the model specification, fitting procedures, gates and decision rules are fixed. On real data, development years are used only to fit the quantities the procedure defines: HAR coefficients, reversion, range scale, calibration maps, thresholds and regime cuts. No specification is changed after any real data is accessed. The whole run, development fitting plus confirmation scoring, is one execution of `confirm.py`, which refuses to run if any frozen file's SHA-256 differs from `FREEZE.json`.
 - **Uncertainty.** Overlapping windows are handled by block bootstrap on calendar months (primary). Weekly and quarterly blocks are reported as sensitivity checks.
 - **Reported alongside the gates.** Absolute and relative Brier differences; results by volatility regime (terciles of the 30-day level, cut on development data); warning recall, median lead time, false-warning rate, and false warnings per 100 monitored scenarios for every alert method.
+
+## Amendment 3 (2026-11-28, before any real data was acquired): corrections from the independent review of commit 10a53d4
+Amendments 1 and 2 stand except where replaced here. Lab results under this amendment are in `LAB_CHECK.md`.
+
+1. **Leakage removed.** The variance floor was the 1st percentile of the whole sample, confirmation years included. It is now a fixed constant (1e-10 per hour). The full audit:
+   - every feature is trailing;
+   - the forward-looking fitting target is used only on rows ending at least 7 hours before each refit;
+   - the range scale is trailing;
+   - V1 uses information to the previous UTC day only;
+   - calibration maps, alert thresholds, regime cut points and the DV half-life are fitted on development scenarios only.
+2. **Benchmarks.** The probability benchmarks are CV, V1 and DV.
+   - **V1:** the frozen `daily1/daily1.py` (SHA-256 2a8410b6…), unchanged.
+   - **DV:** an EWMA of range-scaled hourly variance, updated every hour, with its half-life chosen on development data from {6, 12, 24, 48, 96} hours.
+   - All four models share the same first-passage mathematics and the same development-only calibration. The H1 benchmark is the best of CV, V1 and DV on confirmation data.
+3. **Alerts.** Every alert method is evaluated in two ways:
+   - **Operational:** development-fitted thresholds, applied unchanged, with confirmation false-warning rates reported for every method.
+   - **Matched:** thresholds set on confirmation data so that each method has exactly 10%, 20% or 30% false warnings. This measures discrimination; it is not an operating rule.
+   - **H2 (algorithm)** requires G's matched-20% recall to be at least 1.05 × the best of PROX, ATR and the CV, V1 and DV level rules, with the interval above 1. G's operational false-warning rate must also lie within 15–25% and be no more than 2 pp above the benchmark's.
+   - **New H2c (conventional alerts):** the same test against PROX and ATR only, computed for G and for DV.
+   - Recall and lead time are reported separately. Catching more stop-outs is never described as warning earlier.
+4. **H3 tests the phenomenon itself.** It covers checkpoints where price is within 0.25% of the start but the model's stop-first probability has moved at least 10 pp since inception. There, the model must beat the price-only view (CV) by at least 5% (interval above 0). The observed stop-first rate must be higher where risk rose than where it fell, and each group must be calibrated. It is computed for G and DV. The earlier disagreement analysis is kept and reported as H3a.
+5. **Data integrity.**
+   - **Nothing is filled.** Candles are never forward-filled; missing and inconsistent candles stay missing, and a scenario whose window contains a missing candle is excluded. Rolling features need at least 90% of their window (the 6-hour feature needs all of it).
+   - **`confirm.py` validates the data:** required columns; conflicting duplicates refused, identical duplicates collapsed; on-the-hour timestamps; OHLC consistency (more than 0.5% inconsistent stops the run).
+   - **Coverage:** from February 2018 through the last complete month before the run.
+6. **Reconciliation of registered components.**
+   - **V1:** restored (point 2).
+   - **8-hour horizon:** computed and reported, not a gate.
+   - **Log loss:** reported for every model.
+   - **H4:** implemented as an exact Shapley split of the change in G's stop-first probability over price, time and volatility, the factors G contains. Additivity must hold within 0.1 pp. The volatility share must correlate positively (Spearman, interval above 0) with the next 6 hours' realized-variance surprise, measured on 60,000 sampled confirmation checkpoints with a 300-draw month-block bootstrap.
+   - **Asymmetry (G+A) and regime (G+R):** not implemented, and formally deferred to a new registration.
+7. **Decision rules (these replace section 7).** "The product model" means G if G passes H1, otherwise the simpler DV.
+   - **H1 and H2 pass:** we may say Ghostlyne's engine beats simple dynamic-volatility models, with the numbers.
+   - **H1 or H2 fails:** no claim of a proprietary model advantage, and the product runs on DV.
+   - **H2c passes for the product model:** we may say its alerts caught X% more stop-outs, with at least an hour's warning, than price and ATR alerts at the same false-warning rate in historical tests. "Earlier" is never used.
+   - **H3 passes for the product model:** "Same price. Different risk." may be used, with the numbers. The headline may drop "can" only if H2c and H3 both pass.
+   - **H1c fails for the product model:** no probabilities are published.
+   - **H4:** if it passes, volatility attribution may be shown, labelled "model attribution". If it fails, none is shown.
+   - **H2c and H3 both fail:** the proposition is reconsidered, not re-engineered.
+   - **Always:** no retuning after confirmation results are seen; a new attempt needs a new registration and prospective data.
+8. **Licensing precondition.** Analyst's commercial licence covers feeding proprietary research and trading models, and attributed display. CoinGecko sells separate Enterprise licences for AI/ML training and for redistribution in research reports. Before purchase, we need written confirmation from CoinGecko of two things: (a) that fitting these statistical models, and (b) that publishing derived performance metrics (scores, hit rates and aggregated outcome counts, with no price data) are covered by the Analyst licence.
