@@ -1,10 +1,10 @@
 {
  "frozen_on": "2026-11-28",
- "amendment": 3,
- "supersedes_commit": "10a53d4",
+ "amendment": 4,
+ "supersedes_commit": "72ad7b1",
  "files": {
-  "PREREGISTRATION_WATCH2.md": "8b4b1a2ba6f482d1a334caa1c0ac2b8c6e20c16ad9ac3c0b7ca296c173cc1710",
-  "watch2.py": "0816cf373ff2d3870ed907d73313582d8720f79993a9f8f63af5f08e627b64c4",
+  "PREREGISTRATION_WATCH2.md": "96c81650ae28f198bfe032898609587490669db56350ba9fabdf4366bdedf261",
+  "watch2.py": "7a0586f1e072e532dc956005b2662868dd51394e314154efe54aa910815e447b",
   "fp3.py": "51195094477ce5ffe65a3800a44960809a150ec1029de0d45432d5f785e37bee",
   "confirm.py": "5dddb14e91c659e841ddbbea6fd708889aca96fc3efcd33a4612bcad20beea1d",
   "fetch_coingecko.py": "943ae19330e582716267a91fb47352541325d5377b968211391378a2c7484c2a",

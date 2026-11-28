@@ -123,3 +123,31 @@ Amendments 1 and 2 stand except where replaced here. Lab results under this amen
    - **H2c and H3 both fail:** the proposition is reconsidered, not re-engineered.
    - **Always:** no retuning after confirmation results are seen; a new attempt needs a new registration and prospective data.
 8. **Licensing precondition.** Analyst's commercial licence covers feeding proprietary research and trading models, and attributed display. CoinGecko sells separate Enterprise licences for AI/ML training and for redistribution in research reports. Before purchase, we need written confirmation from CoinGecko of two things: (a) that fitting these statistical models, and (b) that publishing derived performance metrics (scores, hit rates and aggregated outcome counts, with no price data) are covered by the Analyst licence.
+
+## Amendment 4 (2026-11-28, before any real data was acquired): targeted corrections from the independent review of commit 72ad7b1
+Amendments 1–3 stand except where replaced here. The negative algorithmic result is accepted. No further model complexity will be added to WATCH2, and no new research cycle is opened.
+
+1. **Calibration for each model.** H1c is computed separately for G (H1c_G) and DV (H1c_DV), with the same bins and the same rule as before. The production model must pass its own calibration gate under all three treatments of ambiguous candles before any of its probabilities are published.
+2. **Production-model rule.** G is the production model only if H1 and H2 both pass under all three treatments; otherwise the production model is DV. Every user-facing claim must pass for the production model itself, and each claim also requires that model's calibration gate:
+   - publishing probabilities: H1c for that model;
+   - the conventional-alert claim: H1c and H2c for that model;
+   - "Same price. Different risk.": H1c and H3 for that model; dropping "can" from the headline also needs H2c;
+   - the model-advantage claim: only if the production model is G.
+   
+   `watch2.py` writes this decision to the `production` block of every result file.
+3. **No user-facing attribution in the initial release.** H4 evaluates uncalibrated G probabilities, not the production model. It is kept as a reported-only result (`H4_reported_only`), removed from the gates, and authorizes nothing. This replaces the H4 line of Amendment 3, point 7.
+4. **Achieved false-warning rates.** For each matched comparison, the result now reports:
+   - the target rate and the rate actually achieved;
+   - the gap in percentage points;
+   - how many no-stop scenarios tie at the threshold;
+   - a flag where the gap exceeds 0.5 pp.
+   
+   Each H2 and H2c ratio is reported next to both methods' achieved rates.
+5. **Licensing confirmation.** The written request to CoinGecko describes the actual methods plainly and does not suggest how CoinGecko should classify them:
+   - HAR regression on realized-variance measures;
+   - EWMA variance estimation;
+   - monotone statistical calibration;
+   - first-passage probability calculation;
+   - publication of aggregated performance metrics.
+   
+   The purchase waits for CoinGecko's answer.

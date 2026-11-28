@@ -296,8 +296,9 @@ def _first_warning(df, theta):
 def alerts(S, C, P, f, d):
     """Every alert method, two ways:
     operational: thresholds fitted on development data at a 20% false-warning rate, then applied unchanged;
-    matched:     thresholds set on confirmation data so every method has exactly 10/20/30% false warnings
-                 (a discrimination comparison, not an operating rule)."""
+    matched:     thresholds set on confirmation data aiming at 10/20/30% false warnings
+                 (a discrimination comparison, not an operating rule); the achieved rate and any gap
+                 caused by tied scores are reported (Amendment 4)."""
     dist = np.abs(LN(C.price.values / C.stop.values))
     tr = np.maximum(d.high, d.close.shift()) - np.minimum(d.low, d.close.shift())
     atr = (tr / d.close).rolling(14, min_periods=12).mean().values[C.t.values]
@@ -316,19 +317,25 @@ def alerts(S, C, P, f, d):
         if name.endswith("-rise"): df = df[df.c > 0]
         mx = df.groupby("sid").sc.max().reindex(Sx.index).fillna(-np.inf)
         out = {}
-        def score_at(theta):
+        def score_at(theta, target=None):
             w = _first_warning(df, theta).reindex(Sx.index)
             timely = w.notna() & (Sx.r >= w + 2)                    # stop touched no earlier than the hour after next
             false_w = w.notna() & nostop_c
             lead = ((Sx.r - 1) - w)[timely & stop_c]
             hits = pd.DataFrame({"hit": (timely & stop_c).astype(int), "n": stop_c.astype(int), "b": Sx.block})[stop_c].groupby("b").sum()
-            return {"recall": float((timely & stop_c).sum() / stop_c.sum()), "far": float(false_w.sum() / nostop_c.sum()),
+            far = float(false_w.sum() / nostop_c.sum())
+            extra = {}
+            if target is not None:   # Amendment 4: achieved rate and threshold ties reported, never assumed equal to the target
+                extra = {"target_far": target, "achieved_far": far, "far_gap_pp": round(100 * (far - target), 3),
+                         "no_stop_scenarios_tied_at_threshold": int((mx[nostop_c] == theta).sum()),
+                         "tie_discrepancy": bool(abs(far - target) > 0.005)}
+            return {"recall": float((timely & stop_c).sum() / stop_c.sum()), "far": far, **extra,
                     "false_per_100_scenarios": float(100 * false_w.sum() / conf.sum()),
                     "median_lead_hours": float(lead.median()) if len(lead) else float("nan"), "_blocks": hits}
         theta_dev = float(np.quantile(mx[(Sx.out != 2) & Sx.dev], 0.80))
         out["operational"] = score_at(theta_dev)
         for q in (0.10, 0.20, 0.30):
-            out[f"matched_{int(q * 100)}"] = score_at(float(np.quantile(mx[nostop_c], 1 - q)))
+            out[f"matched_{int(q * 100)}"] = score_at(float(np.quantile(mx[nostop_c], 1 - q)), target=q)
         res[name] = out
     return res
 
@@ -376,10 +383,11 @@ def evaluate(S, C, Y, P, f, d):
         if m_.sum() > 1000:
             r_, l_, h_ = boot_rel(br["G"][m_], br[bench][m_], C.block.values[m_])
             out["H1_by_regime"][nm] = {"rel": round(r_, 4), "ci": [round(l_, 4), round(h_, 4)], "abs": round(float(br[bench][m_].mean() - br["G"][m_].mean()), 5), "checkpoints": int(m_.sum())}
-    cal = []
-    for cls, name in ((0, "target"), (1, "stop"), (2, "neither")):
-        for b in calibration_bins(P["G"][conf, cls], Y[conf, cls]): cal.append({"class": name, **b})
-    out["H1c"] = {"bins": cal, "pass": all(c["ok"] for c in cal)}
+    for m in ("G", "DV"):   # Amendment 4: each model has its own calibration gate
+        cal = []
+        for cls, name in ((0, "target"), (1, "stop"), (2, "neither")):
+            for b in calibration_bins(P[m][conf, cls], Y[conf, cls]): cal.append({"class": name, **b})
+        out[f"H1c_{m}"] = {"bins": cal, "pass": all(c["ok"] for c in cal)}
     # H2: discrimination at matched false-warning rates (gate), plus operational rates with development thresholds
     al = alerts(S, C, P, f, d)
     benches = ("PROX", "ATR", "CV-level", "V1-level", "DV-level")
@@ -389,6 +397,7 @@ def evaluate(S, C, Y, P, f, d):
     g_op, b_op = al["G-level"]["operational"]["far"], al[bestA]["operational"]["far"]
     out["H2_methods"] = {m: {kind: {k_: (round(v_, 4) if isinstance(v_, float) else v_) for k_, v_ in r.items() if k_ != "_blocks"} for kind, r in x.items()} for m, x in al.items()}
     out["H2"] = {"benchmark": bestA, "matched20_recall_ratio": ratio, "ci": [lo2, hi2],
+                 "matched20_achieved_far": {"G-level": al["G-level"]["matched_20"]["far"], bestA: al[bestA]["matched_20"]["far"]},
                  "operational_far_G": g_op, "operational_far_benchmark": b_op,
                  "pass": bool(ratio >= 1.05 and lo2 > 1 and 0.15 <= g_op <= 0.25 and g_op <= b_op + 0.02)}
     # H2c and H3 are computed for G (the registered candidate) and for DV (the simpler model the product would use if H1 fails)
@@ -398,7 +407,9 @@ def evaluate(S, C, Y, P, f, d):
         loc, hic = ratio_ci(al[f"{m}-level"]["matched_20"], al[bestC]["matched_20"])
         rc = al[f"{m}-level"]["matched_20"]["recall"] / max(al[bestC]["matched_20"]["recall"], 1e-9)
         m_op, gC = al[f"{m}-level"]["operational"]["far"], al[bestC]["operational"]["far"]
-        out[f"H2c_{m}"] = {"benchmark": bestC, "matched20_recall_ratio": rc, "ci": [loc, hic], "operational_far": m_op, "operational_far_benchmark": gC,
+        out[f"H2c_{m}"] = {"benchmark": bestC, "matched20_recall_ratio": rc, "ci": [loc, hic],
+                           "matched20_achieved_far": {f"{m}-level": al[f"{m}-level"]["matched_20"]["far"], bestC: al[bestC]["matched_20"]["far"]},
+                           "operational_far": m_op, "operational_far_benchmark": gC,
                            "pass": bool(rc >= 1.05 and loc > 1 and 0.15 <= m_op <= 0.25 and m_op <= gC + 0.02)}
         # H3: price within 0.25% of the start, yet the model's stop-first probability moved 10+ pp since inception;
         # the model must beat the price-only view (CV) there, and be calibrated for rises and falls separately
@@ -485,14 +496,16 @@ def attribution(C, P_raw_unused, extras, f, d, n=60_000):
 
 RESOLUTIONS = ("stop", "target", "drop")
 DEFERRED = {"G+A asymmetry, G+R regime": "not implemented; deferred to a new registration (Amendment 3)",
-            "H4 factors": "price, time and volatility only (the factors in G)"}
+            "H4 factors": "price, time and volatility only (the factors in G)",
+            "user-facing attribution": "disabled for the initial release (Amendment 4); H4 is reported only"}
 
 
 def full(d, dev_end, cal=True):
     S, C, P, extras, f, d = run(d, dev_end)
     report = {"horizon_hours": H, "scenarios_total": int(len(S)), "ambiguous_share": float((S.out == 3).mean()),
               "dv_halflife_hours": extras["dv_halflife"], "deferred": DEFERRED, "by_resolution": {}}
-    report["H4"] = attribution(C, None, extras, f, d)
+    report["H4_reported_only"] = attribution(C, None, extras, f, d)
+    report["H4_reported_only"]["note"] = ("evaluates uncalibrated G, not the production model; authorizes nothing (Amendment 4)")
     for res in RESOLUTIONS:
         Y, keep, So = labels(C, S, res)
         Cc = C[keep].reset_index(drop=True); Yc = Y[keep]; Pc = {k: x[keep] for k, x in P.items()}
@@ -503,13 +516,28 @@ def full(d, dev_end, cal=True):
     br = report["by_resolution"]
     report["gates_all_resolutions"] = {
         "H1": all(br[r]["H1"]["pass"] for r in RESOLUTIONS),
-        "H1c": all(br[r]["H1c"]["pass"] for r in RESOLUTIONS),
+        "H1c_G": all(br[r]["H1c_G"]["pass"] for r in RESOLUTIONS),
+        "H1c_DV": all(br[r]["H1c_DV"]["pass"] for r in RESOLUTIONS),
         "H2": all(br[r]["H2"]["pass"] for r in RESOLUTIONS),
         "H2c_G": all(br[r]["H2c_G"]["pass"] for r in RESOLUTIONS),
         "H2c_DV": all(br[r]["H2c_DV"]["pass"] for r in RESOLUTIONS),
         "H3_G": all(br[r]["H3_G"]["pass"] for r in RESOLUTIONS),
-        "H3_DV": all(br[r]["H3_DV"]["pass"] for r in RESOLUTIONS),
-        "H4": report["H4"]["pass"]}
+        "H3_DV": all(br[r]["H3_DV"]["pass"] for r in RESOLUTIONS)}
+    g = report["gates_all_resolutions"]
+    # Amendment 4: G is the production model only if H1 and H2 both pass; otherwise DV.
+    # Every claim must then pass for the production model itself, under all three ambiguity treatments.
+    pm = "G" if (g["H1"] and g["H2"]) else "DV"
+    cal_ok = g[f"H1c_{pm}"]
+    report["production"] = {
+        "model": pm,
+        "rule": "G only if H1 and H2 both pass; otherwise DV",
+        "gates": {"calibration": cal_ok, "conventional_alerts_H2c": g[f"H2c_{pm}"], "same_price_H3": g[f"H3_{pm}"]},
+        "authorized": {
+            "publish_probabilities": cal_ok,
+            "model_advantage_claim": pm == "G" and cal_ok,
+            "conventional_alert_claim": cal_ok and g[f"H2c_{pm}"],
+            "same_price_headline": cal_ok and g[f"H3_{pm}"],
+            "user_facing_attribution": False}}
     return report
 
 
@@ -526,4 +554,4 @@ if __name__ == "__main__":
     json.dump(rep, open(f"lab/{kind}_seed{seed}{'_h8' if H == 8 else ''}.json", "w"), indent=1, default=float)
     b = rep["by_resolution"]["stop"]
     print(f"{kind} seed {seed} H={H}h: H1 {b['H1']['rel_improvement']:+.2%} vs {b['H1']['benchmark']} | H2 {b['H2']['matched20_recall_ratio']:.3f}x vs {b['H2']['benchmark']} | "
-          f"H2c G {b['H2c_G']['matched20_recall_ratio']:.3f}x / DV {b['H2c_DV']['matched20_recall_ratio']:.3f}x vs {b['H2c_G']['benchmark']} | DV half-life {rep['dv_halflife_hours']}h | gates {rep['gates_all_resolutions']} | {rep['seconds']}s")
+          f"H2c G {b['H2c_G']['matched20_recall_ratio']:.3f}x / DV {b['H2c_DV']['matched20_recall_ratio']:.3f}x vs {b['H2c_G']['benchmark']} | DV half-life {rep['dv_halflife_hours']}h | gates {rep['gates_all_resolutions']} | production {rep['production']['model']} authorized {rep['production']['authorized']} | {rep['seconds']}s")
