@@ -67,3 +67,10 @@ An extension (A or R) enters the confirmation model only if, on development data
 
 ## 8. Demonstration integrity
 Website demonstrations show stop-first, target-first and neither outcomes. Until confirmation results exist, every demonstration states that it uses constant volatility and is not tested performance. After confirmation, any example shown is drawn at random from the confirmation scenarios, and the draw procedure is published. No example is selected for its outcome.
+
+## Amendment 1 (2026-11-28, before any real data was acquired)
+These changes come from the lab check on simulated markets (`LAB_CHECK.md`). No real price data informed them.
+- **A1 Alert rule.** The primary H2 rule for probability models is a **level rule**: warn when the stop-first probability reaches θ. The rise rule (a gain of θ pp since the start) is reported as secondary. Reason: in the lab, the rise rule lost to a plain proximity alert even where volatility never changes (0.76×), so it is weak by construction. The level rule is compared against the same benchmarks, with the CV level rule added as a benchmark.
+- **A2 Calibration layer.** Each model's three outcome probabilities pass through a per-class monotone recalibration, fitted on development data only and renormalized. It is applied identically to CV, V1 and G. H1, H1c, H2 and H3 are judged on calibrated outputs. Reason: in the lab, without it, the "neither" class was mis-calibrated by up to 9 pp when returns had fat tails, and H1c would have failed for every model.
+- **A3 Range scale.** Parkinson variance from candle ranges understates return variance. Both CV and G multiply it by the trailing 30-day ratio of close-to-close to Parkinson variance. This brings G to 8 fitted quantities, the stated limit.
+- **A4 Lead time at hourly resolution.** A warning counts only if the stop is touched no earlier than the hour after next, so the lead is at least 1 hour. That is stricter than the 30 minutes stated above.

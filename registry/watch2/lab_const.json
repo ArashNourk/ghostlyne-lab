@@ -1,0 +1,248 @@
+{
+ "checkpoints_confirm": 1807144,
+ "scenarios_confirm": 131304,
+ "brier": {
+  "CV": 0.4409470852060113,
+  "G": 0.4409817806301986
+ },
+ "H1": {
+  "rel_improvement": -7.868387239939878e-05,
+  "ci": [
+   -0.0011118070115810398,
+   0.0009321356031140478
+  ],
+  "pass": false
+ },
+ "H1c": {
+  "bins": [
+   {
+    "class": "target",
+    "bin": "[0.0, 0.05)",
+    "n": 462900,
+    "pred": 0.0147,
+    "obs": 0.0137,
+    "ok": true
+   },
+   {
+    "class": "target",
+    "bin": "[0.05, 0.1)",
+    "n": 210536,
+    "pred": 0.075,
+    "obs": 0.0689,
+    "ok": true
+   },
+   {
+    "class": "target",
+    "bin": "[0.1, 0.2)",
+    "n": 318407,
+    "pred": 0.1455,
+    "obs": 0.133,
+    "ok": true
+   },
+   {
+    "class": "target",
+    "bin": "[0.2, 0.3)",
+    "n": 220674,
+    "pred": 0.2455,
+    "obs": 0.2256,
+    "ok": true
+   },
+   {
+    "class": "target",
+    "bin": "[0.3, 0.5)",
+    "n": 306757,
+    "pred": 0.3926,
+    "obs": 0.3654,
+    "ok": true
+   },
+   {
+    "class": "target",
+    "bin": "[0.5, 0.7)",
+    "n": 190305,
+    "pred": 0.5972,
+    "obs": 0.5692,
+    "ok": true
+   },
+   {
+    "class": "target",
+    "bin": "[0.7, 1.0)",
+    "n": 97565,
+    "pred": 0.8078,
+    "obs": 0.7723,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.0, 0.05)",
+    "n": 361898,
+    "pred": 0.0139,
+    "obs": 0.0133,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.05, 0.1)",
+    "n": 149564,
+    "pred": 0.0744,
+    "obs": 0.067,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.1, 0.2)",
+    "n": 275528,
+    "pred": 0.1505,
+    "obs": 0.1364,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.2, 0.3)",
+    "n": 257408,
+    "pred": 0.246,
+    "obs": 0.2238,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.3, 0.5)",
+    "n": 382588,
+    "pred": 0.3943,
+    "obs": 0.3653,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.5, 0.7)",
+    "n": 250615,
+    "pred": 0.6005,
+    "obs": 0.5717,
+    "ok": true
+   },
+   {
+    "class": "stop",
+    "bin": "[0.7, 1.0)",
+    "n": 129543,
+    "pred": 0.8075,
+    "obs": 0.7717,
+    "ok": true
+   },
+   {
+    "class": "neither",
+    "bin": "[0.0, 0.05)",
+    "n": 142765,
+    "pred": 0.0219,
+    "obs": 0.0349,
+    "ok": true
+   },
+   {
+    "class": "neither",
+    "bin": "[0.05, 0.1)",
+    "n": 84784,
+    "pred": 0.0722,
+    "obs": 0.1048,
+    "ok": false
+   },
+   {
+    "class": "neither",
+    "bin": "[0.1, 0.2)",
+    "n": 185217,
+    "pred": 0.1531,
+    "obs": 0.192,
+    "ok": false
+   },
+   {
+    "class": "neither",
+    "bin": "[0.2, 0.3)",
+    "n": 184697,
+    "pred": 0.2456,
+    "obs": 0.2925,
+    "ok": true
+   },
+   {
+    "class": "neither",
+    "bin": "[0.3, 0.5)",
+    "n": 390618,
+    "pred": 0.4002,
+    "obs": 0.445,
+    "ok": true
+   },
+   {
+    "class": "neither",
+    "bin": "[0.5, 0.7)",
+    "n": 381405,
+    "pred": 0.5982,
+    "obs": 0.6387,
+    "ok": true
+   },
+   {
+    "class": "neither",
+    "bin": "[0.7, 1.0)",
+    "n": 437658,
+    "pred": 0.861,
+    "obs": 0.8786,
+    "ok": true
+   }
+  ],
+  "pass": false
+ },
+ "H2": {
+  "PROX": {
+   "recall": 0.5548,
+   "false_warning_rate": 0.2028
+  },
+  "ATR": {
+   "recall": 0.5531,
+   "false_warning_rate": 0.2045
+  },
+  "CV": {
+   "recall": 0.4224,
+   "false_warning_rate": 0.2016
+  },
+  "G": {
+   "recall": 0.4228,
+   "false_warning_rate": 0.2016
+  },
+  "CV-level": {
+   "recall": 0.5991,
+   "false_warning_rate": 0.1986
+  },
+  "G-level": {
+   "recall": 0.5928,
+   "false_warning_rate": 0.1967
+  },
+  "best_benchmark": "PROX",
+  "G_over_best": {
+   "ratio": 0.7620298672566371,
+   "ci": [
+    0.7489783943539031,
+    0.7756316010614771
+   ],
+   "pass": false
+  }
+ },
+ "H2_level_rule": {
+  "best_benchmark": "CV-level",
+  "G_level_over_best": {
+   "ratio": 0.9895946724723059,
+   "ci": [
+    0.9799362290436487,
+    0.999810120779923
+   ],
+   "pass": false
+  }
+ },
+ "H3": {
+  "checkpoints": 0,
+  "months": 0,
+  "rel_improvement": NaN,
+  "ci": [
+   NaN,
+   NaN
+  ],
+  "pass": false,
+  "enough_evidence": false
+ },
+ "market": "const",
+ "seconds": 27.6
+}
