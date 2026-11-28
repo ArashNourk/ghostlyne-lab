@@ -15,7 +15,7 @@ Alerts
   ATR   distance to stop below m x ATR(14 h)
   CV, G rise in stop-first probability since the scenario started, at least theta
 """
-import json, sys, time
+import json, os, sys, time
 import numpy as np, pandas as pd
 from fp3 import fp3
 
@@ -110,7 +110,10 @@ def variance_path(v_now, level, phi, h):
 def scenarios(d, f):
     hi, lo, cl = d.high.values, d.low.values, d.close.values
     ok = f.m720.notna().values & f.m24.notna().values & f.kfac.notna().values
-    starts = [t for t in range(len(d) - H - 1) if d.index[t].hour % START_EVERY == 0 and ok[t]]
+    bad = d["bad"].values.astype(bool) if "bad" in d else np.zeros(len(d), bool)   # hours inside data gaps > 2 candles
+    badcum = np.concatenate([[0], np.cumsum(bad)])
+    starts = [t for t in range(len(d) - H - 1) if d.index[t].hour % START_EVERY == 0 and ok[t]
+              and badcum[t + H + 1] - badcum[t] == 0]
     rows, scen = [], []
     sid = 0
     for t in starts:
@@ -119,12 +122,13 @@ def scenarios(d, f):
             for sd in STOPS:
                 for td in TARGETS:
                     stop = p0 * (1 - side * sd); tgt = p0 * (1 + side * td)
-                    out, r = 0, H + 1                            # 0 neither, 1 target first, 2 stop first
+                    out, r = 0, H + 1                            # 0 neither, 1 target first, 2 stop first, 3 ambiguous
                     for k in range(1, H + 1):
                         h_, l_ = hi[t + k], lo[t + k]
                         st = (l_ <= stop) if side == 1 else (h_ >= stop)
                         tg = (h_ >= tgt) if side == 1 else (l_ <= tgt)
-                        if st: out, r = 2, k; break                 # same-hour double touch counts as stop first
+                        if st and tg: out, r = 3, k; break          # both crossed inside one candle: order unknown
+                        if st: out, r = 2, k; break
                         if tg: out, r = 1, k; break
                     scen.append((sid, t, side, sd, td, out, r))
                     for c in range(0, min(r, H)):                    # checkpoints while unresolved
@@ -176,13 +180,41 @@ def run(d, dev_end):
     C, P_cv, rem, v_g = C[keep].reset_index(drop=True), P_cv[keep], rem[keep], v_g[keep]
     P_g = probabilities(C, v_g)
     S = S[S.sid.isin(C.sid.unique())].reset_index(drop=True)
-    out = S.set_index("sid").out.reindex(C.sid).values
+    t0_time = d.index[S.t0.values]
+    end_time = t0_time + pd.Timedelta(hours=H)
+    S["dev"] = end_time < dev_end                                 # whole window, outcome included, before the split
+    straddle = (~S.dev) & (t0_time < dev_end)                     # windows that cross the split are dropped
+    S = S[~straddle].reset_index(drop=True)
+    keep = C.sid.isin(S.sid).values
+    C, P_cv, P_g = C[keep].reset_index(drop=True), P_cv[keep], P_g[keep]
+    C["dev"] = S.set_index("sid").dev.reindex(C.sid).values
+    C["t0"] = S.set_index("sid").t0.reindex(C.sid).values
+    for name, freq in (("block", "M"), ("block_w", "W"), ("block_q", "Q")):
+        C[name] = d.index[C.t0.values].tz_localize(None).to_period(freq).astype(str)
+        S[name] = d.index[S.t0.values].tz_localize(None).to_period(freq).astype(str)
+    # volatility regime at scenario start: terciles of the 30-day level, cut points from development only
+    lvl = (f.m720 * f.kfac).values
+    cuts = np.quantile(lvl[S.t0.values[S.dev.values]], [1 / 3, 2 / 3])
+    S["regime"] = np.digitize(lvl[S.t0.values], cuts)
+    C["regime"] = S.set_index("sid").regime.reindex(C.sid).values
+    C["out"] = S.set_index("sid").out.reindex(C.sid).values
+    return S, C, {"CV": P_cv, "G": P_g}, f, d
+
+
+def labels(C, S, resolve):
+    """Outcome matrix under one resolution of ambiguous candles: 'stop', 'target' or 'drop'."""
+    out = C.out.values.copy()
+    keepC = np.ones(len(C), bool)
+    if resolve == "stop": out[out == 3] = 2
+    elif resolve == "target": out[out == 3] = 1
+    else: keepC = out != 3
     Y = np.zeros((len(C), 3)); Y[np.arange(len(C)), np.where(out == 1, 0, np.where(out == 2, 1, 2))] = 1
-    C["dev"] = d.index[S.set_index("sid").t0.reindex(C.sid).values] < dev_end
-    S["dev"] = d.index[S.t0.values] < dev_end
-    C["block"] = d.index[S.set_index("sid").t0.reindex(C.sid).values].tz_localize(None).to_period("M").astype(str)
-    S["block"] = d.index[S.t0.values].tz_localize(None).to_period("M").astype(str)
-    return S, C, Y, {"CV": P_cv, "G": P_g}, f, d
+    So = S.copy(); so = So.out.values.copy()
+    if resolve == "stop": so[so == 3] = 2
+    elif resolve == "target": so[so == 3] = 1
+    So["out"] = so
+    if resolve == "drop": So = So[So.out != 3]
+    return Y, keepC, So
 
 
 # ---------------------------------------------------------------- calibration layer (lab amendment candidate)
@@ -245,9 +277,13 @@ def alerts(S, C, P, f, d):
         conf = ~Sx.dev
         stop_c = conf & (Sx.out == 2)
         timely = warned.notna() & (Sx.r >= warned + 2)            # warned before the hour preceding the touch (>= 30 min lead at hourly resolution)
-        far = float((warned.notna() & conf & (Sx.out != 2)).sum() / (conf & (Sx.out != 2)).sum())
+        false_w = warned.notna() & conf & (Sx.out != 2)
+        far = float(false_w.sum() / (conf & (Sx.out != 2)).sum())
         rec_by_block = pd.DataFrame({"hit": (timely & stop_c).astype(int), "n": stop_c.astype(int), "b": Sx.block})[stop_c].groupby("b").sum()
-        res[name] = {"theta": theta, "recall": float((timely & stop_c).sum() / stop_c.sum()), "far": far, "_blocks": rec_by_block}
+        lead_h = ((Sx.r - 1) - warned)[timely & stop_c]
+        res[name] = {"theta": theta, "recall": float((timely & stop_c).sum() / stop_c.sum()), "far": far,
+                     "false_per_100_scenarios": float(100 * false_w.sum() / conf.sum()),
+                     "median_lead_hours": float(lead_h.median()) if len(lead_h) else float("nan"), "_blocks": rec_by_block}
     return res
 
 
@@ -267,7 +303,17 @@ def evaluate(S, C, Y, P, f, d):
     out = {"checkpoints_confirm": int(conf.sum()), "scenarios_confirm": int((~S.dev).sum())}
     rel, lo, hi = boot_rel(br["G"][conf], br["CV"][conf], C.block.values[conf])
     out["brier"] = {k: float(v[conf].mean()) for k, v in br.items()}
-    out["H1"] = {"rel_improvement": rel, "ci": [lo, hi], "pass": rel >= 0.05 and lo > 0}
+    out["H1"] = {"rel_improvement": rel, "ci": [lo, hi], "abs_improvement": float(br["CV"][conf].mean() - br["G"][conf].mean()), "pass": rel >= 0.05 and lo > 0}
+    out["H1_block_sensitivity"] = {}
+    for bname in ("block_w", "block", "block_q"):
+        r_, l_, h_ = boot_rel(br["G"][conf], br["CV"][conf], C[bname].values[conf])
+        out["H1_block_sensitivity"][{"block_w": "weekly", "block": "monthly", "block_q": "quarterly"}[bname]] = [round(l_, 4), round(h_, 4)]
+    out["H1_by_regime"] = {}
+    for g_, nm in ((0, "low_vol"), (1, "mid_vol"), (2, "high_vol")):
+        m_ = conf & (C.regime.values == g_)
+        if m_.sum() > 1000:
+            r_, l_, h_ = boot_rel(br["G"][m_], br["CV"][m_], C.block.values[m_])
+            out["H1_by_regime"][nm] = {"rel": round(r_, 4), "ci": [round(l_, 4), round(h_, 4)], "abs": round(float(br["CV"][m_].mean() - br["G"][m_].mean()), 5), "checkpoints": int(m_.sum())}
     # calibration of G, stop-first class, reliability bins with >= 500 checkpoints
     bins = [0, .05, .10, .20, .30, .50, .70, 1.0001]
     cal = []
@@ -287,7 +333,7 @@ def evaluate(S, C, Y, P, f, d):
     best = max(("PROX", "ATR", "CV"), key=lambda k: al[k]["recall"])
     lo2, hi2 = recall_ratio_ci(al["G"], al[best])
     ratio = al["G"]["recall"] / max(al[best]["recall"], 1e-9)
-    out["H2"] = {m: {"recall": round(v["recall"], 4), "false_warning_rate": round(v["far"], 4)} for m, v in al.items()}
+    out["H2"] = {m: {"recall": round(v["recall"], 4), "false_warning_rate": round(v["far"], 4), "false_per_100_scenarios": round(v["false_per_100_scenarios"], 2), "median_lead_hours": v["median_lead_hours"]} for m, v in al.items()}
     out["H2"]["best_benchmark"] = best
     out["H2"]["G_over_best"] = {"ratio": ratio, "ci": [lo2, hi2], "pass": ratio >= 1.05 and lo2 > 1 and 0.15 <= al["G"]["far"] <= 0.25}
     bestL = max(("PROX", "ATR", "CV-level"), key=lambda k: al[k]["recall"])
@@ -306,16 +352,37 @@ def evaluate(S, C, Y, P, f, d):
     return out
 
 
+RESOLUTIONS = ("stop", "target", "drop")
+
+
+def full(d, dev_end, cal=True):
+    S, C, P, f, d = run(d, dev_end)
+    report = {"scenarios_total": int(len(S)), "ambiguous_share": float((S.out == 3).mean()), "by_resolution": {}}
+    for res in RESOLUTIONS:
+        Y, keep, So = labels(C, S, res)
+        Cc = C[keep].reset_index(drop=True); Yc = Y[keep]; Pc = {k: v[keep] for k, v in P.items()}
+        if cal:   # fitted on development rows only; the held-out period never informs the map
+            dev = Cc.dev.values
+            Pc = {k: recalibrate(v, Yc, dev) for k, v in Pc.items()}
+        report["by_resolution"][res] = evaluate(So, Cc, Yc, Pc, f, d)
+    br = report["by_resolution"]
+    report["gates_all_resolutions"] = {
+        "H1": all(br[r]["H1"]["pass"] for r in RESOLUTIONS),
+        "H1c": all(br[r]["H1c"]["pass"] for r in RESOLUTIONS),
+        "H2_level": all(br[r]["H2_level_rule"]["G_level_over_best"]["pass"] for r in RESOLUTIONS),
+        "H3": all(br[r]["H3"]["pass"] for r in RESOLUTIONS)}
+    return report
+
+
 if __name__ == "__main__":
     kind = sys.argv[1] if len(sys.argv) > 1 else "sv"
+    seed = int(sys.argv[2]) if len(sys.argv) > 2 else (7 if kind == "sv" else 8)
     t0 = time.time()
-    d = synthetic(kind, years=6, seed=7 if kind == "sv" else 8)
+    d = synthetic(kind, years=6, seed=seed)
     dev_end = d.index[0] + pd.Timedelta(days=int(365 * 3.5))
-    S, C, Y, P, f, d = run(d, dev_end)
-    if "--cal" in sys.argv:
-        dev = C.dev.values
-        P = {"CV": recalibrate(P["CV"], Y, dev), "G": recalibrate(P["G"], Y, dev)}   # same layer on both: a fair comparison
-    res = evaluate(S, C, Y, P, f, d)
-    res["market"] = kind; res["seconds"] = round(time.time() - t0, 1)
-    print(json.dumps(res, indent=1, default=float))
-    json.dump(res, open(f"lab_{kind}{'_cal' if '--cal' in sys.argv else ''}.json", "w"), indent=1, default=float)
+    rep = full(d, dev_end, cal=True)
+    rep.update({"market": kind, "seed": seed, "seconds": round(time.time() - t0, 1)})
+    os.makedirs("lab", exist_ok=True)
+    json.dump(rep, open(f"lab/{kind}_seed{seed}.json", "w"), indent=1, default=float)
+    g = rep["gates_all_resolutions"]; b = rep["by_resolution"]["stop"]
+    print(f"{kind} seed {seed}: ambiguous {rep['ambiguous_share']:.2%} | H1 {b['H1']['rel_improvement']:+.2%} | gates (all resolutions) {g} | {rep['seconds']}s")
